@@ -69,7 +69,7 @@ The JD analyser creates an `any_of` requirement. The matcher scores each alterna
 cos(u,v) = u·v / (‖u‖‖v‖): the angle between two vectors, ignoring length. With non-negative TF-IDF vectors it lies in [0,1]. 1 means same direction (same word mix), 0 means no shared terms.
 
 **Q21. Which embedding model do you use?**  
-all-MiniLM-L6-v2 through sentence-transformers if installed, with a lazy singleton and an embedding cache; otherwise TF-IDF. In my sandbox the model could not be downloaded, so every reported number uses TF-IDF. The ranking page states which backend ran.
+all-MiniLM-L6-v2. `scripts/fetch_minilm.py` downloads it once (hash-verified). The app runs it with sentence-transformers if installed, and otherwise with my own pure-NumPy implementation of the same model (same weights, WordPiece tokenizer, mean pooling, 256-token limit), because PyTorch cannot be installed on my machine. It matches the published Sentence-Transformers example scores to four decimals, but I have not compared it vector by vector with PyTorch. TF-IDF is only a labelled fallback, and the ranking page states which backend ran.
 
 **Q22. Why fit TF-IDF only on the JD and ontology?**  
 If it were fit on all candidates, one candidate's score would change when another was uploaded. Fitting on the JD plus ontology keeps scores independent of the pool.
@@ -112,7 +112,7 @@ Summary, points per component (score × effective weight), why matched, why not,
 A synthetic benchmark: 35 parseable resumes in four layouts and 6 JDs, with ground truth defined at generation and reviewed by me. Metrics: skill P/R/F1, field and experience accuracy, NDCG@5, P@5, R@5, a TF-IDF baseline, a random baseline, score recomputation, a twin test and timings.
 
 **Q34. Give your headline results.**  
-Skill micro-F1 0.993, experience accuracy 1.00, NDCG@5 0.943 vs 0.932 for plain TF-IDF and 0.253 random, twin difference 0.0. I add immediately that the benchmark is synthetic and my own.
+Skill micro-F1 0.993, experience accuracy 1.00, NDCG@5 0.945 with MiniLM (0.943 with TF-IDF) vs 0.932 for the plain baseline and 0.253 random, twin difference 0.0. On a separate 50-resume pack all 10 intended strong matches ranked in the top 10. I add immediately that all data is synthetic and the labels are my own.
 
 **Q35. Is hybrid better than TF-IDF?**  
 Only marginally on this set (+0.012 NDCG@5, same P@5) and worse on the AI/ML JD (0.871 vs 0.884). It adds structure, evidence and explanations; I do not claim a significant accuracy gain.
@@ -160,8 +160,8 @@ A cell beginning with =, +, - or @ can run as a formula when opened in Excel. Ex
 
 ## Engineering
 
-**Q49. Why FastAPI, SQLAlchemy and SQLite?**  
-FastAPI gives typed validation and OpenAPI docs; SQLAlchemy 2 keeps the schema portable to Postgres; SQLite means zero setup on a student laptop. It was also run on PostgreSQL 16.4 (full test suite, migrations and the 50-resume flow pass); other versions and load are untested.
+**Q49. Why FastAPI, SQLAlchemy and PostgreSQL?**  
+FastAPI gives typed validation and OpenAPI docs; SQLAlchemy 2 plus Alembic keep the schema portable and versioned. PostgreSQL 16 is the default database (the assignment prefers it): the full backend suite (237 tests), the Alembic migrations and the 20-resume UI flow all pass on it. SQLite is only a zero-setup fallback when no Postgres is found. Other Postgres versions and load are untested.
 
 **Q50. How do you handle errors?**  
 A central handler returns one envelope with a code and message. Validation errors are 422, domain errors use `AppError`, and unexpected exceptions become a generic 500 without internals; a test monkeypatches a failure to prove no details leak.
@@ -185,7 +185,7 @@ A recruiter-entered score with a required reason, stored in a separate table and
 Backend peak memory was about 307 MB for the whole benchmark on TF-IDF; the frontend bundle is 690 kB (204 kB gzip). MiniLM's footprint was not measured.
 
 **Q57. Is it production-ready?**  
-No. It lacks real-data validation, user management, parser sandboxing, TLS, CI and compliance work, and Docker, Linux/macOS, the PyTorch MiniLM runtime and load behaviour are untested (Windows, PostgreSQL 16.4 and the pure-NumPy MiniLM were run).
+No. It lacks real-data validation, user management, parser sandboxing, TLS, CI and compliance work, and Linux/macOS hosts, the PyTorch MiniLM runtime, Render/Vercel deployment and load behaviour are untested. Verified: Windows, PostgreSQL 16.4, the pure-NumPy MiniLM and the Docker Desktop compose stack.
 
 **Q58. What would you add first?**  
 A real annotated dataset and held-out evaluation, then MiniLM evaluation, then a worker queue with sandboxed parsing and proper authentication.

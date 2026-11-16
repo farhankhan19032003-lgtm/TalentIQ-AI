@@ -3,7 +3,7 @@
 ## Limitations (all true of the code as shipped)
 1. Synthetic, small (35 resumes, 6 JDs), author-labelled benchmark; dev set = test set; no real resumes.
 2. Hybrid ≈ TF-IDF baseline on that benchmark (+0.012 NDCG@5, worse on one JD).
-3. MiniLM path never executed here; calibration ranges for it (0.20–0.65) are guesses.
+3. MiniLM runs through a pure-NumPy implementation (not compared vector-by-vector with PyTorch); its calibration range (0.20–0.65) is a hand-set heuristic.
 4. Hand-set weights/credits; no validation against hiring outcomes; score ≠ probability.
 5. Ontology of 160 skills; unknown skills are invisible; bare `R`/`Go`/`C` only as list items; inflections missed; "Oracle" vendor false positive.
 6. Generalist backend candidates tend to rank above specialists for ML/Java JDs (semantic overlap).
@@ -12,7 +12,7 @@
 9. Single shared API key; in-process parsing; no AV; no TLS; files stored unencrypted.
 10. Proxy bias (school, location, name-adjacent signals, gaps) is not measured.
 11. Availability not collected; no calendar/ATS integration.
-12. Docker/Render/Vercel and Linux/macOS untested; Postgres only on 16.4 and not under load (Windows and Postgres 16.4 were run). No CI.
+12. Docker compose is verified on Docker Desktop (Windows/WSL2); Render/Vercel and Linux/macOS are untested; Postgres only on 16.4 and not under load (Windows and Postgres 16.4 were run). No CI.
 
 ## Future work (ordered by value)
 1. Collect a small real, consented, double-annotated set; report inter-annotator agreement and a held-out test split.
