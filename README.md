@@ -79,6 +79,10 @@ docker compose down -v           # stop and delete the database and uploads
 ```
 Three containers: **PostgreSQL 16**, the **FastAPI backend** (Python 3.13, Tesseract OCR, the MiniLM model baked into the image and hash-checked at build time, Alembic migrations on start, non-root user, health check) and the **React frontend served by nginx**, which proxies `/api` to the backend. The first build takes several minutes (it downloads the 90 MB model). Verified on Docker Desktop (Windows, WSL2): the stack came up healthy, the 20-resume flow (JD upload, 20 PDF/DOCX resumes, bad-file handling, ranking, candidate page, blind mode) gave the same scores as the non-Docker run, similarity method `minilm`, Alembic at head. The image contains no sample data. Set `POSTGRES_PASSWORD` and `API_KEY` for anything beyond a local demo.
 
+### Run in GitHub Codespaces (no local install)
+
+On the repository page choose **Code, Codespaces, Create codespace on main**. The `.devcontainer/` config installs Docker inside the Codespace, builds the same `docker compose` stack and starts it. The first start takes several minutes (it builds the images and downloads the 90 MB MiniLM model); later starts reuse the images. When it is ready, open the **Ports** tab and click the globe icon next to port **8080** ("TalentIQ AI"). The app starts empty: upload a JD and resumes as usual. The port is private to your GitHub account by default; if you make it public to share a demo link, anyone with the link can use the app and see what is uploaded, so use only fictional resumes and switch it back to private afterwards. Codespaces has a free monthly quota and stops after inactivity, so the link only works while the Codespace is running. This setup was written to match the verified compose stack but has not been run on GitHub's infrastructure yet.
+
 ### Tests
 
 ```powershell

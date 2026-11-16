@@ -1,0 +1,19 @@
+{
+  "name": "TalentIQ AI (Docker Compose)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "hostRequirements": { "cpus": 2, "memory": "4gb", "storage": "32gb" },
+  "postCreateCommand": "docker compose build",
+  "postStartCommand": "docker compose up -d --wait --wait-timeout 300",
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": { "label": "TalentIQ AI (open this)", "onAutoForward": "openBrowser" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-azuretools.vscode-docker", "ms-python.python"]
+    }
+  }
+}
