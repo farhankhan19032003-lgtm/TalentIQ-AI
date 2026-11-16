@@ -119,5 +119,5 @@ Environment variables only (no `.env` auto-loading) — see [.env.example](.env.
 - DOCX has no page numbers; text boxes in DOCX are not extracted; no layout-aware parsing of images/tables inside PDFs.
 - PDF parsing runs in-process (no sandbox). No malware scanning.
 - No user accounts/roles: a single optional shared API key.
-- Docker/Render/Vercel files are provided but **untested**. Frontend bundle is ~690 kB (Recharts).
+- `docker compose up --build` is **verified** (Docker Desktop on Windows/WSL2: healthy stack, 20-resume flow, same scores). The Render blueprint and Vercel config are provided but **untested**; Linux and macOS hosts are untested. Frontend bundle is ~690 kB (Recharts).
 - Candidate availability is not collected, so availability analytics are intentionally empty.
