@@ -21,5 +21,5 @@ numpy==2.5.4
 # Optional OCR for scanned PDFs: also needs the Tesseract binary installed on the OS
 pillow==13.0.0
 pytesseract==0.3.13
-# PostgreSQL (optional, only when DATABASE_URL points to Postgres)
-# psycopg[binary]>=3.1
+# PostgreSQL driver (used when DATABASE_URL points to Postgres)
+psycopg[binary]==3.3.9

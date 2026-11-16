@@ -1,7 +1,11 @@
 # Starts the TalentIQ AI backend (port 8000) and frontend (port 5173).
 #   .\start.ps1            start both and open the browser
 #   .\start.ps1 -NoBrowser start both without opening the browser
-#   .\start.ps1 -Stop      stop both
+#   .\start.ps1 -Stop      stop both (and the local PostgreSQL, if this script started it)
+#
+# Database: if a portable PostgreSQL exists at $env:TALENTIQ_PG_HOME (default: ~/talentiq-pg, containing pgsql\bin and data),
+# it is started on port 5433 and used (database "talentiq"). Otherwise the app falls back to SQLite.
+# An explicit $env:DATABASE_URL always wins.
 param(
     [switch]$Stop,
     [switch]$NoBrowser
@@ -13,6 +17,9 @@ $backend = Join-Path $root "backend"
 $frontend = Join-Path $root "frontend"
 $python = Join-Path $backend ".venv\Scripts\python.exe"
 $logs = Join-Path $env:TEMP "talentiq"
+$pgHome = if ($env:TALENTIQ_PG_HOME) { $env:TALENTIQ_PG_HOME } else { Join-Path $HOME "talentiq-pg" }
+$pgBin = Join-Path $pgHome "pgsql\bin"
+$pgData = Join-Path $pgHome "data"
 New-Item -ItemType Directory -Path $logs -Force | Out-Null
 
 function Stop-Port([int]$port) {
@@ -36,6 +43,10 @@ function Wait-Url([string]$url, [int]$seconds) {
 if ($Stop) {
     Stop-Port 8000
     Stop-Port 5173
+    if ((Test-Path $pgBin) -and (Get-NetTCPConnection -LocalPort 5433 -State Listen -ErrorAction SilentlyContinue)) {
+        & "$pgBin\pg_ctl.exe" -D $pgData stop -m fast | Out-Null
+        Write-Host "port 5433: PostgreSQL stopped"
+    }
     return
 }
 
@@ -62,6 +73,23 @@ $env:DISABLE_SQLALCHEMY_CEXT_RUNTIME = "1"
 # Tesseract (OCR for scanned PDFs), if installed.
 $tess = "C:\Program Files\Tesseract-OCR"
 if (Test-Path "$tess\tesseract.exe") { $env:Path = "$tess;$env:Path" }
+# PostgreSQL (portable) ---------------------------------------------------------------
+if (-not $env:DATABASE_URL -and (Test-Path "$pgBin\postgres.exe") -and (Test-Path $pgData)) {
+    if (-not (Get-NetTCPConnection -LocalPort 5433 -State Listen -ErrorAction SilentlyContinue)) {
+        Remove-Item (Join-Path $pgData "postmaster.pid") -ErrorAction SilentlyContinue
+        Start-Process -FilePath "$pgBin\postgres.exe" -ArgumentList "-D", "`"$pgData`"", "-p", "5433" -WindowStyle Hidden `
+            -RedirectStandardOutput (Join-Path $logs "pg.out") -RedirectStandardError (Join-Path $logs "pg.err")
+        for ($i = 0; $i -lt 20; $i++) { & "$pgBin\pg_isready.exe" -h 127.0.0.1 -p 5433 | Out-Null; if ($LASTEXITCODE -eq 0) { break }; Start-Sleep 1 }
+    }
+    & "$pgBin\psql.exe" -h 127.0.0.1 -p 5433 -U postgres -tAc "select 1 from pg_database where datname='talentiq'" | Out-String | ForEach-Object {
+        if (-not $_.Trim()) { & "$pgBin\createdb.exe" -h 127.0.0.1 -p 5433 -U postgres talentiq }
+    }
+    $env:DATABASE_URL = "postgresql+psycopg://postgres@127.0.0.1:5433/talentiq"
+    # The psycopg binary wheel is blocked by Application Control here: use the pure-Python driver with PostgreSQL's own libpq.dll.
+    $env:PSYCOPG_IMPL = "python"
+    $env:Path = "$pgBin;$env:Path"
+    Write-Host "Database: PostgreSQL (port 5433)"
+} elseif (-not $env:DATABASE_URL) { Write-Host "Database: SQLite (no portable PostgreSQL found at $pgHome)" }
 # TF-IDF is the default similarity method; uncomment to force or change it.
 # $env:EMBEDDING_BACKEND = "tfidf"
 
