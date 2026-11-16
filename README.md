@@ -45,7 +45,7 @@ flowchart LR
 
 ## Quick start (Windows PowerShell)
 
-Prerequisites: Python 3.11+, Node 20+ (tested with Node 22). Optional: [Tesseract](https://github.com/UB-Mannheim/tesseract/wiki) for scanned PDFs.
+Prerequisites: Python 3.12+ (the pinned numpy 2.5 needs it), Node 20+ (tested with Node 22). Optional: [Tesseract](https://github.com/UB-Mannheim/tesseract/wiki) for scanned PDFs.
 
 ```powershell
 # 1. Backend
@@ -70,6 +70,14 @@ Open http://localhost:5173 → **Jobs → New job** (paste or upload a JD, revie
 **Semantic matching.** The semantic component uses the sentence-embedding model all-MiniLM-L6-v2. `python scripts/fetch_minilm.py` downloads it once (about 90 MB, every file checked against the hash Hugging Face publishes) into `backend/storage/models/`. The app runs it with `sentence-transformers` when that is installed, and otherwise with its own **pure-NumPy implementation of the same model** (`backend/app/services/minilm_numpy.py`: same weights, same WordPiece tokenizer, mean pooling, 256-token limit; no torch needed, so it works on any Python version and on locked-down machines). `EMBEDDING_BACKEND=auto` (the default) uses MiniLM when the model files exist and otherwise falls back to TF-IDF, and the ranking page says which one was used and why. `EMBEDDING_BACKEND=tfidf` forces TF-IDF, `minilm` insists on MiniLM.
 
 Regenerate the synthetic sample data (fictional people, testing only): `python scripts/generate_sample_data.py` from the repo root.
+
+### Run with Docker (one command)
+
+```powershell
+docker compose up --build        # then open http://localhost:8080
+docker compose down -v           # stop and delete the database and uploads
+```
+Three containers: **PostgreSQL 16**, the **FastAPI backend** (Python 3.13, Tesseract OCR, the MiniLM model baked into the image and hash-checked at build time, Alembic migrations on start, non-root user, health check) and the **React frontend served by nginx**, which proxies `/api` to the backend. The first build takes several minutes (it downloads the 90 MB model). Verified on Docker Desktop (Windows, WSL2): the stack came up healthy, the 20-resume flow (JD upload, 20 PDF/DOCX resumes, bad-file handling, ranking, candidate page, blind mode) gave the same scores as the non-Docker run, similarity method `minilm`, Alembic at head. The image contains no sample data. Set `POSTGRES_PASSWORD` and `API_KEY` for anything beyond a local demo.
 
 ### Tests
 

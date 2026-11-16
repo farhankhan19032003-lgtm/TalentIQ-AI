@@ -1,5 +1,5 @@
-# NOTE: not tested in the authoring environment (no Docker available). Treat as a starting point.
-# The app itself was verified against PostgreSQL 16.4 (237 tests, Alembic, full demo flow) using portable binaries, see README.
+# Run everything:  docker compose up --build     then open http://localhost:8080
+# Stack: PostgreSQL 16 + FastAPI backend (MiniLM baked in, Tesseract OCR) + React frontend served by nginx.
 services:
   db:
     image: postgres:16
@@ -24,7 +24,8 @@ services:
   frontend:
     build: { context: ., dockerfile: frontend/Dockerfile }
     ports: [ "8080:80" ]
-    depends_on: [ backend ]
+    depends_on:
+      backend: { condition: service_healthy }
 volumes:
   talentiq-data:
   talentiq-pg:
