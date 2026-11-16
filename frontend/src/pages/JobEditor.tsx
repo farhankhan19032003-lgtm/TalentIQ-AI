@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Plus, Trash2 } from "lucide-react";
 import { api, errMsg } from "../api";
+import { useApp } from "../ctx";
 import { Chip, ErrorBox, PageTitle, Spinner } from "../components/ui";
 import { Job, Requirement } from "../types";
 
 export default function JobEditor() {
   const { id } = useParams();
   const nav = useNavigate();
+  const { setJobId } = useApp();
   const editing = !!id;
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
@@ -57,6 +59,7 @@ export default function JobEditor() {
         body.optional_skills = extraOpt.split(",").map((s) => s.trim()).filter(Boolean);
         const j = (await api.post<Job>("/jobs", body)).data;
         if (reqs && reqs.some((r) => r.importance === "ignored")) { await api.put(`/jobs/${j.id}`, { title, description: desc, requirements: reqs }); }
+        setJobId(j.id);   // the job just created becomes the active one, so Upload / Ranking work on it right away
         nav("/jobs");
       }
     } catch (e) { setErr(errMsg(e)); } finally { setBusy(false); }
