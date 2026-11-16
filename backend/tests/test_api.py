@@ -72,7 +72,9 @@ def test_resume_listing_stats_and_batch(client, loaded):
     assert len(lst["items"]) == 5 and lst["total"] >= 35
     assert client.get("/api/resumes?status=failed").json()["total"] >= 2
     b = client.get(f"/api/resumes/batches/{loaded['upload']['batch_id']}").json()
-    assert b["total"] >= 37 and b["parsed"] >= 35
+    # the image-only scanned PDF only parses when Tesseract OCR is available
+    from app.services.document_parser import _ocr_available
+    assert b["total"] >= 37 and b["parsed"] >= (35 if _ocr_available() else 34)
     assert client.get("/api/resumes/999999").status_code == 404
 
 

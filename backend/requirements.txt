@@ -1,25 +1,25 @@
-# Core runtime (versions are the minimums this project was developed and tested against)
-fastapi>=0.115
-uvicorn>=0.30
-pydantic>=2.7
-SQLAlchemy>=2.0
-alembic>=1.13
-python-multipart>=0.0.9
+# Core runtime (pinned to the exact versions this project was developed and tested against)
+fastapi==0.163.1
+uvicorn==0.54.0
+pydantic==2.14.3
+SQLAlchemy==2.0.57
+alembic==1.20.1
+python-multipart==0.0.33
 # Document parsing
-pymupdf>=1.24
-pdfplumber>=0.11
-python-docx>=1.1
+pymupdf==1.28.2
+pdfplumber==0.11.10
+python-docx==1.2.0
 # Exports
-openpyxl>=3.1
-reportlab>=4.2
+openpyxl==3.1.5
+reportlab==5.1.0
 # Text shaping for Hindi (Devanagari) in PDFs: vowel signs and conjuncts. Optional at runtime (PDFs still build without it),
 # but without it Hindi is drawn unshaped. Fonts are bundled in app/assets/fonts.
-uharfbuzz>=0.40
+uharfbuzz==0.57.0
 # NLP (TF-IDF fallback and numerics). The MiniLM model is optional, see requirements-ml.txt
-scikit-learn>=1.4
-numpy>=1.26
+scikit-learn==1.9.1
+numpy==2.5.4
 # Optional OCR for scanned PDFs: also needs the Tesseract binary installed on the OS
-pillow>=10.0
-pytesseract>=0.3.10
+pillow==13.0.0
+pytesseract==0.3.13
 # PostgreSQL (optional, only when DATABASE_URL points to Postgres)
 # psycopg[binary]>=3.1
