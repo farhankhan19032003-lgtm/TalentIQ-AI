@@ -1,4 +1,4 @@
-# Demo video script (about 8 minutes)
+# Demo video script (about 9 minutes)
 
 For the assignment "AI-Based Resume Matching & Ranking System". Narration is in English (for the reviewer); the **Do** column is your screen action. The structure follows the five modules and the evaluation table (functional app 25 %, parsing 15 %, matching logic 25 %, score and explanation 15 %, UI 10 %, code and docs 10 %).
 
@@ -6,7 +6,8 @@ For the assignment "AI-Based Resume Matching & Ranking System". Narration is in 
 1. `.\start.ps1` (PostgreSQL + backend + frontend). Check the terminal says `Database: PostgreSQL (port 5433)`.
 2. Empty database (the app starts empty and the UI has no demo-data button). The video uses only the repo's fictional `sample_data/` resumes, copied into one folder: `Desktop\TalentIQ_video_demo` with `1_job_description`, `2_resumes_20_good` (9 DOCX + 11 PDF) and `3_error_handling_files`. To rebuild it, copy those files from `sample_data/job_descriptions` and `sample_data/resumes`. State on camera that the resumes are fictional and the project uses no real candidate data.
 3. Browser at http://localhost:5173, zoom 110 %, close other tabs and notifications. Have the demo folder open in File Explorer, ready for the file picker.
-4. Record at 1080p with a screen recorder (OBS or Win+G). Do one dry run first.
+4. Docker (for the 8:10 step): start Docker Desktop and wait for the whale icon to say running. Pre-warm once so the video does not wait for the first build (5-10 minutes, it downloads the 90 MB model): `docker compose up --build -d`, wait until `docker compose ps` shows db and backend healthy, then `docker compose down -v`. Images stay cached, and the next `docker compose up -d` takes about 20 seconds. Make sure nothing else uses port 8080.
+5. Record at 1080p with a screen recorder (OBS or Win+G). Do one dry run first.
 
 ## Script
 
@@ -29,7 +30,8 @@ For the assignment "AI-Based Resume Matching & Ranking System". Narration is in 
 | 7:15 | What-if: set minimum years to 12 | "What-if: if I raise the experience requirement to 12 years, I can see who moves and by how much. This is a preview, nothing is saved." |
 | 7:35 | Override: score 90 plus a reason, show it beside the machine score | "A recruiter can override with a required reason. The machine score is never rewritten, and the override is audit-logged." |
 | 7:50 | Terminal: `python -m pytest -q`, show `237 passed`. Then the GitHub repo | "Code quality: 237 automated tests pass on PostgreSQL 16, migrations run with Alembic, and the README documents setup, architecture and the scoring method. Source is on GitHub." |
-| 8:10 | Limitations slide or README "Known limitations" | "Honest limits: it is tested on synthetic resumes only, the ground truth is author-defined, and MiniLM beats the TF-IDF baseline by only a small margin on this set. Weights are hand-set, not learned. It is a prototype, not production-ready. Thank you." |
+| 8:10 | Terminal: `docker compose up -d`, then `docker compose ps`, then open http://localhost:8080 | "Deployment: the whole stack also runs with one command, `docker compose up`. Three containers: PostgreSQL 16, the FastAPI backend with Tesseract OCR and the MiniLM model baked into the image, and the React frontend served by nginx. The backend runs as a non-root user, has a health check and applies Alembic migrations on start. I verified that the 20-resume flow gives the same scores inside Docker as outside." Show `healthy` in `docker compose ps` and the empty app on port 8080. Then `docker compose down -v`. |
+| 8:40 | Limitations slide or README "Known limitations" | "Honest limits: it is tested on synthetic resumes only, the ground truth is author-defined, and MiniLM beats the TF-IDF baseline by only a small margin on this set. Weights are hand-set, not learned. It is a prototype, not production-ready. Thank you." |
 
 ## If the reviewer asks "how is the percentage calculated?"
 ```
@@ -45,7 +47,7 @@ Overall = 0.40 * Technical + 0.25 * Semantic + 0.20 * Experience + 0.10 * Educat
 Details: `docs/AI_MATCHING_ALGORITHM.md`.
 
 ## Recording tips
-- Keep each take under about 8 minutes; cut the pauses while matching runs (it takes about 5 seconds).
+- Keep each take under about 9 minutes; cut the pauses while matching runs (it takes about 5 seconds).
 - Speak slowly, and use the mouse to point at what you describe.
 - Do not show `.env`, terminal history or any real personal data.
 - Upload the video as unlisted (YouTube or Drive) and put the link in the README and the submission email.
