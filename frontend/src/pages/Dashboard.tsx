@@ -11,23 +11,10 @@ export default function Dashboard() {
   const { jobId, setJobId } = useApp();
   const stats = useAsync(() => api.get("/resumes/stats").then((r) => r.data), []);
   const jobs = useAsync(() => api.get<Paged<Job>>("/jobs?page_size=100").then((r) => r.data), []);
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
-  const [err, setErr] = useState<string | null>(null);
-
-  const loadDemo = async () => {
-    setBusy(true); setErr(null); setMsg(null);
-    try {
-      await api.post("/demo/seed-jobs");
-      const u = (await api.post<UploadResponse>("/demo/upload-samples")).data;
-      setMsg(`Loaded synthetic TEST resumes: ${Object.entries(u.summary).map(([k, v]) => `${v} ${k}`).join(", ")}. These are fictional and for testing only.`);
-      stats.reload(); jobs.reload();
-    } catch (e) { setErr(errMsg(e)); } finally { setBusy(false); }
-  };
   if (stats.loading || jobs.loading) return <Spinner />;
   const empty = (stats.data?.total ?? 0) === 0;
   const steps = [
-    { n: 1, to: "/jobs/new", icon: Briefcase, title: "Create a job", text: "Paste a job description (or use a template). Requirements are extracted and editable." },
+    { n: 1, to: "/jobs/new", icon: Briefcase, title: "Create a job", text: "Paste or upload a job description. Requirements are extracted and editable." },
     { n: 2, to: "/upload", icon: FileUp, title: "Upload resumes", text: "PDF or DOCX, single files or whole batches. Bad files never stop the batch." },
     { n: 3, to: "/ranking", icon: Trophy, title: "Rank with evidence", text: "Run matching and inspect the exact resume text behind every score." },
   ];
@@ -70,12 +57,9 @@ export default function Dashboard() {
         </div>
         {empty && (
           <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm">
-            No resumes yet. For a quick try-out you can load the synthetic <strong>test</strong> dataset shipped with the repository (fictional people; never use it as real candidate data).
-            <div className="mt-3"><button className="btn-ghost" disabled={busy} onClick={loadDemo}>{busy ? "Loading…" : "Load synthetic test data"}</button></div>
+            No resumes yet. Create a job, then <Link to="/upload" className="font-semibold underline">upload resumes</Link> (PDF or DOCX).
           </div>
         )}
-        {msg && <p className="mt-3 text-sm text-emerald-700">{msg}</p>}
-        {err && <div className="mt-3"><ErrorBox message={err} /></div>}
       </section>
 
       {jobs.data && jobs.data.items.length > 0 && (

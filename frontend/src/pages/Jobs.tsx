@@ -11,7 +11,6 @@ export default function Jobs() {
   const { setJobId } = useApp();
   const { data, error, loading, reload } = useAsync(() => api.get<Paged<Job>>("/jobs?page_size=100").then((r) => r.data), []);
   const [err, setErr] = useState<string | null>(null);
-  const seed = async () => { try { await api.post("/demo/seed-jobs"); reload(); } catch (e) { setErr(errMsg(e)); } };
   const del = async (j: Job) => {
     if (!confirm(`Delete job "${j.title}" and its ranking runs? Candidates are kept.`)) return;
     try { await api.delete(`/jobs/${j.id}`); reload(); } catch (e) { setErr(errMsg(e)); }
@@ -19,11 +18,10 @@ export default function Jobs() {
   return (
     <div>
       <PageTitle title="Jobs" sub="Job descriptions are analysed into editable requirements.">
-        <button className="btn-ghost" onClick={seed}>Add JD templates</button>
         <Link className="btn-primary" to="/jobs/new">New job</Link>
       </PageTitle>
       {(error || err) && <ErrorBox message={(error || err)!} onRetry={reload} />}
-      {loading ? <Spinner /> : !data?.items.length ? <Empty>No jobs yet. Create one or add the template jobs.</Empty> : (
+      {loading ? <Spinner /> : !data?.items.length ? <Empty>No jobs yet. Create one by pasting or uploading a job description.</Empty> : (
         <div className="card overflow-x-auto">
           <table className="w-full">
             <thead className="border-b border-slate-200"><tr><th className="th">Title</th><th className="th">Must-have</th><th className="th">Preferred</th><th className="th">Min. exp.</th><th className="th" /></tr></thead>

@@ -1,11 +1,11 @@
 # 5-minute demo plan
 
-**Setup (before the audience arrives):** both servers running, **empty database (do not demo with real resumes: use the synthetic sample files)**, `python scripts/fetch_minilm.py` already run, browser at http://localhost:5173. To show Module 1 and 2 live instead of the "Load synthetic test data" button: Jobs → New job → upload a JD (.pdf/.docx/.txt) or paste one → Save; then Upload resumes → select 10+ files from `sample_data/resumes`.
+**Setup (before the audience arrives):** both servers running, **empty database**, `python scripts/fetch_minilm.py` already run, browser at http://localhost:5173. Use only resumes you have consent to show (your own, or volunteers'). Flow: Jobs → New job → upload a JD (.pdf/.docx/.txt) or paste one → Save; then Upload resumes → select 10+ PDF/DOCX files.
 
 | Min | Do | Say |
 |---|---|---|
 | 0:00 | Dashboard | "TalentIQ ranks candidates *and shows the resume text behind every score*. It is decision support — it never rejects anyone." |
-| 0:30 | Click **Load synthetic test data** | "41 fictional files: 35 good resumes in 4 layouts, plus a duplicate, a scanned image, a corrupted PDF, an encrypted PDF and a fake `.pdf`. One bad file must not stop the batch." Point at the summary chips (35 parsed, 2 failed, 1 duplicate, 3 rejected). |
+| 0:30 | Upload resumes → select 10+ PDF/DOCX files (add one corrupted file to show error handling) | "A batch of resumes, PDF and DOCX mixed. One bad file must not stop the batch." Point at the summary chips (parsed, failed, duplicate, rejected). |
 | 1:15 | Jobs → open **AI/ML Engineer** (Edit) | "Requirements are extracted from the JD and you can change must/preferred/ignore. 'FastAPI or Django' style alternatives are understood." |
 | 1:45 | Rank → **Run matching** | "Hybrid score: 40 technical, 25 semantic, 20 experience, 10 education, 5 project. Open *Scoring weights* to show sliders that must total 100 %." Point at "MiniLM sentence embeddings" in the run line: the semantic part compares meaning, not just shared words (hover it for the model name). |
 | 2:30 | Open the #1 candidate | Walk the bar chart and the points table summing to the overall score. |
