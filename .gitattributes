@@ -1,0 +1,13 @@
+* text=auto
+# Binary files must never be line-ending converted (autocrlf corrupts small PDFs)
+*.pdf binary
+*.docx binary
+*.dotx binary
+*.xlsx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
