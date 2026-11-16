@@ -4,8 +4,8 @@ For the assignment "AI-Based Resume Matching & Ranking System". Narration is in 
 
 ## Before you record
 1. `.\start.ps1` (PostgreSQL + backend + frontend). Check the terminal says `Database: PostgreSQL (port 5433)`.
-2. Empty database: stop the app, delete the `talentiq` database or use a fresh one, start again. Do not show real resumes: use only `sample_data/` (all fictional).
-3. Browser at http://localhost:5173, zoom 110 %, close other tabs and notifications. Have `sample_data/job_descriptions/python_backend_developer.docx` and 10+ files from `sample_data/resumes/` ready in a folder.
+2. Empty database (the app starts empty and the UI has no demo-data button). The video uses only the repo's fictional `sample_data/` resumes, copied into one folder: `Desktop\TalentIQ_video_demo` with `1_job_description`, `2_resumes_20_good` (9 DOCX + 11 PDF) and `3_error_handling_files`. To rebuild it, copy those files from `sample_data/job_descriptions` and `sample_data/resumes`. State on camera that the resumes are fictional and the project uses no real candidate data.
+3. Browser at http://localhost:5173, zoom 110 %, close other tabs and notifications. Have the demo folder open in File Explorer, ready for the file picker.
 4. Record at 1080p with a screen recorder (OBS or Win+G). Do one dry run first.
 
 ## Script
@@ -15,8 +15,8 @@ For the assignment "AI-Based Resume Matching & Ranking System". Narration is in 
 | 0:00 | Dashboard, then briefly the README architecture diagram | "Hi, I'm Farhan. This is TalentIQ AI: it takes a job description and a batch of resumes, ranks the candidates, and explains every score with the exact resume text behind it. Stack: React and Vite, FastAPI, PostgreSQL, and MiniLM sentence embeddings. It runs fully offline, no paid API." |
 | 0:40 | **Module 1.** Jobs, New job, upload `python_backend_developer.docx` | "Module 1. I upload a JD as DOCX; pasting text works too. The system extracts the title, must-have versus preferred skills, years of experience, education level and responsibilities." |
 | 1:10 | Point at extracted requirements. Show "FastAPI or Django" | "It understands alternatives: 'FastAPI or Django' is one requirement, satisfied by either. Everything is editable before saving, so a recruiter stays in control." Click Save. |
-| 1:40 | **Module 2.** Upload resumes, select 15 files (PDF and DOCX), upload | "Module 2. I upload 15 resumes in one batch, PDF and DOCX mixed. Each is parsed for name, contact, skills, employment, education, projects and certifications." |
-| 2:10 | Show batch summary chips. Then upload the bad files: corrupted PDF, password-protected PDF, fake `.pdf` | "One bad file never stops the batch. A corrupted PDF, a password-protected one and a fake extension are rejected with a clear reason, and the rest continue. Duplicates are detected by hash." |
+| 1:40 | **Module 2.** Upload resumes, open `2_resumes_20_good`, Ctrl+A, upload | "Module 2. I upload 20 resumes in one batch, PDF and DOCX mixed. Each is parsed for name, contact, skills, employment, education, projects and certifications." |
+| 2:10 | Show batch summary chips (20 parsed). Then upload everything from `3_error_handling_files`: corrupted PDF, password-protected PDF, fake `.pdf`, and a duplicate of Anika's resume | "One bad file never stops the batch. A corrupted PDF, a password-protected one and a fake extension are rejected with a clear reason, and the rest continue. Duplicates are detected by hash." |
 | 2:45 | Open one parsed resume, show extracted fields and page/line source | "Every extracted field keeps its page and source line, so parsing can be audited." |
 | 3:10 | **Module 3.** Jobs, Rank, expand **Scoring weights**, Run matching | "Module 3. The score is a hybrid, not keyword counting: 40 % technical skills, 25 % semantic similarity, 20 % experience, 10 % education, 5 % project and domain relevance. Weights are editable and must total 100." |
 | 3:50 | Point at the run line "MiniLM", hover for model name | "Semantic similarity uses the all-MiniLM-L6-v2 sentence embeddings, so 'built REST services' still matches 'API development' with no shared keyword. I run the model with my own NumPy implementation, so it works on a CPU-only laptop. Skills also go through a 160-skill ontology with synonyms and related-skill partial credit." |
