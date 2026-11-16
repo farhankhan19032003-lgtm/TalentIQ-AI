@@ -1,0 +1,15 @@
+# NOTE: not tested in the authoring environment (no Docker available). Treat as a starting point.
+services:
+  backend:
+    build: { context: ., dockerfile: backend/Dockerfile }
+    environment:
+      DATABASE_URL: sqlite:////data/talentiq.db
+      UPLOAD_DIR: /data/uploads
+      API_KEY: ${API_KEY:-}
+    volumes: [ "talentiq-data:/data" ]
+  frontend:
+    build: { context: ., dockerfile: frontend/Dockerfile }
+    ports: [ "8080:80" ]
+    depends_on: [ backend ]
+volumes:
+  talentiq-data:

@@ -1,0 +1,26 @@
+Job Title: AI/ML Engineer
+Company: Aurora Insights (fictional)
+
+About Us:
+Aurora Insights builds language-understanding products for the fintech industry.
+
+Responsibilities:
+- Design, train and evaluate machine learning models for text classification and document understanding
+- Build NLP pipelines to extract structured information from financial documents
+- Deploy models as REST APIs and monitor them in production
+- Collaborate with data engineers and product managers to ship features
+
+Requirements:
+- 2+ years of experience in machine learning or data science
+- Strong Python programming skills
+- Hands-on experience with scikit-learn and NLP techniques
+- Good SQL skills
+- Experience with Docker and Git
+- Experience building REST APIs
+- Bachelor's degree in Computer Science, Engineering or a related field
+
+Nice to have:
+- PyTorch or Transformers experience
+- Exposure to AWS and MLOps practices
+- Kubernetes is a plus
+- Master's degree preferred

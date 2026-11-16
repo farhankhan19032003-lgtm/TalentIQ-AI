@@ -1,0 +1,22 @@
+Job Title: Data Analyst
+Company: Lumen Retail Tech (fictional)
+
+Responsibilities:
+- Analyse sales and customer data to find trends and insights
+- Build dashboards and reports for business stakeholders
+- Clean and validate data from multiple sources
+- Present findings to non-technical audiences
+
+Requirements:
+- 1+ years of experience in a data analyst role
+- Strong SQL skills
+- Advanced Excel
+- Experience with Tableau or Power BI
+- Data Analysis and Data Visualization skills
+- Working knowledge of Statistics
+- Bachelor's degree in any quantitative field
+
+Preferred:
+- Python with Pandas
+- A/B testing experience
+- Good communication skills

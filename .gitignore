@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+node_modules/
+frontend/dist/
+*.db
+backend/storage/uploads/*
+!backend/storage/uploads/.gitkeep
+# local backups of a previous demo database / its uploaded originals
+backend/storage/uploads_*/
+# the 90 MB embedding model is downloaded by scripts/fetch_minilm.py, not committed
+backend/storage/models/
+.env
+*.log
+backend/eval/results/*pytest*
+.DS_Store

@@ -1,0 +1,355 @@
+{
+ "dataset_version": "1.0.0",
+ "algorithm_version": "2.0.0",
+ "ontology_version": "1.0.0",
+ "evaluation_date": "2026-11-15T12:20:55Z",
+ "as_of_date": "2026-11-01",
+ "label_provenance": "Skill labels are defined BY CONSTRUCTION (every sentence is tagged with the skills it was written to contain) and were reviewed by the author. Relevance grades (0-3) were assigned by the author from each profile's design intent. Not independently annotated.",
+ "tag": "fix2",
+ "batch_upload_seconds": 1.24,
+ "parsing": {
+  "files_in_batch": 41,
+  "expected_parseable": 34,
+  "parsed_ok": 34,
+  "parse_success_rate": 1.0,
+  "failure_cases_expected": 6,
+  "failure_cases_classified_correctly": 6,
+  "ocr_dependent_files": [
+   {
+    "file": "scanned_resume_image_only.pdf",
+    "status": "parsed"
+   }
+  ],
+  "batch_completed_without_crash": true,
+  "http_summary": {
+   "parsed": 35,
+   "failed": 2,
+   "duplicate": 1,
+   "rejected": 3
+  }
+ },
+ "skill_extraction": {
+  "resumes_evaluated": 35,
+  "micro_precision": 0.9963,
+  "micro_recall": 0.9891,
+  "micro_f1": 0.9927,
+  "macro_f1": 0.9945,
+  "technical_only_micro_precision": 0.9962,
+  "technical_only_micro_recall": 0.9924,
+  "technical_only_micro_f1": 0.9943,
+  "total_tp": 272,
+  "total_fp": 1,
+  "total_fn": 3
+ },
+ "field_extraction": {
+  "name_accuracy": 1.0,
+  "email_accuracy": 0.9714,
+  "n": 35
+ },
+ "experience_extraction": {
+  "effective_years_within_0.1y_accuracy": 1.0,
+  "employment_count_accuracy": 1.0,
+  "n": 35,
+  "mismatches": []
+ },
+ "jd_extraction": {
+  "per_jd": [
+   {
+    "jd": "ai_ml_engineer",
+    "skill_f1": 0.96,
+    "precision": 0.923,
+    "recall": 1.0,
+    "must_correct": 8,
+    "must_expected": 8,
+    "importance_correct": 12,
+    "importance_total": 12,
+    "extra": [
+     "Classification"
+    ],
+    "missing": [],
+    "min_years_ok": true,
+    "education_ok": true
+   },
+   {
+    "jd": "python_backend_developer",
+    "skill_f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "must_correct": 8,
+    "must_expected": 8,
+    "importance_correct": 13,
+    "importance_total": 13,
+    "extra": [],
+    "missing": [],
+    "min_years_ok": true,
+    "education_ok": true
+   },
+   {
+    "jd": "data_analyst",
+    "skill_f1": 0.947,
+    "precision": 1.0,
+    "recall": 0.9,
+    "must_correct": 6,
+    "must_expected": 6,
+    "importance_correct": 9,
+    "importance_total": 10,
+    "extra": [],
+    "missing": [
+     "Communication"
+    ],
+    "min_years_ok": true,
+    "education_ok": true
+   },
+   {
+    "jd": "java_backend_developer",
+    "skill_f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "must_correct": 8,
+    "must_expected": 8,
+    "importance_correct": 11,
+    "importance_total": 11,
+    "extra": [],
+    "missing": [],
+    "min_years_ok": true,
+    "education_ok": true
+   },
+   {
+    "jd": "cloud_devops_engineer",
+    "skill_f1": 0.96,
+    "precision": 0.923,
+    "recall": 1.0,
+    "must_correct": 8,
+    "must_expected": 8,
+    "importance_correct": 12,
+    "importance_total": 12,
+    "extra": [
+     "Cloud Computing"
+    ],
+    "missing": [],
+    "min_years_ok": true,
+    "education_ok": true
+   },
+   {
+    "jd": "full_stack_developer",
+    "skill_f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "must_correct": 8,
+    "must_expected": 8,
+    "importance_correct": 11,
+    "importance_total": 11,
+    "extra": [],
+    "missing": [],
+    "min_years_ok": true,
+    "education_ok": true
+   }
+  ],
+  "mean_skill_f1": 0.9778,
+  "importance_accuracy": 0.9855,
+  "experience_requirement_accuracy": 1.0,
+  "education_requirement_accuracy": 1.0
+ },
+ "ranking": {
+  "per_jd": [
+   {
+    "jd": "ai_ml_engineer",
+    "n_graded": 34,
+    "relevant_total": 7,
+    "ndcg@5": 0.8714,
+    "precision@5": 0.8,
+    "recall@5": 0.5714,
+    "max_possible_recall@5": 0.7143,
+    "baseline_tfidf_ndcg@5": 0.884,
+    "baseline_tfidf_precision@5": 0.8,
+    "random_ndcg@5_mean": 0.3417,
+    "match_seconds": 0.42,
+    "top5": [
+     "manish_kulkarni.pdf",
+     "sneha_kulkarni.pdf",
+     "rohan_varma.docx",
+     "scanned_resume_image_only.pdf",
+     "lakshmi_narayan.pdf"
+    ],
+    "top5_grades": [
+     2,
+     2,
+     3,
+     2,
+     1
+    ]
+   },
+   {
+    "jd": "python_backend_developer",
+    "n_graded": 34,
+    "relevant_total": 10,
+    "ndcg@5": 0.9563,
+    "precision@5": 1.0,
+    "recall@5": 0.5,
+    "max_possible_recall@5": 0.5,
+    "baseline_tfidf_ndcg@5": 0.9563,
+    "baseline_tfidf_precision@5": 1.0,
+    "random_ndcg@5_mean": 0.3892,
+    "match_seconds": 0.39,
+    "top5": [
+     "lakshmi_narayan.pdf",
+     "vikram_joshi.pdf",
+     "fairness_a_karan_arora.pdf",
+     "fairness_b_kavita_arora.pdf",
+     "sana_qureshi.docx"
+    ],
+    "top5_grades": [
+     3,
+     3,
+     3,
+     3,
+     2
+    ]
+   },
+   {
+    "jd": "data_analyst",
+    "n_graded": 34,
+    "relevant_total": 6,
+    "ndcg@5": 0.9676,
+    "precision@5": 1.0,
+    "recall@5": 0.8333,
+    "max_possible_recall@5": 0.8333,
+    "baseline_tfidf_ndcg@5": 0.9676,
+    "baseline_tfidf_precision@5": 1.0,
+    "random_ndcg@5_mean": 0.2045,
+    "match_seconds": 0.32,
+    "top5": [
+     "dev_malhotra.pdf",
+     "kabir_sethi.pdf",
+     "tara_bose.docx",
+     "zoya_hasan.pdf",
+     "nisha_pillai.pdf"
+    ],
+    "top5_grades": [
+     3,
+     2,
+     2,
+     2,
+     3
+    ]
+   },
+   {
+    "jd": "java_backend_developer",
+    "n_graded": 34,
+    "relevant_total": 3,
+    "ndcg@5": 0.9358,
+    "precision@5": 0.6,
+    "recall@5": 1.0,
+    "max_possible_recall@5": 1.0,
+    "baseline_tfidf_ndcg@5": 0.8782,
+    "baseline_tfidf_precision@5": 0.6,
+    "random_ndcg@5_mean": 0.1712,
+    "match_seconds": 0.36,
+    "top5": [
+     "rahul_menon.docx",
+     "farah_ali.pdf",
+     "manish_kulkarni.pdf",
+     "lakshmi_narayan.pdf",
+     "sana_qureshi.docx"
+    ],
+    "top5_grades": [
+     3,
+     3,
+     2,
+     0,
+     1
+    ]
+   },
+   {
+    "jd": "cloud_devops_engineer",
+    "n_graded": 34,
+    "relevant_total": 4,
+    "ndcg@5": 1.0,
+    "precision@5": 0.8,
+    "recall@5": 1.0,
+    "max_possible_recall@5": 1.0,
+    "baseline_tfidf_ndcg@5": 1.0,
+    "baseline_tfidf_precision@5": 0.8,
+    "random_ndcg@5_mean": 0.2192,
+    "match_seconds": 0.41,
+    "top5": [
+     "sameer_gupta.pdf",
+     "kavya_nambiar.docx",
+     "lakshmi_narayan.pdf",
+     "manish_kulkarni.pdf",
+     "farah_ali.pdf"
+    ],
+    "top5_grades": [
+     3,
+     2,
+     2,
+     2,
+     1
+    ]
+   },
+   {
+    "jd": "full_stack_developer",
+    "n_graded": 34,
+    "relevant_total": 3,
+    "ndcg@5": 0.9292,
+    "precision@5": 0.6,
+    "recall@5": 1.0,
+    "max_possible_recall@5": 1.0,
+    "baseline_tfidf_ndcg@5": 0.9034,
+    "baseline_tfidf_precision@5": 0.6,
+    "random_ndcg@5_mean": 0.1908,
+    "match_seconds": 0.47,
+    "top5": [
+     "neel_kapoor.docx",
+     "pooja_reddy.pdf",
+     "arjun_desai.pdf",
+     "lakshmi_narayan.pdf",
+     "fairness_a_karan_arora.pdf"
+    ],
+    "top5_grades": [
+     3,
+     2,
+     2,
+     0,
+     1
+    ]
+   }
+  ],
+  "mean_ndcg@5": 0.9434,
+  "mean_precision@5": 0.8,
+  "mean_recall@5": 0.8175,
+  "mean_max_possible_recall@5": 0.8413,
+  "baseline_tfidf_mean_ndcg@5": 0.9316,
+  "baseline_tfidf_mean_precision@5": 0.8,
+  "random_mean_ndcg@5": 0.2528,
+  "relevant_definition": "relevance grade >= 2 (graded 0-3 by the author)",
+  "gain": "linear (gain = grade)",
+  "similarity_method": "tfidf",
+  "model_name": "tfidf(word 1-2gram, sublinear tf)"
+ },
+ "score_calculation": {
+  "results_checked": 210,
+  "recomputed_matches_stored": 210,
+  "weights_sum_to_one": true,
+  "rank_stable_under_10pp_weight_perturbation_share": 0.5095
+ },
+ "fairness_twin_test": {
+  "pair": [
+   "fairness_a_karan_arora.pdf",
+   "fairness_b_kavita_arora.pdf"
+  ],
+  "max_score_difference_across_6_jds": 0.0,
+  "note": "Identical professional content; different name/gender/DOB/marital status/religion lines."
+ },
+ "performance": {
+  "mean_parse_ms_per_resume": 28.5,
+  "max_parse_ms": 475,
+  "mean_match_seconds_per_jd": 0.395
+ },
+ "known_limitations": [
+  "Benchmark is synthetic and small (35 parseable resumes, 6 job descriptions); results do not predict performance on real resumes.",
+  "Skill labels are defined by construction and reviewed by the author, not by independent annotators; ontology aliases were refined after viewing errors on this same set, so skill metrics are optimistic (dev set = test set).",
+  "Relevance grades (0-3) are author-assigned; NDCG/precision/recall are only as valid as those grades.",
+  "Fallback TF-IDF similarity was used when the MiniLM model could not be downloaded; MiniLM was not evaluated in this run."
+ ]
+}

@@ -1,0 +1,1459 @@
+{
+ "dataset_version": "1.0.0",
+ "as_of": "2026-11-01",
+ "synthetic": true,
+ "label_provenance": "Skill labels are defined BY CONSTRUCTION (every sentence is tagged with the skills it was written to contain) and were reviewed by the author. Relevance grades (0-3) were assigned by the author from each profile's design intent. Not independently annotated.",
+ "jd_order": [
+  "ai_ml_engineer",
+  "python_backend_developer",
+  "data_analyst",
+  "java_backend_developer",
+  "cloud_devops_engineer",
+  "full_stack_developer"
+ ],
+ "job_descriptions": {
+  "ai_ml_engineer": {
+   "must": [
+    "Machine Learning",
+    "Python",
+    "scikit-learn",
+    "NLP",
+    "SQL",
+    "Docker",
+    "Git",
+    "REST APIs"
+   ],
+   "preferred": [
+    "PyTorch or Transformers",
+    "AWS",
+    "MLOps",
+    "Kubernetes"
+   ],
+   "min_years": 2,
+   "education_level": 3,
+   "preferred_education_level": 4
+  },
+  "python_backend_developer": {
+   "must": [
+    "Python",
+    "FastAPI or Django",
+    "REST APIs",
+    "PostgreSQL",
+    "Docker",
+    "Git",
+    "Unit Testing",
+    "pytest"
+   ],
+   "preferred": [
+    "Redis",
+    "Celery",
+    "Kubernetes",
+    "CI/CD",
+    "AWS"
+   ],
+   "min_years": 3,
+   "education_level": 3,
+   "preferred_education_level": null
+  },
+  "data_analyst": {
+   "must": [
+    "SQL",
+    "Excel",
+    "Tableau or Power BI",
+    "Data Analysis",
+    "Data Visualization",
+    "Statistics"
+   ],
+   "preferred": [
+    "Python",
+    "Pandas",
+    "Hypothesis Testing",
+    "Communication"
+   ],
+   "min_years": 1,
+   "education_level": 3,
+   "preferred_education_level": null
+  },
+  "java_backend_developer": {
+   "must": [
+    "Java",
+    "Spring Boot",
+    "Hibernate",
+    "MySQL",
+    "REST APIs",
+    "Microservices",
+    "Maven",
+    "JUnit"
+   ],
+   "preferred": [
+    "Kafka",
+    "Docker",
+    "AWS"
+   ],
+   "min_years": 3,
+   "education_level": 3,
+   "preferred_education_level": null
+  },
+  "cloud_devops_engineer": {
+   "must": [
+    "AWS",
+    "Docker",
+    "Kubernetes",
+    "Terraform",
+    "CI/CD",
+    "Jenkins",
+    "Linux",
+    "Python or Bash"
+   ],
+   "preferred": [
+    "Ansible",
+    "Prometheus",
+    "Grafana",
+    "Azure"
+   ],
+   "min_years": 3,
+   "education_level": 3,
+   "preferred_education_level": null
+  },
+  "full_stack_developer": {
+   "must": [
+    "React",
+    "TypeScript",
+    "Node.js",
+    "PostgreSQL",
+    "REST APIs",
+    "HTML",
+    "CSS",
+    "Git"
+   ],
+   "preferred": [
+    "Docker",
+    "AWS",
+    "Next.js"
+   ],
+   "min_years": 2,
+   "education_level": 3,
+   "preferred_education_level": null
+  }
+ },
+ "resumes": [
+  {
+   "key": "p01",
+   "file": "anika_menon.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Anika Menon",
+   "email": "anika.menon@example.com",
+   "skills": [
+    "AWS",
+    "Docker",
+    "FastAPI",
+    "Git",
+    "MLOps",
+    "Machine Learning",
+    "Mentoring",
+    "NLP",
+    "PyTorch",
+    "Python",
+    "REST APIs",
+    "SQL",
+    "Transformers",
+    "scikit-learn",
+    "spaCy"
+   ],
+   "experience": {
+    "fulltime_months": 101,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 8.42,
+    "n_employment": 2
+   },
+   "education_level": 4,
+   "relevance": {
+    "ai_ml_engineer": 3,
+    "python_backend_developer": 2,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 1,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p02",
+   "file": "rohan_varma.docx",
+   "layout": "docx_headings",
+   "expects": "parsed",
+   "name": "Rohan Varma",
+   "email": "rohan.varma@example.com",
+   "skills": [
+    "Data Cleaning",
+    "Deep Learning",
+    "Docker",
+    "Flask",
+    "GCP",
+    "Git",
+    "Keras",
+    "Machine Learning",
+    "NumPy",
+    "Pandas",
+    "Python",
+    "Regression",
+    "SQL",
+    "TensorFlow",
+    "Time Series",
+    "scikit-learn"
+   ],
+   "experience": {
+    "fulltime_months": 78,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 6.5,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 3,
+    "python_backend_developer": 2,
+    "data_analyst": 1,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p03",
+   "file": "isha_rao.pdf",
+   "layout": "pdf_two_col",
+   "expects": "parsed",
+   "name": "Isha Rao",
+   "email": "isha.rao@example.com",
+   "skills": [
+    "Classification",
+    "Git",
+    "Pandas",
+    "Predictive Modeling",
+    "Python",
+    "SQL",
+    "XGBoost",
+    "scikit-learn"
+   ],
+   "experience": {
+    "fulltime_months": 89,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 7.42,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 2,
+    "python_backend_developer": 1,
+    "data_analyst": 1,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p04",
+   "file": "kabir_sethi.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Kabir Sethi",
+   "email": "kabir.sethi@example.com",
+   "skills": [
+    "Clustering",
+    "Data Analysis",
+    "Hypothesis Testing",
+    "Jupyter",
+    "Machine Learning",
+    "Matplotlib",
+    "Pandas",
+    "Python",
+    "SQL",
+    "Statistics",
+    "Tableau",
+    "scikit-learn"
+   ],
+   "experience": {
+    "fulltime_months": 102,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 8.5,
+    "n_employment": 2
+   },
+   "education_level": 4,
+   "relevance": {
+    "ai_ml_engineer": 2,
+    "python_backend_developer": 1,
+    "data_analyst": 2,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p05",
+   "file": "tara_bose.docx",
+   "layout": "docx_table",
+   "expects": "parsed",
+   "name": "Tara Bose",
+   "email": "tara.bose@example.com",
+   "skills": [
+    "Excel",
+    "R",
+    "Regression",
+    "SQL",
+    "Statistics",
+    "Tableau",
+    "Time Series"
+   ],
+   "experience": {
+    "fulltime_months": 68,
+    "part_time_months": 22,
+    "internship_months": 0,
+    "effective_years": 6.58,
+    "n_employment": 2
+   },
+   "education_level": 4,
+   "relevance": {
+    "ai_ml_engineer": 1,
+    "python_backend_developer": 0,
+    "data_analyst": 2,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p06",
+   "file": "dev_malhotra.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Dev Malhotra",
+   "email": "dev.malhotra@example.com",
+   "skills": [
+    "Data Analysis",
+    "Data Visualization",
+    "Excel",
+    "Power BI",
+    "Python",
+    "SQL",
+    "Statistics",
+    "Tableau"
+   ],
+   "experience": {
+    "fulltime_months": 88,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 7.33,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 0,
+    "data_analyst": 3,
+    "java_backend_developer": 1,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p07",
+   "file": "nisha_pillai.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Nisha Pillai",
+   "email": "nisha.pillai@example.com",
+   "skills": [
+    "Data Cleaning",
+    "Excel",
+    "MySQL",
+    "SQL",
+    "Tableau"
+   ],
+   "experience": {
+    "fulltime_months": 65,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 5.42,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 0,
+    "data_analyst": 3,
+    "java_backend_developer": 1,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p08",
+   "file": "vikram_joshi.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Vikram Joshi",
+   "email": "vikram.joshi@example.com",
+   "skills": [
+    "Celery",
+    "Django",
+    "Docker",
+    "Git",
+    "PostgreSQL",
+    "Python",
+    "REST APIs",
+    "Redis",
+    "pytest"
+   ],
+   "experience": {
+    "fulltime_months": 114,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 9.5,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 1,
+    "python_backend_developer": 3,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 1,
+    "full_stack_developer": 1
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p09",
+   "file": "sana_qureshi.docx",
+   "layout": "docx_headings",
+   "expects": "parsed",
+   "name": "Sana Qureshi",
+   "email": "sana.qureshi@example.com",
+   "skills": [
+    "Flask",
+    "Git",
+    "MySQL",
+    "Python",
+    "REST APIs",
+    "Unit Testing"
+   ],
+   "experience": {
+    "fulltime_months": 54,
+    "part_time_months": 0,
+    "internship_months": 5,
+    "effective_years": 4.71,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 1,
+    "python_backend_developer": 2,
+    "data_analyst": 0,
+    "java_backend_developer": 1,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p10",
+   "file": "arjun_desai.pdf",
+   "layout": "pdf_two_col",
+   "expects": "parsed",
+   "name": "Arjun Desai",
+   "email": "arjun.desai@example.com",
+   "skills": [
+    "AWS",
+    "Docker",
+    "Express.js",
+    "Git",
+    "JavaScript",
+    "MongoDB",
+    "Node.js",
+    "REST APIs"
+   ],
+   "experience": {
+    "fulltime_months": 99,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 8.25,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 1,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 1,
+    "full_stack_developer": 2
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p11",
+   "file": "lakshmi_narayan.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Lakshmi Narayan",
+   "email": "lakshmi.narayan@example.com",
+   "skills": [
+    "AWS",
+    "CI/CD",
+    "Docker",
+    "FastAPI",
+    "Git",
+    "GitHub Actions",
+    "Kubernetes",
+    "Mentoring",
+    "PostgreSQL",
+    "Python",
+    "REST APIs",
+    "Redis",
+    "SQL",
+    "pytest"
+   ],
+   "experience": {
+    "fulltime_months": 137,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 11.42,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 1,
+    "python_backend_developer": 3,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 2,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p12",
+   "file": "neel_kapoor.docx",
+   "layout": "docx_headings",
+   "expects": "parsed",
+   "name": "Neel Kapoor",
+   "email": "neel.kapoor@example.com",
+   "skills": [
+    "CSS",
+    "Docker",
+    "Git",
+    "HTML",
+    "Node.js",
+    "PostgreSQL",
+    "REST APIs",
+    "React",
+    "Tailwind CSS",
+    "TypeScript"
+   ],
+   "experience": {
+    "fulltime_months": 100,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 8.33,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 1,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 3
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p13",
+   "file": "pooja_reddy.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Pooja Reddy",
+   "email": "pooja.reddy@example.com",
+   "skills": [
+    "Bootstrap",
+    "CSS",
+    "Django",
+    "Git",
+    "HTML",
+    "JavaScript",
+    "MySQL",
+    "Python",
+    "React"
+   ],
+   "experience": {
+    "fulltime_months": 69,
+    "part_time_months": 0,
+    "internship_months": 8,
+    "effective_years": 6.08,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 2,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 2
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p14",
+   "file": "rahul_menon.docx",
+   "layout": "docx_table",
+   "expects": "parsed",
+   "name": "Rahul Menon",
+   "email": "rahul.menon@example.com",
+   "skills": [
+    "Git",
+    "Hibernate",
+    "JUnit",
+    "Java",
+    "Maven",
+    "Microservices",
+    "MySQL",
+    "REST APIs",
+    "Spring Boot"
+   ],
+   "experience": {
+    "fulltime_months": 113,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 9.42,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 0,
+    "data_analyst": 0,
+    "java_backend_developer": 3,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p15",
+   "file": "farah_ali.pdf",
+   "layout": "pdf_two_col",
+   "expects": "parsed",
+   "name": "Farah Ali",
+   "email": "farah.ali@example.com",
+   "skills": [
+    "AWS",
+    "Docker",
+    "Java",
+    "Jenkins",
+    "Kafka",
+    "Maven",
+    "Microservices",
+    "Oracle",
+    "SQL",
+    "Spring"
+   ],
+   "experience": {
+    "fulltime_months": 160,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 13.33,
+    "n_employment": 2
+   },
+   "education_level": 4,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 0,
+    "data_analyst": 0,
+    "java_backend_developer": 3,
+    "cloud_devops_engineer": 1,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p16",
+   "file": "sameer_gupta.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Sameer Gupta",
+   "email": "sameer.gupta@example.com",
+   "skills": [
+    "AWS",
+    "Bash",
+    "CI/CD",
+    "Docker",
+    "Grafana",
+    "Jenkins",
+    "Kubernetes",
+    "Linux",
+    "Prometheus",
+    "Python",
+    "Terraform"
+   ],
+   "experience": {
+    "fulltime_months": 138,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 11.5,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 1,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 3,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p17",
+   "file": "kavya_nambiar.docx",
+   "layout": "docx_headings",
+   "expects": "parsed",
+   "name": "Kavya Nambiar",
+   "email": "kavya.nambiar@example.com",
+   "skills": [
+    "Ansible",
+    "Azure",
+    "Bash",
+    "Docker",
+    "Git",
+    "Jenkins",
+    "Kubernetes",
+    "Linux"
+   ],
+   "experience": {
+    "fulltime_months": 90,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 7.5,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 0,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 2,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p18",
+   "file": "aditya_rao.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Aditya Rao",
+   "email": "aditya.rao@example.com",
+   "skills": [
+    "Git",
+    "Machine Learning",
+    "Pandas",
+    "Python",
+    "Recommendation Systems",
+    "Regression",
+    "SQL",
+    "scikit-learn"
+   ],
+   "experience": {
+    "fulltime_months": 0,
+    "part_time_months": 0,
+    "internship_months": 6,
+    "effective_years": 0.25,
+    "n_employment": 1
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 1,
+    "python_backend_developer": 1,
+    "data_analyst": 1,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p19",
+   "file": "ishita_das.docx",
+   "layout": "docx_headings",
+   "expects": "parsed",
+   "name": "Ishita Das",
+   "email": "ishita.das@example.com",
+   "skills": [
+    "CSS",
+    "HTML",
+    "JavaScript",
+    "MongoDB",
+    "Node.js",
+    "React"
+   ],
+   "experience": {
+    "fulltime_months": 0,
+    "part_time_months": 0,
+    "internship_months": 3,
+    "effective_years": 0.12,
+    "n_employment": 1
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 0,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 1
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p20",
+   "file": "manish_kulkarni.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Manish Kulkarni",
+   "email": "manish.kulkarni@example.com",
+   "skills": [
+    "AWS",
+    "Docker",
+    "Git",
+    "Java",
+    "Jenkins",
+    "Kubernetes",
+    "Leadership",
+    "Machine Learning",
+    "Microservices",
+    "Python",
+    "REST APIs",
+    "SQL",
+    "Time Series"
+   ],
+   "experience": {
+    "fulltime_months": 210,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 17.5,
+    "n_employment": 3
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 2,
+    "python_backend_developer": 3,
+    "data_analyst": 0,
+    "java_backend_developer": 2,
+    "cloud_devops_engineer": 2,
+    "full_stack_developer": 1
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p21",
+   "file": "zoya_hasan.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Zoya Hasan",
+   "email": "zoya.hasan@example.com",
+   "skills": [
+    "Excel",
+    "Pandas",
+    "Python",
+    "SQL"
+   ],
+   "experience": {
+    "fulltime_months": 46,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 3.83,
+    "n_employment": 1
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 1,
+    "python_backend_developer": 1,
+    "data_analyst": 2,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p22",
+   "file": "rajesh_pawar.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Rajesh Pawar",
+   "email": "rajesh.pawar@example.com",
+   "skills": [
+    "Communication",
+    "Excel",
+    "Leadership",
+    "Stakeholder Management"
+   ],
+   "experience": {
+    "fulltime_months": 128,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 10.67,
+    "n_employment": 1
+   },
+   "education_level": 4,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 0,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p23",
+   "file": "meenal_shah.docx",
+   "layout": "docx_headings",
+   "expects": "parsed",
+   "name": "Meenal Shah",
+   "email": "meenal.shah@example.com",
+   "skills": [
+    "Communication",
+    "Teamwork"
+   ],
+   "experience": {
+    "fulltime_months": 138,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 11.5,
+    "n_employment": 1
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 0,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p24",
+   "file": "chirag_bhatt.pdf",
+   "layout": "pdf_two_col",
+   "expects": "parsed",
+   "name": "Chirag Bhatt",
+   "email": "chirag.bhatt@example.com",
+   "skills": [
+    "AWS",
+    "Airflow",
+    "Apache Spark",
+    "Docker",
+    "ETL",
+    "Kafka",
+    "PostgreSQL",
+    "Python",
+    "SQL",
+    "Snowflake"
+   ],
+   "experience": {
+    "fulltime_months": 113,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 9.42,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 1,
+    "python_backend_developer": 2,
+    "data_analyst": 1,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 1,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p25",
+   "file": "divya_krishnan.docx",
+   "layout": "docx_headings",
+   "expects": "parsed",
+   "name": "Divya Krishnan",
+   "email": "divya.krishnan@example.com",
+   "skills": [
+    "Application Security",
+    "Docker",
+    "Git",
+    "Linux",
+    "OWASP",
+    "Penetration Testing",
+    "Python"
+   ],
+   "experience": {
+    "fulltime_months": 79,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 6.58,
+    "n_employment": 1
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 1,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 1,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p26",
+   "file": "omkar_patil.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Omkar Patil",
+   "email": "omkar.patil@example.com",
+   "skills": [
+    "Git",
+    "Jenkins",
+    "Jira",
+    "Postman",
+    "Python",
+    "Selenium",
+    "Test Automation",
+    "pytest"
+   ],
+   "experience": {
+    "fulltime_months": 81,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 6.75,
+    "n_employment": 1
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 1,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p28",
+   "file": "harsh_vyas.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Harsh Vyas",
+   "email": "harsh.vyas@example.com",
+   "skills": [
+    "Django",
+    "Python",
+    "SQL"
+   ],
+   "experience": {
+    "fulltime_months": 53,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 4.42,
+    "n_employment": 1
+   },
+   "education_level": null,
+   "relevance": {
+    "ai_ml_engineer": 1,
+    "python_backend_developer": 1,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [
+    "incomplete"
+   ],
+   "protected_lines": 0
+  },
+  {
+   "key": "p29",
+   "file": "neha_banerjee.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Neha Banerjee",
+   "email": "neha.banerjee@example.com",
+   "skills": [
+    "Java",
+    "Python",
+    "Teamwork"
+   ],
+   "experience": {
+    "fulltime_months": 0,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 0.0,
+    "n_employment": 0
+   },
+   "education_level": null,
+   "relevance": {
+    "ai_ml_engineer": 1,
+    "python_backend_developer": 1,
+    "data_analyst": 0,
+    "java_backend_developer": 1,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [
+    "incomplete",
+    "ambiguous"
+   ],
+   "protected_lines": 0
+  },
+  {
+   "key": "p33",
+   "file": "gaurav_mehta.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Gaurav Mehta",
+   "email": "gaurav.mehta@example.com",
+   "skills": [
+    "Django",
+    "Git",
+    "JavaScript",
+    "PostgreSQL",
+    "Python"
+   ],
+   "experience": {
+    "fulltime_months": 60,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 5.0,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 1,
+    "python_backend_developer": 2,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 1
+   },
+   "tags": [
+    "overlap"
+   ],
+   "protected_lines": 0
+  },
+  {
+   "key": "p34",
+   "file": "sneha_kulkarni.pdf",
+   "layout": "pdf_two_col",
+   "expects": "parsed",
+   "name": "Sneha Kulkarni",
+   "email": "sneha.kulkarni@example.com",
+   "skills": [
+    "Classification",
+    "Computer Vision",
+    "Deep Learning",
+    "Docker",
+    "Git",
+    "Machine Learning",
+    "OpenCV",
+    "PyTorch",
+    "Python",
+    "SQL"
+   ],
+   "experience": {
+    "fulltime_months": 66,
+    "part_time_months": 0,
+    "internship_months": 6,
+    "effective_years": 5.75,
+    "n_employment": 2
+   },
+   "education_level": 4,
+   "relevance": {
+    "ai_ml_engineer": 2,
+    "python_backend_developer": 1,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [],
+   "protected_lines": 0
+  },
+  {
+   "key": "p35",
+   "file": "yash_trivedi.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Yash Trivedi",
+   "email": "yash.trivedi@example.com",
+   "skills": [
+    "Communication",
+    "Excel"
+   ],
+   "experience": {
+    "fulltime_months": 91,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 7.58,
+    "n_employment": 1
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 0,
+    "python_backend_developer": 0,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [
+    "injection"
+   ],
+   "protected_lines": 0
+  },
+  {
+   "key": "p36",
+   "file": "fairness_a_karan_arora.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Karan Arora",
+   "email": "karan.arora@example.com",
+   "skills": [
+    "Django",
+    "Docker",
+    "Git",
+    "PostgreSQL",
+    "Python",
+    "REST APIs",
+    "pytest"
+   ],
+   "experience": {
+    "fulltime_months": 92,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 7.67,
+    "n_employment": 1
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 1,
+    "python_backend_developer": 3,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 1,
+    "full_stack_developer": 1
+   },
+   "tags": [
+    "fairness_pair"
+   ],
+   "protected_lines": 5
+  },
+  {
+   "key": "p37",
+   "file": "fairness_b_kavita_arora.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Kavita Arora",
+   "email": "kavita.arora@example.com",
+   "skills": [
+    "Django",
+    "Docker",
+    "Git",
+    "PostgreSQL",
+    "Python",
+    "REST APIs",
+    "pytest"
+   ],
+   "experience": {
+    "fulltime_months": 92,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 7.67,
+    "n_employment": 1
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 1,
+    "python_backend_developer": 3,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 1,
+    "full_stack_developer": 1
+   },
+   "tags": [
+    "fairness_pair"
+   ],
+   "protected_lines": 5
+  },
+  {
+   "key": "p38",
+   "file": "pranav_sen.pdf",
+   "layout": "pdf_single",
+   "expects": "parsed",
+   "name": "Pranav Sen",
+   "email": "pranav.sen@example.com",
+   "skills": [
+    "Communication",
+    "Data Cleaning",
+    "Pandas",
+    "Python",
+    "SQL",
+    "scikit-learn"
+   ],
+   "experience": {
+    "fulltime_months": 63,
+    "part_time_months": 0,
+    "internship_months": 6,
+    "effective_years": 5.5,
+    "n_employment": 2
+   },
+   "education_level": 3,
+   "relevance": {
+    "ai_ml_engineer": 2,
+    "python_backend_developer": 1,
+    "data_analyst": 2,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "tags": [
+    "ambiguous_tokens"
+   ],
+   "protected_lines": 0
+  },
+  {
+   "key": "p27",
+   "file": "anika_menon_resume_copy.pdf",
+   "expects": "duplicate",
+   "kind": "duplicate_of",
+   "error_code": null,
+   "relevance": null,
+   "duplicate_of": "anika_menon.pdf"
+  },
+  {
+   "key": "p30",
+   "file": "scanned_resume_image_only.pdf",
+   "expects": "ocr_dependent",
+   "kind": "scanned",
+   "error_code": null,
+   "relevance": {
+    "ai_ml_engineer": 2,
+    "python_backend_developer": 1,
+    "data_analyst": 0,
+    "java_backend_developer": 0,
+    "cloud_devops_engineer": 0,
+    "full_stack_developer": 0
+   },
+   "name": "Ritu Sharma",
+   "skills": [
+    "Docker",
+    "Machine Learning",
+    "Python",
+    "SQL",
+    "scikit-learn"
+   ],
+   "experience": {
+    "fulltime_months": 59,
+    "part_time_months": 0,
+    "internship_months": 0,
+    "effective_years": 4.92,
+    "n_employment": 1
+   },
+   "email": "ritu.sharma@example.com",
+   "layout": "scanned_image_only"
+  },
+  {
+   "key": "p31",
+   "file": "corrupted_resume.pdf",
+   "expects": "failed",
+   "kind": "corrupted_pdf",
+   "error_code": "corrupt",
+   "relevance": null
+  },
+  {
+   "key": "p32",
+   "file": "password_protected_resume.pdf",
+   "expects": "failed",
+   "kind": "encrypted",
+   "error_code": "password_protected",
+   "relevance": null
+  },
+  {
+   "key": "p39",
+   "file": "corrupted_resume.docx",
+   "expects": "rejected",
+   "kind": "corrupted_docx",
+   "error_code": "corrupt",
+   "relevance": null
+  },
+  {
+   "key": "p40",
+   "file": "fake_extension_resume.pdf",
+   "expects": "rejected",
+   "kind": "fake_pdf",
+   "error_code": "signature_mismatch",
+   "relevance": null
+  },
+  {
+   "key": "p41",
+   "file": "resume_notes.txt",
+   "expects": "rejected",
+   "kind": "txt",
+   "error_code": "unsupported_type",
+   "relevance": null
+  }
+ ]
+}

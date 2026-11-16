@@ -1,0 +1,4 @@
+# Optional: semantic embeddings (all-MiniLM-L6-v2). ~90 MB model download on first use, CPU only.
+# Install CPU torch first on Windows to avoid the large CUDA wheel:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+sentence-transformers>=3.0

@@ -1,0 +1,1746 @@
+{
+ "_comment": "Editable TalentIQ skill ontology. 'aliases' = synonyms (normalised to the canonical name). 'related' = DIRECTIONAL partial-evidence skills: presence of a related skill gives only PARTIAL, clearly-labelled credit for the canonical skill; related skills are never treated as interchangeable. 'ambiguous' skills (e.g. R, Go, C) are only counted when found in a skills-list context.",
+ "version": "1.0.0",
+ "domains": [
+  "Fintech",
+  "Healthcare",
+  "E-commerce",
+  "Banking",
+  "Insurance",
+  "Education Technology",
+  "Logistics",
+  "Telecom",
+  "Cybersecurity",
+  "Retail",
+  "Manufacturing",
+  "Advertising",
+  "Supply Chain",
+  "Genomics",
+  "Real Estate"
+ ],
+ "skills": [
+  {
+   "name": "Python",
+   "category": "Programming Languages",
+   "aliases": [
+    "python3",
+    "python 3"
+   ],
+   "related": [
+    "Django",
+    "Flask",
+    "FastAPI",
+    "Pandas",
+    "NumPy",
+    "scikit-learn",
+    "PyTorch"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Java",
+   "category": "Programming Languages",
+   "aliases": [],
+   "related": [
+    "Spring Boot",
+    "Spring",
+    "Hibernate",
+    "JUnit",
+    "Maven"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "JavaScript",
+   "category": "Programming Languages",
+   "aliases": [
+    "js",
+    "ecmascript",
+    "es6"
+   ],
+   "related": [
+    "TypeScript",
+    "React",
+    "Node.js",
+    "Angular",
+    "Vue.js"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "TypeScript",
+   "category": "Programming Languages",
+   "aliases": [
+    "ts"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "C++",
+   "category": "Programming Languages",
+   "aliases": [
+    "cpp"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "C#",
+   "category": "Programming Languages",
+   "aliases": [
+    "csharp",
+    "c sharp"
+   ],
+   "related": [
+    "ASP.NET"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "C",
+   "category": "Programming Languages",
+   "aliases": [
+    "c language",
+    "c programming"
+   ],
+   "related": [],
+   "ambiguous": true,
+   "case_sensitive": false
+  },
+  {
+   "name": "Go",
+   "category": "Programming Languages",
+   "aliases": [
+    "golang",
+    "go language"
+   ],
+   "related": [],
+   "ambiguous": true,
+   "case_sensitive": false
+  },
+  {
+   "name": "R",
+   "category": "Programming Languages",
+   "aliases": [
+    "r programming",
+    "r language",
+    "rstudio"
+   ],
+   "related": [],
+   "ambiguous": true,
+   "case_sensitive": false
+  },
+  {
+   "name": "Rust",
+   "category": "Programming Languages",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Kotlin",
+   "category": "Programming Languages",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Swift",
+   "category": "Programming Languages",
+   "aliases": [],
+   "related": [],
+   "ambiguous": true,
+   "case_sensitive": false
+  },
+  {
+   "name": "PHP",
+   "category": "Programming Languages",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Ruby",
+   "category": "Programming Languages",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Scala",
+   "category": "Programming Languages",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "MATLAB",
+   "category": "Programming Languages",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Bash",
+   "category": "Programming Languages",
+   "aliases": [
+    "shell scripting",
+    "bash scripting",
+    "shell script"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "React",
+   "category": "Frontend",
+   "aliases": [
+    "react.js",
+    "reactjs",
+    "react js"
+   ],
+   "related": [
+    "Next.js",
+    "Redux"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Angular",
+   "category": "Frontend",
+   "aliases": [
+    "angularjs"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Vue.js",
+   "category": "Frontend",
+   "aliases": [
+    "vue",
+    "vuejs"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "HTML",
+   "category": "Frontend",
+   "aliases": [
+    "html5"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "CSS",
+   "category": "Frontend",
+   "aliases": [
+    "css3"
+   ],
+   "related": [
+    "Tailwind CSS",
+    "Bootstrap"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Tailwind CSS",
+   "category": "Frontend",
+   "aliases": [
+    "tailwind",
+    "tailwindcss"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Redux",
+   "category": "Frontend",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Next.js",
+   "category": "Frontend",
+   "aliases": [
+    "nextjs"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Bootstrap",
+   "category": "Frontend",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "jQuery",
+   "category": "Frontend",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "FastAPI",
+   "category": "Backend",
+   "aliases": [
+    "fast api"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Django",
+   "category": "Backend",
+   "aliases": [
+    "django rest framework",
+    "drf"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Flask",
+   "category": "Backend",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Spring Boot",
+   "category": "Backend",
+   "aliases": [
+    "springboot"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Spring",
+   "category": "Backend",
+   "aliases": [
+    "spring framework"
+   ],
+   "related": [
+    "Spring Boot"
+   ],
+   "ambiguous": true,
+   "case_sensitive": false
+  },
+  {
+   "name": "Hibernate",
+   "category": "Backend",
+   "aliases": [
+    "jpa"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Node.js",
+   "category": "Backend",
+   "aliases": [
+    "nodejs",
+    "node js"
+   ],
+   "related": [
+    "Express.js"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Express.js",
+   "category": "Backend",
+   "aliases": [
+    "!Express",
+    "expressjs",
+    "express.js"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "ASP.NET",
+   "category": "Backend",
+   "aliases": [
+    "asp.net core",
+    ".net core",
+    ".net",
+    "dotnet"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "REST APIs",
+   "category": "Backend",
+   "aliases": [
+    "rest api",
+    "restful api",
+    "restful apis",
+    "restful services",
+    "restful web services"
+   ],
+   "related": [
+    "FastAPI",
+    "Flask",
+    "Django",
+    "Express.js",
+    "Spring Boot"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "GraphQL",
+   "category": "Backend",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Microservices",
+   "category": "Backend",
+   "aliases": [
+    "microservice",
+    "micro-services",
+    "microservices architecture"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "gRPC",
+   "category": "Backend",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Celery",
+   "category": "Backend",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "SQLAlchemy",
+   "category": "Backend",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "SQL",
+   "category": "Databases",
+   "aliases": [
+    "structured query language",
+    "t-sql",
+    "pl/sql",
+    "sql queries"
+   ],
+   "related": [
+    "PostgreSQL",
+    "MySQL",
+    "SQLite",
+    "SQL Server",
+    "Oracle"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "PostgreSQL",
+   "category": "Databases",
+   "aliases": [
+    "postgres",
+    "psql"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "MySQL",
+   "category": "Databases",
+   "aliases": [
+    "mariadb"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "SQLite",
+   "category": "Databases",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "MongoDB",
+   "category": "Databases",
+   "aliases": [
+    "mongo"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Redis",
+   "category": "Databases",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "SQL Server",
+   "category": "Databases",
+   "aliases": [
+    "mssql",
+    "microsoft sql server"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Oracle",
+   "category": "Databases",
+   "aliases": [
+    "oracle db",
+    "oracle database"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": true
+  },
+  {
+   "name": "Elasticsearch",
+   "category": "Databases",
+   "aliases": [
+    "elastic search",
+    "opensearch"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Cassandra",
+   "category": "Databases",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "DynamoDB",
+   "category": "Databases",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "AWS",
+   "category": "Cloud",
+   "aliases": [
+    "amazon web services"
+   ],
+   "related": [
+    "EC2",
+    "S3",
+    "Lambda",
+    "SageMaker"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Azure",
+   "category": "Cloud",
+   "aliases": [
+    "microsoft azure"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "GCP",
+   "category": "Cloud",
+   "aliases": [
+    "google cloud",
+    "google cloud platform"
+   ],
+   "related": [
+    "BigQuery"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Cloud Computing",
+   "category": "Cloud",
+   "aliases": [
+    "cloud platforms",
+    "cloud infrastructure"
+   ],
+   "related": [
+    "AWS",
+    "Azure",
+    "GCP"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "EC2",
+   "category": "Cloud",
+   "aliases": [
+    "aws ec2"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "S3",
+   "category": "Cloud",
+   "aliases": [
+    "aws s3",
+    "amazon s3"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Lambda",
+   "category": "Cloud",
+   "aliases": [
+    "aws lambda"
+   ],
+   "related": [],
+   "ambiguous": true,
+   "case_sensitive": false
+  },
+  {
+   "name": "SageMaker",
+   "category": "Cloud",
+   "aliases": [
+    "aws sagemaker"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Docker",
+   "category": "DevOps",
+   "aliases": [
+    "dockerfile",
+    "docker compose",
+    "docker-compose",
+    "containerization",
+    "containerisation"
+   ],
+   "related": [
+    "Kubernetes"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Kubernetes",
+   "category": "DevOps",
+   "aliases": [
+    "k8s",
+    "eks",
+    "aks",
+    "gke"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "CI/CD",
+   "category": "DevOps",
+   "aliases": [
+    "cicd",
+    "ci cd",
+    "continuous integration",
+    "continuous delivery",
+    "continuous deployment",
+    "ci/cd pipelines"
+   ],
+   "related": [
+    "Jenkins",
+    "GitHub Actions"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Jenkins",
+   "category": "DevOps",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "GitHub Actions",
+   "category": "DevOps",
+   "aliases": [
+    "gitlab ci"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Terraform",
+   "category": "DevOps",
+   "aliases": [
+    "infrastructure as code",
+    "iac"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Ansible",
+   "category": "DevOps",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Git",
+   "category": "DevOps",
+   "aliases": [
+    "version control"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Linux",
+   "category": "DevOps",
+   "aliases": [
+    "ubuntu",
+    "unix"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Nginx",
+   "category": "DevOps",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Prometheus",
+   "category": "DevOps",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Grafana",
+   "category": "DevOps",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Machine Learning",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "ml",
+    "machine-learning",
+    "machine learning models"
+   ],
+   "related": [
+    "scikit-learn",
+    "TensorFlow",
+    "PyTorch",
+    "Keras",
+    "XGBoost",
+    "LightGBM",
+    "Predictive Modeling",
+    "Classification",
+    "Regression",
+    "Clustering",
+    "Deep Learning"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Deep Learning",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "neural networks",
+    "neural network",
+    "cnn",
+    "rnn",
+    "lstm"
+   ],
+   "related": [
+    "TensorFlow",
+    "PyTorch",
+    "Keras"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "NLP",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "natural language processing",
+    "text mining"
+   ],
+   "related": [
+    "spaCy",
+    "NLTK",
+    "Transformers",
+    "Sentence Transformers"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Computer Vision",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "image recognition",
+    "image classification"
+   ],
+   "related": [
+    "OpenCV"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "scikit-learn",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "sklearn",
+    "scikit learn"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "TensorFlow",
+   "category": "AI and Machine Learning",
+   "aliases": [],
+   "related": [
+    "Keras"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "PyTorch",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "torch"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Keras",
+   "category": "AI and Machine Learning",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "XGBoost",
+   "category": "AI and Machine Learning",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "LightGBM",
+   "category": "AI and Machine Learning",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Transformers",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "hugging face",
+    "huggingface",
+    "hugging face transformers"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Sentence Transformers",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "sbert",
+    "sentence-transformers",
+    "sentence embeddings"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "LLM",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "large language models",
+    "large language model",
+    "llms"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Generative AI",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "genai",
+    "gen ai",
+    "generative models"
+   ],
+   "related": [
+    "LLM"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "RAG",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "retrieval augmented generation",
+    "retrieval-augmented generation"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "spaCy",
+   "category": "AI and Machine Learning",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "NLTK",
+   "category": "AI and Machine Learning",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "OpenCV",
+   "category": "AI and Machine Learning",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "MLOps",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "ml ops",
+    "model deployment",
+    "model serving",
+    "mlflow"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Predictive Modeling",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "predictive modelling",
+    "predictive models",
+    "predictive analytics"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Classification",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "classification models",
+    "classifiers"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Regression",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "regression models",
+    "linear regression",
+    "logistic regression"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Clustering",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "k-means",
+    "kmeans"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Feature Engineering",
+   "category": "AI and Machine Learning",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Recommendation Systems",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "recommender systems",
+    "recommendation engine"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Time Series",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "time-series",
+    "time series forecasting",
+    "forecasting"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Reinforcement Learning",
+   "category": "AI and Machine Learning",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "FAISS",
+   "category": "AI and Machine Learning",
+   "aliases": [
+    "vector search",
+    "vector database",
+    "vector databases"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Pandas",
+   "category": "Data Science",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "NumPy",
+   "category": "Data Science",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "SciPy",
+   "category": "Data Science",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Matplotlib",
+   "category": "Data Science",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Seaborn",
+   "category": "Data Science",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Statistics",
+   "category": "Data Science",
+   "aliases": [
+    "statistical analysis",
+    "statistical modeling",
+    "statistical modelling"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Hypothesis Testing",
+   "category": "Data Science",
+   "aliases": [
+    "a/b testing",
+    "ab testing"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Data Analysis",
+   "category": "Data Science",
+   "aliases": [
+    "data analytics",
+    "analyzing data",
+    "analysing data"
+   ],
+   "related": [
+    "Pandas",
+    "Excel",
+    "Tableau",
+    "Power BI",
+    "SQL"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Data Visualization",
+   "category": "Data Science",
+   "aliases": [
+    "data visualisation",
+    "data viz"
+   ],
+   "related": [
+    "Tableau",
+    "Power BI",
+    "Matplotlib",
+    "Seaborn"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Data Cleaning",
+   "category": "Data Science",
+   "aliases": [
+    "data wrangling",
+    "data cleansing",
+    "data preprocessing",
+    "data preparation"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Tableau",
+   "category": "Data Science",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Power BI",
+   "category": "Data Science",
+   "aliases": [
+    "powerbi",
+    "power-bi"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Excel",
+   "category": "Data Science",
+   "aliases": [
+    "microsoft excel",
+    "advanced excel",
+    "ms excel"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": true
+  },
+  {
+   "name": "Jupyter",
+   "category": "Data Science",
+   "aliases": [
+    "jupyter notebook",
+    "jupyter notebooks"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Apache Spark",
+   "category": "Data Engineering",
+   "aliases": [
+    "!Spark",
+    "pyspark",
+    "apache spark"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Hadoop",
+   "category": "Data Engineering",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Kafka",
+   "category": "Data Engineering",
+   "aliases": [
+    "apache kafka"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Airflow",
+   "category": "Data Engineering",
+   "aliases": [
+    "apache airflow"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "ETL",
+   "category": "Data Engineering",
+   "aliases": [
+    "etl pipelines",
+    "etl pipeline",
+    "data pipelines",
+    "data pipeline"
+   ],
+   "related": [
+    "Airflow",
+    "Apache Spark",
+    "dbt"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Data Warehousing",
+   "category": "Data Engineering",
+   "aliases": [
+    "data warehouse",
+    "data warehouses"
+   ],
+   "related": [
+    "Snowflake",
+    "BigQuery",
+    "Redshift"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Snowflake",
+   "category": "Data Engineering",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "BigQuery",
+   "category": "Data Engineering",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Redshift",
+   "category": "Data Engineering",
+   "aliases": [
+    "amazon redshift"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "dbt",
+   "category": "Data Engineering",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Databricks",
+   "category": "Data Engineering",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "OWASP",
+   "category": "Security",
+   "aliases": [
+    "owasp top 10"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Application Security",
+   "category": "Security",
+   "aliases": [
+    "appsec",
+    "secure coding",
+    "secure development"
+   ],
+   "related": [
+    "OWASP"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Penetration Testing",
+   "category": "Security",
+   "aliases": [
+    "pentesting",
+    "pen testing",
+    "pentest"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Encryption",
+   "category": "Security",
+   "aliases": [
+    "cryptography"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "OAuth",
+   "category": "Security",
+   "aliases": [
+    "oauth2",
+    "oauth 2.0"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "JWT",
+   "category": "Security",
+   "aliases": [
+    "json web token",
+    "json web tokens"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Network Security",
+   "category": "Security",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "SIEM",
+   "category": "Security",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "IAM",
+   "category": "Security",
+   "aliases": [
+    "identity and access management"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": true
+  },
+  {
+   "name": "pytest",
+   "category": "Testing",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Unit Testing",
+   "category": "Testing",
+   "aliases": [
+    "unit tests",
+    "unit test"
+   ],
+   "related": [
+    "pytest",
+    "JUnit",
+    "Jest"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Integration Testing",
+   "category": "Testing",
+   "aliases": [
+    "integration tests"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Test Automation",
+   "category": "Testing",
+   "aliases": [
+    "automated testing",
+    "automation testing",
+    "test automation framework"
+   ],
+   "related": [
+    "Selenium",
+    "Cypress"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Selenium",
+   "category": "Testing",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "JUnit",
+   "category": "Testing",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Jest",
+   "category": "Testing",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Cypress",
+   "category": "Testing",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Postman",
+   "category": "Testing",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "TDD",
+   "category": "Testing",
+   "aliases": [
+    "test-driven development",
+    "test driven development"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Agile",
+   "category": "Frameworks and Tools",
+   "aliases": [
+    "agile methodologies",
+    "agile methodology",
+    "agile development"
+   ],
+   "related": [
+    "Scrum"
+   ],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Scrum",
+   "category": "Frameworks and Tools",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Jira",
+   "category": "Frameworks and Tools",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Swagger",
+   "category": "Frameworks and Tools",
+   "aliases": [
+    "openapi"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Maven",
+   "category": "Frameworks and Tools",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Gradle",
+   "category": "Frameworks and Tools",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Figma",
+   "category": "Frameworks and Tools",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Communication",
+   "category": "Soft Skills",
+   "aliases": [
+    "communication skills",
+    "written communication",
+    "verbal communication"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Teamwork",
+   "category": "Soft Skills",
+   "aliases": [
+    "collaboration",
+    "team player",
+    "collaborative team",
+    "cross-functional"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Leadership",
+   "category": "Soft Skills",
+   "aliases": [
+    "team lead",
+    "led a team"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Problem Solving",
+   "category": "Soft Skills",
+   "aliases": [
+    "problem-solving",
+    "analytical thinking",
+    "analytical skills"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Mentoring",
+   "category": "Soft Skills",
+   "aliases": [
+    "mentorship",
+    "mentored"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Stakeholder Management",
+   "category": "Soft Skills",
+   "aliases": [
+    "stakeholder communication"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Critical Thinking",
+   "category": "Soft Skills",
+   "aliases": [],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  },
+  {
+   "name": "Adaptability",
+   "category": "Soft Skills",
+   "aliases": [
+    "fast learner",
+    "quick learner"
+   ],
+   "related": [],
+   "ambiguous": false,
+   "case_sensitive": false
+  }
+ ]
+}

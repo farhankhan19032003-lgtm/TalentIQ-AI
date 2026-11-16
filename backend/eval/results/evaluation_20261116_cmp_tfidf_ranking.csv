@@ -1,0 +1,7 @@
+jd,n_graded,relevant_total,ndcg@5,precision@5,recall@5,max_possible_recall@5,baseline_tfidf_ndcg@5,baseline_tfidf_precision@5,random_ndcg@5_mean,match_seconds
+ai_ml_engineer,34,7,0.8714,0.8,0.5714,0.7143,0.884,0.8,0.3417,0.46
+python_backend_developer,34,10,0.9563,1.0,0.5,0.5,0.9563,1.0,0.3892,0.44
+data_analyst,34,6,0.9676,1.0,0.8333,0.8333,0.9676,1.0,0.2045,0.38
+java_backend_developer,34,3,0.9358,0.6,1.0,1.0,0.8782,0.6,0.1712,0.38
+cloud_devops_engineer,34,4,1.0,0.8,1.0,1.0,1.0,0.8,0.2192,0.4
+full_stack_developer,34,3,0.9292,0.6,1.0,1.0,0.9034,0.6,0.1908,0.43

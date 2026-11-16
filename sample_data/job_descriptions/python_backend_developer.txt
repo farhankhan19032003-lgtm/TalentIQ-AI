@@ -1,0 +1,23 @@
+Job Title: Python Backend Developer
+Company: Brightwave Labs (fictional)
+
+Responsibilities:
+- Design and build scalable backend services and REST APIs
+- Model data in PostgreSQL and optimise queries
+- Write unit tests and maintain CI pipelines
+- Containerise services and support deployments
+
+Requirements:
+- 3+ years of professional experience in backend development
+- Strong Python with FastAPI or Django
+- Experience designing REST APIs
+- Solid PostgreSQL knowledge
+- Docker and Git
+- Unit Testing with pytest
+- Bachelor's degree in Computer Science or equivalent
+
+Good to have:
+- Redis and Celery
+- Kubernetes
+- CI/CD experience
+- AWS

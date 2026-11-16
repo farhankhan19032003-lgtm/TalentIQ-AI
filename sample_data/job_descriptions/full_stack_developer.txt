@@ -1,0 +1,22 @@
+Job Title: Full Stack Developer
+Company: Nimbus Apps (fictional)
+
+Responsibilities:
+- Build responsive web applications from design to deployment
+- Develop REST APIs and integrate front-end components
+- Write clean, tested and documented code
+
+Requirements:
+- 2+ years of experience in full stack web development
+- React and TypeScript
+- Node.js
+- PostgreSQL
+- REST APIs
+- HTML and CSS
+- Git
+- Bachelor's degree in Computer Science or related field
+
+Nice to have:
+- Docker
+- AWS
+- Next.js

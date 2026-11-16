@@ -1,0 +1,23 @@
+Job Title: Cloud DevOps Engineer
+Company: Skyline Infra (fictional)
+
+Responsibilities:
+- Provision and manage cloud infrastructure using infrastructure as code
+- Build and maintain CI/CD pipelines
+- Operate Kubernetes clusters and monitor system health
+- Improve reliability and automate operational tasks
+
+Requirements:
+- 3+ years of experience in cloud or DevOps roles
+- Hands-on AWS experience
+- Docker and Kubernetes
+- Terraform
+- CI/CD pipelines with Jenkins
+- Strong Linux skills
+- Scripting with Python or Bash
+- Bachelor's degree in Computer Science or Information Technology
+
+Nice to have:
+- Ansible
+- Prometheus and Grafana
+- Azure

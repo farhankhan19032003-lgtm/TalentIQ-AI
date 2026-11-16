@@ -1,0 +1,20 @@
+Job Title: Java Backend Developer
+Company: Pinecrest Finserv (fictional)
+
+Responsibilities:
+- Develop and maintain microservices for payment processing
+- Design REST APIs and integrate with message queues
+- Write automated tests and participate in code reviews
+
+Requirements:
+- 3+ years of experience developing Java applications
+- Strong knowledge of Spring Boot and Hibernate
+- Experience with MySQL
+- REST APIs and Microservices architecture
+- Maven and JUnit
+- Bachelor's degree in Computer Science
+
+Nice to have:
+- Kafka
+- Docker
+- AWS

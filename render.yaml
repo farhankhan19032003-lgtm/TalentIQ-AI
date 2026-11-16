@@ -1,0 +1,10 @@
+# Render blueprint (untested). Backend only; host the frontend on Vercel/Netlify.
+services:
+  - type: web
+    name: talentiq-api
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: .
+    envVars:
+      - { key: API_KEY, generateValue: true }
+      - { key: CORS_ORIGINS, value: https://YOUR-FRONTEND.vercel.app }

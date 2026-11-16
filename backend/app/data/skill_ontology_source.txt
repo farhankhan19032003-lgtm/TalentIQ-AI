@@ -1,0 +1,161 @@
+# Name | Category | aliases (;) | related-evidence (;)  [directional: presence of these gives PARTIAL evidence for Name] | flags
+Python|Programming Languages|python3;python 3|Django;Flask;FastAPI;Pandas;NumPy;scikit-learn;PyTorch
+Java|Programming Languages||Spring Boot;Spring;Hibernate;JUnit;Maven
+JavaScript|Programming Languages|js;ecmascript;es6|TypeScript;React;Node.js;Angular;Vue.js
+TypeScript|Programming Languages|ts|
+C++|Programming Languages|cpp|
+C#|Programming Languages|csharp;c sharp|ASP.NET
+C|Programming Languages|c language;c programming||ambiguous
+Go|Programming Languages|golang;go language|||ambiguous
+R|Programming Languages|r programming;r language;rstudio||ambiguous
+Rust|Programming Languages||
+Kotlin|Programming Languages||
+Swift|Programming Languages|||ambiguous
+PHP|Programming Languages||
+Ruby|Programming Languages||
+Scala|Programming Languages||
+MATLAB|Programming Languages||
+Bash|Programming Languages|shell scripting;bash scripting;shell script|
+React|Frontend|react.js;reactjs;react js|Next.js;Redux
+Angular|Frontend|angularjs|
+Vue.js|Frontend|vue;vuejs|
+HTML|Frontend|html5|
+CSS|Frontend|css3|Tailwind CSS;Bootstrap
+Tailwind CSS|Frontend|tailwind;tailwindcss|
+Redux|Frontend||
+Next.js|Frontend|nextjs|
+Bootstrap|Frontend||
+jQuery|Frontend||
+FastAPI|Backend|fast api|
+Django|Backend|django rest framework;drf|
+Flask|Backend||
+Spring Boot|Backend|springboot|
+Spring|Backend|spring framework|Spring Boot|ambiguous
+Hibernate|Backend|jpa|
+Node.js|Backend|nodejs;node js|Express.js
+Express.js|Backend|!Express;expressjs;express.js|
+ASP.NET|Backend|asp.net core;.net core;.net;dotnet|
+REST APIs|Backend|rest api;restful api;restful apis;restful services;restful web services|FastAPI;Flask;Django;Express.js;Spring Boot
+GraphQL|Backend||
+Microservices|Backend|microservice;micro-services;microservices architecture|
+gRPC|Backend||
+Celery|Backend||
+SQLAlchemy|Backend||
+SQL|Databases|structured query language;t-sql;pl/sql;sql queries|PostgreSQL;MySQL;SQLite;SQL Server;Oracle
+PostgreSQL|Databases|postgres;psql|
+MySQL|Databases|mariadb|
+SQLite|Databases||
+MongoDB|Databases|mongo|
+Redis|Databases||
+SQL Server|Databases|mssql;microsoft sql server|
+Oracle|Databases|oracle db;oracle database||cs
+Elasticsearch|Databases|elastic search;opensearch|
+Cassandra|Databases||
+DynamoDB|Databases||
+AWS|Cloud|amazon web services|EC2;S3;Lambda;SageMaker
+Azure|Cloud|microsoft azure|
+GCP|Cloud|google cloud;google cloud platform|BigQuery
+Cloud Computing|Cloud|cloud platforms;cloud infrastructure|AWS;Azure;GCP
+EC2|Cloud|aws ec2|
+S3|Cloud|aws s3;amazon s3|
+Lambda|Cloud|aws lambda||ambiguous
+SageMaker|Cloud|aws sagemaker|
+Docker|DevOps|dockerfile;docker compose;docker-compose;containerization;containerisation|Kubernetes
+Kubernetes|DevOps|k8s;eks;aks;gke|
+CI/CD|DevOps|cicd;ci cd;continuous integration;continuous delivery;continuous deployment;ci/cd pipelines|Jenkins;GitHub Actions
+Jenkins|DevOps||
+GitHub Actions|DevOps|gitlab ci|
+Terraform|DevOps|infrastructure as code;iac|
+Ansible|DevOps||
+Git|DevOps|version control|
+Linux|DevOps|ubuntu;unix|
+Nginx|DevOps||
+Prometheus|DevOps||
+Grafana|DevOps||
+Machine Learning|AI and Machine Learning|ml;machine-learning;machine learning models|scikit-learn;TensorFlow;PyTorch;Keras;XGBoost;LightGBM;Predictive Modeling;Classification;Regression;Clustering;Deep Learning
+Deep Learning|AI and Machine Learning|neural networks;neural network;cnn;rnn;lstm|TensorFlow;PyTorch;Keras
+NLP|AI and Machine Learning|natural language processing;text mining|spaCy;NLTK;Transformers;Sentence Transformers
+Computer Vision|AI and Machine Learning|image recognition;image classification|OpenCV
+scikit-learn|AI and Machine Learning|sklearn;scikit learn|
+TensorFlow|AI and Machine Learning||Keras
+PyTorch|AI and Machine Learning|torch|
+Keras|AI and Machine Learning||
+XGBoost|AI and Machine Learning||
+LightGBM|AI and Machine Learning||
+Transformers|AI and Machine Learning|hugging face;huggingface;hugging face transformers|
+Sentence Transformers|AI and Machine Learning|sbert;sentence-transformers;sentence embeddings|
+LLM|AI and Machine Learning|large language models;large language model;llms|
+Generative AI|AI and Machine Learning|genai;gen ai;generative models|LLM
+RAG|AI and Machine Learning|retrieval augmented generation;retrieval-augmented generation|
+spaCy|AI and Machine Learning||
+NLTK|AI and Machine Learning||
+OpenCV|AI and Machine Learning||
+MLOps|AI and Machine Learning|ml ops;model deployment;model serving;mlflow|
+Predictive Modeling|AI and Machine Learning|predictive modelling;predictive models;predictive analytics|
+Classification|AI and Machine Learning|classification models;classifiers|
+Regression|AI and Machine Learning|regression models;linear regression;logistic regression|
+Clustering|AI and Machine Learning|k-means;kmeans|
+Feature Engineering|AI and Machine Learning||
+Recommendation Systems|AI and Machine Learning|recommender systems;recommendation engine|
+Time Series|AI and Machine Learning|time-series;time series forecasting;forecasting|
+Reinforcement Learning|AI and Machine Learning||
+FAISS|AI and Machine Learning|vector search;vector database;vector databases|
+Pandas|Data Science||
+NumPy|Data Science||
+SciPy|Data Science||
+Matplotlib|Data Science||
+Seaborn|Data Science||
+Statistics|Data Science|statistical analysis;statistical modeling;statistical modelling|
+Hypothesis Testing|Data Science|a/b testing;ab testing|
+Data Analysis|Data Science|data analytics;analyzing data;analysing data|Pandas;Excel;Tableau;Power BI;SQL
+Data Visualization|Data Science|data visualisation;data viz|Tableau;Power BI;Matplotlib;Seaborn
+Data Cleaning|Data Science|data wrangling;data cleansing;data preprocessing;data preparation|
+Tableau|Data Science||
+Power BI|Data Science|powerbi;power-bi|
+Excel|Data Science|microsoft excel;advanced excel;ms excel||cs
+Jupyter|Data Science|jupyter notebook;jupyter notebooks|
+Apache Spark|Data Engineering|!Spark;pyspark;apache spark|
+Hadoop|Data Engineering||
+Kafka|Data Engineering|apache kafka|
+Airflow|Data Engineering|apache airflow|
+ETL|Data Engineering|etl pipelines;etl pipeline;data pipelines;data pipeline|Airflow;Apache Spark;dbt
+Data Warehousing|Data Engineering|data warehouse;data warehouses|Snowflake;BigQuery;Redshift
+Snowflake|Data Engineering||
+BigQuery|Data Engineering||
+Redshift|Data Engineering|amazon redshift|
+dbt|Data Engineering||
+Databricks|Data Engineering||
+OWASP|Security|owasp top 10|
+Application Security|Security|appsec;secure coding;secure development|OWASP
+Penetration Testing|Security|pentesting;pen testing;pentest|
+Encryption|Security|cryptography|
+OAuth|Security|oauth2;oauth 2.0|
+JWT|Security|json web token;json web tokens|
+Network Security|Security||
+SIEM|Security||
+IAM|Security|identity and access management||cs
+pytest|Testing||
+Unit Testing|Testing|unit tests;unit test|pytest;JUnit;Jest
+Integration Testing|Testing|integration tests|
+Test Automation|Testing|automated testing;automation testing;test automation framework|Selenium;Cypress
+Selenium|Testing||
+JUnit|Testing||
+Jest|Testing||
+Cypress|Testing||
+Postman|Testing||
+TDD|Testing|test-driven development;test driven development|
+Agile|Frameworks and Tools|agile methodologies;agile methodology;agile development|Scrum
+Scrum|Frameworks and Tools||
+Jira|Frameworks and Tools||
+Swagger|Frameworks and Tools|openapi|
+Maven|Frameworks and Tools||
+Gradle|Frameworks and Tools||
+Figma|Frameworks and Tools||
+Communication|Soft Skills|communication skills;written communication;verbal communication|
+Teamwork|Soft Skills|collaboration;team player;collaborative team;cross-functional|
+Leadership|Soft Skills|team lead;led a team|
+Problem Solving|Soft Skills|problem-solving;analytical thinking;analytical skills|
+Mentoring|Soft Skills|mentorship;mentored|
+Stakeholder Management|Soft Skills|stakeholder communication|
+Critical Thinking|Soft Skills||
+Adaptability|Soft Skills|fast learner;quick learner|
