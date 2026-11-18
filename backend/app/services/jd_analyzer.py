@@ -14,6 +14,10 @@ HEAD_RESP = re.compile(r"responsibilit|what you(?:'ll| will) do|duties|key tasks
 HEAD_IGNORE = re.compile(r"about (us|the company)|benefits|perks|we offer|why join|equal opportunity|how to apply", re.I)
 YEARS = re.compile(r"(\d+(?:\.\d+)?)\s*(?:\+|plus)?\s*(?:(?:-|–|to)\s*(\d+(?:\.\d+)?))?\s*\+?\s*(?:years?|yrs?)", re.I)
 CORE_WEIGHT = 2.0
+# One concept, many names: when a JD names both the practice and a tool that implements it ("unit testing with pytest"),
+# counting them as two requirements would penalise a candidate twice for one missing idea. They are merged into a single
+# "X (tool)" requirement that any of the names satisfies. Only genuine practice->tool pairs belong here (NOT Python->FastAPI).
+CONCEPT_TOOLS = {"Unit Testing": ("pytest", "JUnit", "Jest")}
 GENERIC_TITLE = {"senior", "junior", "sr", "jr", "lead", "associate", "i", "ii", "iii", "the", "of", "and", "engineer", "developer", "specialist", "staff", "principal"}
 
 GROUPS = {
@@ -47,6 +51,25 @@ def _heading(line: str):
     if HEAD_REQ.search(t):
         return "must"
     return None
+
+
+def _merge_concepts(requirements: list[dict], technical: dict[str, str]) -> None:
+    """In place: fold tool requirements into the practice requirement they implement (see CONCEPT_TOOLS)."""
+    by_name = {r["name"]: r for r in requirements}
+    for concept, tools in CONCEPT_TOOLS.items():
+        present = [t for t in tools if t in by_name and not by_name[t].get("any_of")]
+        base = by_name.get(concept)
+        if not present or base is None or base.get("any_of"):
+            continue
+        imps = [base["importance"]] + [by_name[t]["importance"] for t in present]
+        base.update(name=f"{concept} ({', '.join(present)})", any_of=[concept, *present], importance="must" if "must" in imps else "preferred",
+                    weight=max(base["weight"], *(by_name[t]["weight"] for t in present)))
+        base["id"] = "req_" + slug(base["name"])
+        for t in present:
+            requirements.remove(by_name[t])
+            technical.pop(t, None)
+        technical.pop(concept, None)
+        technical[base["name"]] = base["importance"]
 
 
 def analyze_jd(text: str, extractor: SkillExtractor, onto: Ontology, title: str | None = None) -> dict:
@@ -121,6 +144,7 @@ def analyze_jd(text: str, extractor: SkillExtractor, onto: Ontology, title: str 
         nm = " or ".join(g["names"])
         requirements.append({"id": "req_" + slug(nm), "name": nm, "category": onto.category(g["names"][0]), "importance": g["importance"],
                              "weight": 1.0, "custom": False, "any_of": g["names"]})
+    _merge_concepts(requirements, technical)
     requirements.sort(key=lambda r: (r["importance"] != "must", r["category"], r["name"]))
     technical.update({r["name"]: r["importance"] for r in requirements if r.get("any_of")})
     # Skills named in the job title are role-defining: weighted x2 (recruiter-editable per requirement)
