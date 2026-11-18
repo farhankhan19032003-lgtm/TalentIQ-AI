@@ -104,6 +104,28 @@ def job_to_dict(job: M.Job) -> dict:
 
 
 # ---------------------------------------------------------------------------- ingestion
+REVIEW_REASONS = {
+    "scanned_ocr": "Scanned/image-only file read with OCR: the text may contain errors, check it against the original.",
+    "low_text_quality": "The extracted text is of low quality (garbled or very short), so parsed fields may be wrong.",
+    "recovered_with_fallback": "The PDF was malformed and was recovered with a fallback reader; check the parsed fields.",
+    "name_not_found": "No candidate name could be extracted.",
+}
+
+
+def build_review(doc, parsed: dict) -> dict:
+    """Parse-quality flags. A flagged resume is still scored, but is shown as 'needs review' with the reasons, never as a normal one."""
+    codes = []
+    if doc.ocr_used:
+        codes.append("scanned_ocr")
+    if doc.quality < 0.5 or sum(len(p.text) for p in doc.pages) < 200:
+        codes.append("low_text_quality")
+    if "recovered_with_fallback" in doc.warnings:
+        codes.append("recovered_with_fallback")
+    if not parsed["fields"]["name"]["value"]:
+        codes.append("name_not_found")
+    return {"needs_review": bool(codes), "codes": codes, "reasons": [REVIEW_REASONS[c] for c in codes]}
+
+
 def _persist_candidate(db: Session, resume: M.Resume, parsed: dict) -> M.Candidate:
     f = parsed["fields"]
     c = M.Candidate(name=f["name"]["value"], email=f["email"]["value"], phone=f["phone"]["value"], location=f["location"]["value"],
@@ -133,6 +155,7 @@ def process_resume_record(db: Session, resume: M.Resume, data: bytes):
     try:
         doc = parse_document(data, resume.file_type)
         parsed = resume_extractor.extract(doc)
+        parsed["review"] = build_review(doc, parsed)
         diag = {"pages": [p.diag() for p in doc.pages], "document_quality": doc.quality, "ocr_used": doc.ocr_used, "warnings": doc.warnings,
                 "protected_lines_removed": parsed["protected_lines_removed"], "injection_flags": parsed["injection_flags"],
                 "parse_confidence": parsed["parse_confidence"], "sections_found": parsed["section_names_found"]}
@@ -186,6 +209,10 @@ def ingest_resume(db: Session, filename: str, data: bytes, batch_id: str) -> dic
     if r.candidate_id:
         c = db.get(M.Candidate, r.candidate_id)
         out["parse_confidence"] = c.parse_confidence
+        review = (c.parsed or {}).get("review") or {}
+        out["needs_review"], out["review_reasons"] = bool(review.get("needs_review")), review.get("reasons", [])
+        if review.get("needs_review"):
+            out["warnings"].extend(review["reasons"])
         flags = (r.diagnostics or {}).get("injection_flags")
         if flags:
             out["warnings"].append("Resume contains instruction-like text, which is ignored (treated as data only).")

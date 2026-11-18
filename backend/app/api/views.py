@@ -4,23 +4,31 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from ..core.config import COMPONENTS
+from ..core.config import COMPONENTS, HIGH_SCORE  # noqa: F401
 from ..models import db as M
 from ..services.pipeline import display_name
 
-HIGH_SCORE = 70.0
-
 
 def latest_title(c: M.Candidate) -> str | None:
-    if not c.employment:
-        return None
-    cur = [e for e in c.employment if e.is_current]
-    pick = cur[0] if cur else max(c.employment, key=lambda e: e.start or "")
-    return pick.title
+    """Most recent dated job title, else the role the resume presents itself as (headline), else None."""
+    if c.employment:
+        cur = [e for e in c.employment if e.is_current]
+        pick = cur[0] if cur else max(c.employment, key=lambda e: e.start or "")
+        if pick.title:
+            return pick.title
+    return ((c.parsed or {}).get("fields", {}).get("headline") or {}).get("value")
+
+
+def role_source(c: M.Candidate) -> str:
+    """'job' (dated employment title), 'headline' (self-described role, no dated job) or 'none'."""
+    if c.employment and max(c.employment, key=lambda e: e.start or "").title:
+        return "job"
+    return "headline" if latest_title(c) else "none"
 
 
 def needs_review(row: dict) -> bool:
-    return row["confidence"] < 60 or row["completeness"] < 60 or (row["score_high"] - row["score_low"]) > 15
+    return (bool(row.get("parse_review", {}).get("needs_review")) or row["confidence"] < 60 or row["completeness"] < 60
+            or (row["score_high"] - row["score_low"]) > 15)
 
 
 def result_row(res: M.MatchResult, c: M.Candidate, blind: bool) -> dict:
@@ -30,7 +38,9 @@ def result_row(res: M.MatchResult, c: M.Candidate, blind: bool) -> dict:
     ov = max(res.overrides, key=lambda o: o.id) if res.overrides else None
     row = {
         "candidate_id": c.id, "result_id": res.id, "rank": res.rank, "name": display_name(c, blind), "email": None if blind else c.email,
-        "latest_role": latest_title(c), "overall": res.overall, "score_low": res.score_low, "score_high": res.score_high,
+        "latest_role": latest_title(c), "role_source": role_source(c), "employment_count": len(c.employment),
+        "claimed_years": ((c.parsed or {}).get("fields", {}).get("claimed_years") or {}).get("value"),
+        "parse_review": (c.parsed or {}).get("review") or {"needs_review": False, "reasons": []}, "overall": res.overall, "score_low": res.score_low, "score_high": res.score_high,
         "skill_coverage": res.skill_coverage, "must_have_coverage": res.detail.get("must_have_coverage"), "components": comps,
         "relevant_years": res.relevant_years, "total_years": res.total_years, "confidence": res.confidence, "completeness": res.completeness,
         "review_status": c.review_status, "parse_status": "parsed",

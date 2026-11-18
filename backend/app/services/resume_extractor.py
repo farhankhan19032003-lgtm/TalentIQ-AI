@@ -11,25 +11,30 @@ from .skill_extractor import Line, SkillExtractor
 
 SECTION_PATTERNS = {
     "summary": r"(?:professional |career |executive )?(?:summary|profile|objective|about(?: me)?)",
-    "experience": r"(?:work |professional |relevant |employment )?(?:experience|history)|employment(?: history)?|work history",
-    "internships": r"internships?(?: experience)?",
+    "experience": r"(?:work |professional |relevant |industry |employment )?(?:experience|history)(?:(?: &| and) internships?)?|employment(?: history| record)?|work history|"
+                  r"career (?:history|progression)|professional background|work background",
+    "internships": r"(?:internships?(?: experience)?|(?:industrial )?training(?: (?:&|and) internships?)?)",
     "education": r"education(?:al)?(?: qualifications?| background)?|academics?(?: background| qualifications?)?|qualifications",
     "skills": r"(?:technical |core |key )?skills(?:(?: &| and) tools)?|technologies|tech stack|technical expertise|competencies|skills & technologies",
     "projects": r"(?:academic |personal |key |selected |major )?projects",
-    "certifications": r"certifications?(?:(?: &| and) courses)?|licen[sc]es?|courses|training",
+    "certifications": r"certifications?(?:(?: &| and) courses)?|licen[sc]es?|courses",
     "achievements": r"achievements?|awards?(?:(?: &| and) honou?rs)?|honou?rs|accomplishments",
     "publications": r"publications?|research papers?",
 }
 _SECTION_RE = {k: re.compile(v, re.I) for k, v in SECTION_PATTERNS.items()}
+HEADING_DECOR = " -–—|•▪■●◆►▶#*_=:·~"   # decoration stripped around a heading line ("— EXPERIENCE —", "## Skills")
 PROTECTED = re.compile(
     r"^\s*(?:date of birth|d\.?o\.?b\.?|birth ?date|gender|sex|marital status|religion|caste|race|ethnicity|nationality|"
     r"age|father'?s name|mother'?s name|photo(?:graph)?|disability|political (?:views|affiliation)|spouse)\s*[:\-–]", re.I)
 
 MONTHS = {m: i for i, m in enumerate(["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
 _MON = r"(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)"
-_DATE = rf"(?:{_MON}\.?,?\s+(?:'?\d{{2}}\b|\d{{4}})|\d{{1,2}}/\d{{4}}|(?:19|20)\d{{2}})"
-_END = rf"(?:{_DATE}|present|current|now|till date|to date|ongoing)"
-RANGE_RE = re.compile(rf"({_DATE})\s*(?:-|–|—|to|until)\s*({_END})", re.I)
+_DATE = rf"(?:{_MON}\.?,?\s+(?:'?\d{{2}}\b|\d{{4}})|\d{{1,2}}[/.](?:19|20)\d{{2}}|(?:19|20)\d{{2}}[/.]\d{{1,2}}\b|(?:19|20)\d{{2}})"
+_END = rf"(?:{_DATE}|present|current|currently|now|till date|till now|to date|ongoing|today|date)"
+# "Jan 2020 - Present", "2019-2023", "03/2020 to 05/2021", "03.2020 - 05.2021", "2019-23" (two-digit end year), "since 2021"
+RANGE_RE = re.compile(rf"(?P<s>{_DATE})\s*(?:-|–|—|to|until|till)\s*(?P<e>{_END})|"
+                      rf"(?P<y1>(?:19|20)\d{{2}})\s*[-–—]\s*(?P<y2>\d{{2}})(?!\d)|"
+                      rf"\bsince\s+(?P<since>{_DATE})", re.I)
 TITLE_WORDS = re.compile(r"\b(engineer|developer|analyst|scientist|manager|intern|lead|architect|consultant|specialist|administrator|designer|"
                          r"tester|associate|executive|officer|accountant|chef|researcher|programmer|trainee|director|head|assistant|coordinator|"
                          r"technician|sde|devops|sre|qa)\b", re.I)
@@ -42,6 +47,11 @@ LEVELS = [("phd", 5, r"ph\.?\s?d|doctorate"), ("masters", 4, r"m\.?\s?tech|m\.?e
           ("bachelors", 3, r"b\.?\s?tech|b\.?e\.?(?=\s|,|$)|b\.?sc|bca|b\.?s\.?(?=\s|,|$)|bachelor(?:'?s)?|b\.?com|b\.?a\.?(?=\s|,|$)|undergraduate"),
           ("diploma", 2, r"diploma|polytechnic|associate degree")]
 LEVEL_RE = [(n, lv, re.compile(rf"\b(?:{p})", re.I)) for n, lv, p in LEVELS]
+ROLE_NOUN = r"(?:engineer|developer|analyst|scientist|manager|architect|consultant|designer|programmer|administrator|specialist|researcher|intern|tester|devops)"
+HEADLINE_SUMMARY_RE = re.compile(rf"^(?:(?:an?|the)\s+)?(?:(?:experienced|results[- ]driven|motivated|passionate|dedicated|enthusiastic|aspiring|talented|detail[- ]oriented|"
+                                 rf"driven|skilled|proficient|dynamic|creative|ambitious|highly\s+\w+)\s+)*((?:[A-Za-z/+.&#-]+\s+){{0,3}}?{ROLE_NOUN})\b", re.I)
+CLAIMED_YEARS_RE = re.compile(r"(\d{1,2}(?:\.\d)?)\s*\+?\s*(?:years?|yrs?)(?:\s+of)?(?:\s+[\w/&+.-]+){0,4}?\s+experience|"
+                              r"experience\s+(?:of|for)\s+(\d{1,2}(?:\.\d)?)\s*\+?\s*(?:years?|yrs?)", re.I)
 INSTITUTION_RE = re.compile(r"\b(university|institute|college|school|academy|polytechnic|iit|nit)\b", re.I)
 
 
@@ -50,17 +60,29 @@ def _fld(value, page=None, evidence=None, method=None, confidence=0.0):
             "status": "extracted" if value not in (None, "", []) else "unknown"}
 
 
+def range_bounds(m: re.Match) -> tuple[str, str]:
+    """(start text, end text) of a RANGE_RE match; 'since X' and 'Y1-YY' forms are normalised."""
+    if m.group("since"):
+        return m.group("since"), "present"
+    if m.group("y1"):
+        return m.group("y1"), m.group("y1")[:2] + m.group("y2")
+    return m.group("s"), m.group("e")
+
+
 def _parse_date(s: str, end: bool = False):
     s = s.strip().lower().rstrip(".")
-    if s in ("present", "current", "now", "till date", "to date", "ongoing"):
+    if s in ("present", "current", "currently", "now", "till date", "till now", "to date", "ongoing", "today", "date"):
         return {"current": True}
     m = re.match(rf"({_MON})\.?,?\s+'?(\d{{2,4}})", s, re.I)
     if m:
         y = int(m.group(2)); y = y + 2000 if y < 100 else y
         return {"year": y, "month": MONTHS[m.group(1)[:3].lower()], "precision": "month"}
-    m = re.match(r"(\d{1,2})/(\d{4})", s)
+    m = re.match(r"(\d{1,2})[/.]((?:19|20)\d{2})", s)
     if m and 1 <= int(m.group(1)) <= 12:
         return {"year": int(m.group(2)), "month": int(m.group(1)), "precision": "month"}
+    m = re.match(r"((?:19|20)\d{2})[/.](\d{1,2})", s)
+    if m and 1 <= int(m.group(2)) <= 12:
+        return {"year": int(m.group(1)), "month": int(m.group(2)), "precision": "month"}
     m = re.match(r"((?:19|20)\d{2})", s)
     if m:
         return {"year": int(m.group(1)), "month": 6 if end else 7, "precision": "year"}
@@ -88,7 +110,7 @@ class ResumeExtractor:
                     continue
                 head = re.sub(r"[:\s]+$", "", t)
                 if len(head) <= 45 and not t.startswith("•"):
-                    hit = next((k for k, rx in _SECTION_RE.items() if rx.fullmatch(head.strip(" -–|"))), None)
+                    hit = next((k for k, rx in _SECTION_RE.items() if rx.fullmatch(head.strip(HEADING_DECOR))), None)
                     if hit:
                         section = hit
                         lines.append(Line(pg.number, "heading:" + hit, t))
@@ -114,6 +136,8 @@ class ResumeExtractor:
         fields["portfolio"] = self._portfolio(body)
         fields["location"] = self._location(header)
         fields["summary"] = self._summary(sections, header)
+        fields["headline"] = self._headline(header, fields["summary"])
+        fields["claimed_years"] = self._claimed_years(sections, header)
 
         employment = self._employment(body)
         education = self._education(sections.get("education", []))
@@ -196,6 +220,32 @@ class ResumeExtractor:
                 return _fld(l.text, l.page, l.text[:200], "header_paragraph", 0.55)
         return _fld(None)
 
+    def _headline(self, header: list[Line], summary: dict) -> dict:
+        """The role the candidate presents themselves as (title line under the name, else the first words of the summary).
+        Used only as a display fallback when no dated job title exists (e.g. freshers); it is never counted as experience."""
+        for l in header[1:6]:
+            t = l.text.split("|")[0].strip(" -–—•·")
+            if 1 <= len(t.split()) <= 6 and TITLE_WORDS.search(t) and not re.search(r"[\d@:/]", t) and not re.search(r"resume|curriculum|vitae", t, re.I):
+                return _fld(t.title() if t.isupper() else t, l.page, l.text, "header_title_line", 0.7)
+        s = summary.get("value")
+        if s:
+            m = HEADLINE_SUMMARY_RE.match(s.strip())
+            if m:
+                val = " ".join(w if any(c.isupper() for c in w) else w.capitalize() for w in m.group(1).split())
+                return _fld(val, summary.get("page"), s[:160], "summary_first_clause", 0.55)
+        return _fld(None)
+
+    def _claimed_years(self, sections: dict, header: list[Line]) -> dict:
+        """'5+ years of experience' written as text in the summary/header. A claim, not evidence: scored at a reduced credit."""
+        texts = [(x["page"], x["text"]) for x in sections.get("summary", [])] + [(l.page, l.text) for l in header[:10]]
+        best = None
+        for page, txt in texts:
+            for m in CLAIMED_YEARS_RE.finditer(txt):
+                val = float(m.group(1) or m.group(2))
+                if 0 < val <= 45 and (best is None or val > best[0]):
+                    best = (val, page, txt[:200])
+        return _fld(best[0], best[1], best[2], "regex_claimed_years", 0.5) if best else _fld(None)
+
     # ---------------------------------------------------------------- employment
     def _employment(self, body: list[Line]) -> list[dict]:
         out = []
@@ -211,12 +261,18 @@ class ResumeExtractor:
                 else:
                     j = i - 1
                     hdr = [lines[j]] if j >= 0 and not lines[j].text.startswith("•") and j not in idx else []
-                    starts.append((j if hdr else i, i))
+                    k = j
+                    # three-line header: "Title" / "Company" / "dates" - the title sits one line above the company line
+                    if (hdr and not TITLE_WORDS.search(lines[j].text) and j >= 1 and (j - 1) not in idx
+                            and not lines[j - 1].text.startswith("•") and not lines[j - 1].text.rstrip().endswith(".")
+                            and len(lines[j - 1].text) < 70 and TITLE_WORDS.search(lines[j - 1].text)):
+                        k = j - 1
+                    starts.append((k if hdr else i, i))
             for n, (hi, ri) in enumerate(starts):
                 nxt = starts[n + 1][0] if n + 1 < len(starts) else len(lines)
                 rline = lines[ri]
                 m = RANGE_RE.search(rline.text)
-                header_parts = [RANGE_RE.sub("", lines[hi].text)] if hi == ri else [lines[hi].text, RANGE_RE.sub("", rline.text)]
+                header_parts = [RANGE_RE.sub("", lines[hi].text)] if hi == ri else [l.text for l in lines[hi:ri]] + [RANGE_RE.sub("", rline.text)]
                 desc_lines = lines[ri + 1: nxt]
                 # an un-bulleted line right after the dates may be company/location, not a description
                 extra_hdr = []
@@ -224,8 +280,9 @@ class ResumeExtractor:
                     extra_hdr.append(desc_lines.pop(0).text)
                 header = " | ".join(p for p in header_parts + extra_hdr if p.strip())
                 title, company = self._title_company(header)
-                s = _parse_date(m.group(1))
-                e = _parse_date(m.group(2), end=True)
+                s_txt, e_txt = range_bounds(m)
+                s = _parse_date(s_txt)
+                e = _parse_date(e_txt, end=True)
                 if not s or not e:
                     continue
                 precise = s.get("precision") == "month" and (e.get("current") or e.get("precision") == "month")

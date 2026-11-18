@@ -179,9 +179,9 @@ def parse_pdf(data: bytes) -> ParsedDocument:
     total_chars = sum(len(p.text) for p in pages)
     if total_chars < 40:
         if any(p.scanned for p in pages):
-            raise DocumentError("scanned_no_ocr", "Scanned/image-only PDF detected and OCR is unavailable or found no text. "
-                                "Install Tesseract (see README) or upload a text-based PDF.")
-        raise DocumentError("no_text", "No extractable text was found in the PDF.")
+            raise DocumentError("scanned_no_ocr", "Needs review: no extractable text. This looks like a scanned/image-only PDF and OCR is unavailable "
+                                "or found no text, so it was NOT scored. Install Tesseract (see README) or upload a text-based PDF.")
+        raise DocumentError("no_text", "Needs review: no extractable text was found in the PDF, so it was NOT scored.")
     nonempty = [p for p in pages if p.text]
     quality = sum(p.quality for p in nonempty) / len(nonempty)
     if ocr_used:
@@ -208,6 +208,24 @@ def _parse_pdf_fallback(data: bytes) -> ParsedDocument:
 
 
 # ----------------------------------------------------------------------------- DOCX
+_W_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+_MC_FALLBACK = "{http://schemas.openxmlformats.org/markup-compatibility/2006}Fallback"
+
+
+def _textbox_lines(paragraph_el, doc, para_text) -> list[str]:
+    """Text inside drawing/VML text boxes anchored in a paragraph. Word stores each box twice (Choice + Fallback): the fallback copy is skipped."""
+    from docx.text.paragraph import Paragraph
+    out: list[str] = []
+    for box in paragraph_el.iter(_W_NS + "txbxContent"):
+        if any(a.tag == _MC_FALLBACK for a in box.iterancestors()):
+            continue
+        for p in box.iter(_W_NS + "p"):
+            t = para_text(Paragraph(p, doc))
+            if t:
+                out.append(t)
+    return out
+
+
 def parse_docx(data: bytes) -> ParsedDocument:
     from docx import Document
     from docx.table import Table
@@ -233,6 +251,7 @@ def parse_docx(data: bytes) -> ParsedDocument:
             t = para_text(Paragraph(child, d))
             if t:
                 lines.append(t)
+            lines.extend(_textbox_lines(child, d, para_text))   # text boxes anchored in this paragraph (sidebars, contact blocks)
         elif tag == "tbl":
             tbl = Table(child, d)
             rows = []
@@ -269,8 +288,7 @@ def parse_docx(data: bytes) -> ParsedDocument:
     if len(text) < 40:
         raise DocumentError("no_text", "No extractable text was found in the DOCX.")
     q = text_quality(text)
-    return ParsedDocument("docx", [PageText(None, text, "python_docx", 1, q)], q, False,
-                          ["docx_has_no_page_numbers", "text_boxes_not_extracted"])
+    return ParsedDocument("docx", [PageText(None, text, "python_docx", 1, q)], q, False, ["docx_has_no_page_numbers"])
 
 
 def parse_document(data: bytes, kind: str) -> ParsedDocument:
