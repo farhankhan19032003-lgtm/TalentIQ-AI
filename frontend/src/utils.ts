@@ -120,3 +120,33 @@ export function interviewTitle(b: InterviewBrief): string {
   if (tally) parts.push(`interviewers said: ${tally}`);
   return parts.join(" · ");
 }
+
+export const EDU_LABEL: Record<number, string> = { 5: "PhD", 4: "Master's", 3: "Bachelor's", 2: "Diploma" };
+
+export interface Verdict { tone: "green" | "amber" | "red" | "slate"; label: string }
+/** Plain-language verdict for "JD requires X years / candidate has Y relevant years". */
+export function experienceVerdict(e: { status: string; required_min_years: number | null; preferred_years: number | null; relevant_effective_years: number; claimed_years?: number | null }): Verdict {
+  if (e.status === "unverified") return { tone: "amber", label: "Cannot verify: no dated roles found" };
+  if (e.claimed_years) return { tone: "amber", label: `Claimed ${e.claimed_years} y, not verifiable from dated roles` };
+  const min = e.required_min_years, rel = e.relevant_effective_years;
+  if (!min) return { tone: "slate", label: "The job states no experience requirement" };
+  if (e.preferred_years && rel >= e.preferred_years) return { tone: "green", label: "Exceeds the requirement" };
+  if (rel >= min) return { tone: "green", label: "Meets the requirement" };
+  if (rel >= 0.75 * min) return { tone: "amber", label: "Slightly below the requirement" };
+  return { tone: "red", label: "Below the requirement" };
+}
+/** Plain-language verdict for the education requirement. */
+export function educationVerdict(requiredLevel: number | null, candidateLevel: number | null): Verdict {
+  if (!requiredLevel) return { tone: "slate", label: "The job states no education requirement" };
+  if (candidateLevel == null) return { tone: "amber", label: "No degree could be extracted" };
+  return candidateLevel >= requiredLevel ? { tone: "green", label: "Meets the requirement" } : { tone: "red", label: "Below the requirement" };
+}
+/** Friendly text for parser warning codes; null = not worth showing to a recruiter. */
+export const WARNING_TEXT: Record<string, string | null> = {
+  ocr_used: "Scanned file read with OCR: text may contain errors.",
+  docx_has_no_page_numbers: null,
+  low_text_quality: "Low text quality: parsed fields may be wrong.",
+  recovered_with_fallback: "Malformed PDF recovered with a fallback reader.",
+  scanned_page_no_ocr: "A scanned page could not be read (no OCR).",
+};
+export const warningText = (code: string): string | null => (code in WARNING_TEXT ? WARNING_TEXT[code] : code);

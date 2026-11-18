@@ -7,9 +7,9 @@ import { useApp } from "../ctx";
 import { useAsync } from "../hooks";
 import EvidenceViewer from "../components/EvidenceViewer";
 import InterviewNotes from "../components/InterviewNotes";
-import { Chip, Disclaimer, ErrorBox, MatchTag, PageTitle, ScoreBadge, Spinner } from "../components/ui";
+import { Chip, Disclaimer, ErrorBox, MatchTag, PageTitle, ScoreBadge, SkillChips, SkillLegend, Spinner } from "../components/ui";
 import { CandidateDetail } from "../types";
-import { COMP_LABEL, STATUSES, STATUS_LABEL, fmt } from "../utils";
+import { COMP_LABEL, EDU_LABEL, STATUSES, STATUS_LABEL, educationVerdict, experienceVerdict, fmt, warningText } from "../utils";
 
 export default function Candidate() {
   const { id } = useParams();
@@ -30,6 +30,13 @@ export default function Candidate() {
   const chart = Object.keys(COMP_LABEL).map((k) => ({ name: COMP_LABEL[k], score: r.components[k]?.score ?? 0, contribution: r.components[k]?.contribution ?? 0, nv: r.components[k]?.status === "unverified" || r.components[k]?.score == null }));
   const gap = { matched: r.matched_skills, related: r.related_skills, missing: r.missing_skills };
   const ex = r.explanation;
+  const xv = experienceVerdict({ ...r.experience, claimed_years: r.experience.claimed_years });
+  const ev = educationVerdict(r.education.required_level, r.education.candidate_level);
+  const need = r.experience.required_min_years as number | null;
+  const pct = need ? Math.min(100, Math.round((r.experience.relevant_effective_years / need) * 100)) : null;
+  const topEdu = (c.education ?? [])[0];
+  const verdictTone = (tone: string) => (tone === "green" ? "bg-emerald-50 text-emerald-800 ring-emerald-200" : tone === "amber" ? "bg-amber-50 text-amber-900 ring-amber-200" : tone === "red" ? "bg-red-50 text-red-700 ring-red-200" : "bg-slate-100 text-slate-700 ring-slate-200");
+  const shownWarnings = (c.diagnostics.warnings as string[]).map(warningText).filter((w): w is string => !!w);
   return (
     <div>
       <PageTitle title={c.name} sub={`${r.latest_role ?? "Role not stated"} · rank #${r.rank} for this job`}>
@@ -37,6 +44,10 @@ export default function Candidate() {
         <button className="btn-danger" onClick={() => { if (confirm("Permanently delete this candidate, their resume file and all extracted data?")) act(async () => { await api.delete(`/candidates/${c.id}`); nav("/ranking"); }); }}><Trash2 className="h-4 w-4" />Delete data</button>
       </PageTitle>
       {err && <div className="mb-3"><ErrorBox message={err} /></div>}
+      {r.parse_review?.needs_review && (
+        <div role="alert" className="mb-4 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+          <strong>Needs review.</strong> {r.parse_review.reasons.join(" ")} The score below was calculated from the text that could be read; check it against the original file before relying on it.
+        </div>)}
 
       <div className="grid gap-5 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">
@@ -47,16 +58,38 @@ export default function Candidate() {
               <div className="text-sm text-slate-600"><div>Confidence <strong>{fmt(r.confidence, 0)}%</strong></div><div>Completeness <strong>{fmt(r.completeness, 0)}%</strong></div><div>Rank stability: {r.sensitivity.stable ? "stable" : `${r.sensitivity.rank_min}–${r.sensitivity.rank_max}`}</div></div>
               <ScoreBadge score={r.overall} low={r.score_low} high={r.score_high} />
             </div>
-            <p className="mt-3 text-sm text-slate-700">{ex.summary}</p>
+            <p className="mt-4 rounded-lg bg-slate-50 p-3 text-base font-medium text-slate-800" data-testid="headline">{ex.headline}</p>
+            <p className="mt-2 text-xs text-slate-500">{ex.summary}</p>
             <div className="mt-4 h-56" aria-label="Score breakdown chart">
               <ResponsiveContainer><BarChart data={chart} layout="vertical" margin={{ left: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} /><XAxis type="number" domain={[0, 100]} /><YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 12 }} />
-                <Tooltip formatter={(v: number, _n, p: any) => [p.payload.nv ? "not verifiable (scored 0, widens range)" : `${v.toFixed(1)}/100`, "Component score"]} />
+                <Tooltip formatter={(v: number, _n, p: any) => [p.payload.nv ? "not verifiable (see score range)" : `${v.toFixed(1)}/100`, "Component score"]} />
                 <Bar dataKey="score">{chart.map((d, i) => <Cell key={i} fill={d.nv ? "#cbd5e1" : "#4f46e5"} />)}</Bar></BarChart></ResponsiveContainer>
             </div>
             <table className="mt-2 w-full text-sm"><thead><tr><th className="th">Component</th><th className="th">Score</th><th className="th">Effective weight</th><th className="th">Points</th></tr></thead>
-              <tbody className="divide-y divide-slate-100">{ex.component_effects.map((e) => <tr key={e.component}><td className="td">{e.label}</td><td className="td">{e.status === "not_required" ? "n/a" : fmt(e.score)}</td><td className="td">{fmt(e.weight)}%</td><td className="td">{fmt(e.contribution, 2)}</td></tr>)}
+              <tbody className="divide-y divide-slate-100">{ex.component_effects.map((e) => <tr key={e.component}><td className="td">{e.label}</td><td className="td">{e.status === "not_required" || e.score == null ? "n/a" : fmt(e.score)}</td><td className="td">{e.score == null && e.status !== "not_required" ? "left out (no evidence)" : `${fmt(e.weight)}%`}</td><td className="td">{fmt(e.contribution, 2)}</td></tr>)}
                 <tr className="font-semibold"><td className="td">Total</td><td className="td" /><td className="td">100%</td><td className="td">{fmt(r.overall, 2)}</td></tr></tbody></table>
+          </section>
+
+          <section className="card p-5" data-testid="skills-glance">
+            <h2 className="mb-2 font-semibold">Skills vs the job</h2>
+            <p className="mb-2 text-sm text-slate-600">{r.matched_skills.length} exact · {r.related_skills.length} related (partial credit) · {r.missing_skills.length} missing, out of {r.requirements.length} requirements.</p>
+            <SkillChips matched={r.matched_skills} related={r.related_skills} missing={r.missing_skills} />
+            <div className="mt-2"><SkillLegend /></div>
+          </section>
+
+          <section className="card p-5" data-testid="profile">
+            <h2 className="mb-3 font-semibold">Candidate profile (extracted)</h2>
+            <dl className="grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+              <div><dt className="label">Name</dt><dd>{c.name}</dd></div>
+              <div><dt className="label">Email</dt><dd>{c.fields.email?.value ?? "not found"}</dd></div>
+              <div><dt className="label">Phone</dt><dd>{c.fields.phone?.value ?? "not found"}</dd></div>
+              <div><dt className="label">Current / latest role</dt><dd>{r.latest_role ? (r.role_source === "headline" ? <em title="No dated job title; this is how the resume describes itself">{r.latest_role} (profile)</em> : r.latest_role) : "not stated"}</dd></div>
+              <div><dt className="label">Education</dt><dd>{topEdu ? `${topEdu.degree}${topEdu.institution ? `, ${topEdu.institution}` : ""}${topEdu.year ? ` (${topEdu.year})` : ""}` : "not found"}</dd></div>
+              <div><dt className="label">Experience</dt><dd>{r.experience.roles.length === 0 ? (r.experience.claimed_years ? `claims ${r.experience.claimed_years} y (no dated roles)` : "no dated roles found") : `${fmt(r.experience.total_effective_years)} y total · ${fmt(r.experience.relevant_effective_years)} y relevant`}</dd></div>
+            </dl>
+            <div className="mt-3"><div className="label">Skills found in the resume ({c.skills.length})</div>
+              <div className="mt-1 flex flex-wrap gap-1">{c.skills.length ? c.skills.map((s: any) => <Chip key={s.name}>{s.name}</Chip>) : <span className="text-sm text-slate-500">none extracted</span>}</div></div>
           </section>
 
           <section className="card p-5">
@@ -70,9 +103,7 @@ export default function Candidate() {
 
           <section className="card p-5">
             <h2 className="mb-3 font-semibold">Requirement evidence <span className="text-sm font-normal text-slate-500">(click a row to inspect the resume text)</span></h2>
-            <div className="mb-3 flex flex-wrap gap-1.5 text-xs">
-              {gap.matched.map((s) => <Chip key={s} tone="green">{s}</Chip>)}{gap.related.map((s) => <Chip key={s} tone="amber">{s} (related)</Chip>)}{gap.missing.map((s) => <Chip key={s} tone="red">{s} missing</Chip>)}
-            </div>
+            <div className="mb-3"><SkillChips matched={gap.matched} related={gap.related} missing={gap.missing} /></div>
             <table className="w-full"><thead><tr><th className="th" /><th className="th">Requirement</th><th className="th">Importance</th><th className="th">Match</th><th className="th">Credit</th></tr></thead>
               <tbody>{r.requirements.filter((q) => q.importance !== "ignored").map((q) => (
                 <Fragment key={q.requirement_id}>
@@ -84,18 +115,25 @@ export default function Candidate() {
           </section>
 
           <section className="card p-5">
-            <h2 className="mb-2 font-semibold">Experience</h2>
-            <p className="text-sm">Relevant <strong>{fmt(r.experience.relevant_effective_years)} y</strong> of <strong>{fmt(r.experience.total_effective_years)} y</strong> total (required {r.experience.required_min_years ? `${r.experience.required_min_years}+ y` : "not stated"}).</p>
-            <p className="text-xs text-slate-500">{r.experience.methodology}</p>
+            <h2 className="mb-3 font-semibold">Experience comparison</h2>
+            <div className="grid gap-3 text-sm sm:grid-cols-4" data-testid="experience-comparison">
+              <div className="rounded-lg border border-slate-200 p-3"><div className="label">Job requires</div><div className="text-lg font-semibold">{need ? `${need}+ y` : "not stated"}</div>{r.experience.preferred_years && <div className="text-xs text-slate-500">preferred {r.experience.preferred_years} y</div>}</div>
+              <div className="rounded-lg border border-slate-200 p-3"><div className="label">Candidate, relevant</div><div className="text-lg font-semibold">{fmt(r.experience.relevant_effective_years)} y</div></div>
+              <div className="rounded-lg border border-slate-200 p-3"><div className="label">Candidate, total</div><div className="text-lg font-semibold">{fmt(r.experience.total_effective_years)} y</div></div>
+              <div className={`rounded-lg p-3 ring-1 ring-inset ${verdictTone(xv.tone)}`}><div className="label">Verdict</div><div className="font-semibold" data-testid="experience-verdict">{xv.label}</div></div>
+            </div>
+            {pct !== null && <div className="mt-3" aria-label={`Relevant experience is ${pct}% of the requirement`}><div className="h-2 w-full overflow-hidden rounded-full bg-slate-100"><div className={`h-2 ${xv.tone === "green" ? "bg-emerald-500" : xv.tone === "amber" ? "bg-amber-500" : "bg-red-400"}`} style={{ width: `${pct}%` }} /></div><div className="mt-1 text-xs text-slate-500">{pct}% of the required experience is relevant to this job</div></div>}
+            <p className="mt-3 text-xs text-slate-500">{r.experience.methodology}</p>
             <ul className="mt-3 space-y-2">{r.experience.roles.map((x: any, i: number) => (
-              <li key={i} className="rounded-lg border border-slate-200 p-3 text-sm"><div className="flex flex-wrap items-center gap-2"><strong>{x.title}</strong><span className="text-slate-500">{x.company}</span><Chip>{x.type.replace("_", " ")}</Chip>{x.relevant ? <Chip tone="green">relevant</Chip> : <Chip>not relevant</Chip>}{x.date_uncertain && <Chip tone="amber">dates uncertain</Chip>}</div>
+              <li key={i} className="rounded-lg border border-slate-200 p-3 text-sm"><div className="flex flex-wrap items-center gap-2"><strong>{x.title}</strong>{x.fit != null && <span className="text-xs text-slate-500" title="Share of the job's weighted requirements this role demonstrates">fit {Math.round(x.fit * 100)}%</span>}<span className="text-slate-500">{x.company}</span><Chip>{x.type.replace("_", " ")}</Chip>{x.relevant ? <Chip tone="green">relevant</Chip> : <Chip>not relevant</Chip>}{x.date_uncertain && <Chip tone="amber">dates uncertain</Chip>}</div>
                 <div className="text-xs text-slate-500">{x.start} → {x.end} · {x.months} months · p.{x.page}</div>{x.matching_skills?.length > 0 && <div className="mt-1 text-xs text-slate-600">Matching skills: {x.matching_skills.join(", ")}</div>}</li>))}</ul>
             {r.experience.notes?.map((n: string, i: number) => <p key={i} className="mt-1 text-xs text-slate-500">• {n}</p>)}
           </section>
 
           <section className="card p-5">
             <h2 className="mb-2 font-semibold">Education & projects</h2>
-            <p className="text-sm text-slate-600">{r.education.note}</p>
+            <p className="text-sm"><span className="text-slate-500">Job requires:</span> <strong>{r.education.required_level ? EDU_LABEL[r.education.required_level] ?? "degree" : "not stated"}</strong> · <span className="text-slate-500">Candidate:</span> <strong>{r.education.candidate_level ? EDU_LABEL[r.education.candidate_level] : "not found"}</strong> <span className={`ml-1 rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${verdictTone(ev.tone)}`}>{ev.label}</span></p>
+            <p className="mt-1 text-sm text-slate-600">{r.education.note}</p>
             <ul className="mt-2 text-sm">{r.education.entries.map((e: any, i: number) => <li key={i}>• {e.degree} — {e.institution} {e.year ?? ""} <span className="text-xs text-slate-400">p.{e.page}</span></li>)}</ul>
             <p className="mt-3 text-sm text-slate-600">{r.projects.note}</p>
             {r.projects.top_projects?.map((p: any, i: number) => <p key={i} className="text-sm">• {p.name ?? p.title} <span className="text-xs text-slate-400">similarity {fmt(p.similarity, 2)}</span></p>)}
@@ -134,7 +172,7 @@ export default function Candidate() {
             {c.diagnostics.ocr_used && <Chip tone="amber">OCR used</Chip>}
             {c.protected_lines_removed > 0 && <p className="mt-1 text-xs text-slate-500">{c.protected_lines_removed} protected-attribute line(s) were removed before matching.</p>}
             {c.injection_flags.length > 0 && <p className="mt-1 text-xs text-amber-700">Text resembling instructions to an AI was found and ignored (treated as data only).</p>}
-            {c.diagnostics.warnings.map((w: string, i: number) => <p key={i} className="text-xs text-amber-700">⚠ {w}</p>)}
+            {shownWarnings.map((w, i) => <p key={i} className="text-xs text-amber-700">⚠ {w}</p>)}
           </section>
         </div>
       </div>

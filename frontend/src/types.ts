@@ -23,6 +23,8 @@ export interface ResultRow {
   review_status: string; parse_status: string; requirements: ReqResult[]; matched_skills: string[]; related_skills: string[];
   semantic_skills: string[]; missing_skills: string[]; candidate_skills: string[]; sensitivity: { rank_min: number; rank_max: number; stable: boolean; scenarios: number };
   override: any; needs_review: boolean;
+  role_source: "job" | "headline" | "none"; employment_count: number; claimed_years: number | null;
+  parse_review: { needs_review: boolean; codes?: string[]; reasons: string[] };
 }
 export interface ResultsResponse {
   job: { id: number; title: string }; run: RunInfo; total: number; page: number; page_size: number; items: ResultRow[];
@@ -37,9 +39,9 @@ export interface CandidateDetail {
     diagnostics: any; file: { filename: string; pages: number }; notes: { id: number; text: string; created_at: string }[];
   };
   result: ResultRow & { run: RunInfo; experience: any; education: any; projects: any; semantic: any; evidence: Evidence[]; overrides: any[];
-    explanation: { summary: string; why_matched: string[]; why_not_matched: string[]; missing_information: string[]; component_effects: any[]; evidence_supporting_score: { requirement: string; text: string; page: number | null }[]; disclaimer: string } };
+    explanation: { headline: string; summary: string; why_matched: string[]; why_not_matched: string[]; missing_information: string[]; component_effects: any[]; evidence_supporting_score: { requirement: string; text: string; page: number | null }[]; disclaimer: string } };
 }
-export interface UploadItem { filename: string; status: string; error_code?: string; error_message?: string; resume_id?: number; candidate_id?: number; possible_duplicate_of?: number; warnings?: string[] }
+export interface UploadItem { filename: string; status: string; needs_review?: boolean; review_reasons?: string[]; error_code?: string; error_message?: string; resume_id?: number; candidate_id?: number; possible_duplicate_of?: number; warnings?: string[] }
 export interface UploadResponse { batch_id: string; total: number; summary: Record<string, number>; results: UploadItem[] }
 export interface ResumeRow { id: number; batch_id: string; filename: string; file_type: string; file_size: number; status: string; error_code: string | null; error_message: string | null; page_count: number | null; candidate_id: number | null; processing_ms: number | null; created_at: string; diagnostics: any }
 export interface WhatIfResponse { original_run_id: number; weights: Weights; persisted: boolean; note: string; rows: { candidate_id: number; name: string; original_rank: number; simulated_rank: number; rank_change: number; original_score: number; simulated_score: number; score_change: number }[] }

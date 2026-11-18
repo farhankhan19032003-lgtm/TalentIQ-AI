@@ -6,7 +6,7 @@ import { useApp } from "../ctx";
 import { useAsync } from "../hooks";
 import { useToast } from "../components/Toast";
 import WeightsPanel from "../components/WeightsPanel";
-import { Chip, Disclaimer, Empty, ErrorBox, PageTitle, Pager, ScoreBadge, Spinner, Stat } from "../components/ui";
+import { Chip, Disclaimer, Empty, ErrorBox, PageTitle, Pager, ScoreBadge, SkillChips, SkillLegend, Spinner, Stat } from "../components/ui";
 import { ResultsResponse, RunInfo, Settings } from "../types";
 import { COMP_LABEL, STATUSES, STATUS_LABEL, fmt, groupChangesByPrevious, weightsValid } from "../utils";
 
@@ -145,28 +145,28 @@ export default function Ranking() {
             <div className="card overflow-x-auto"><table className="w-full">
               <thead className="border-b border-slate-200"><tr><th className="th"><input type="checkbox" aria-label="Select all on this page" checked={allOnPage} onChange={toggleAllOnPage} /></th><th className="th">#</th><th className="th">Candidate</th><th className="th">Match %</th>
                 {Object.keys(COMP_LABEL).slice(0, 4).map((k) => <th key={k} className="th hidden xl:table-cell">{COMP_LABEL[k].split(" ")[0]}</th>)}
-                <th className="th">Experience (relevant / total)</th><th className="th">Matched skills</th><th className="th">Confidence</th><th className="th">Status</th></tr></thead>
+                <th className="th">Experience (relevant / total)</th><th className="th">Matched skills (exact / related / missing)</th><th className="th">Confidence</th><th className="th">Status</th></tr></thead>
               <tbody className="divide-y divide-slate-100">{items.map((r) => (
                 <tr key={r.result_id} className="hover:bg-slate-50">
                   <td className="td"><input type="checkbox" aria-label={`Select ${r.name}`} checked={sel.includes(r.candidate_id)} onChange={() => toggle(r.candidate_id)} /></td>
                   <td className="td font-semibold">{r.rank}{r.sensitivity && !r.sensitivity.stable && <span title={`Rank varies ${r.sensitivity.rank_min}–${r.sensitivity.rank_max} under ±10pp weight changes`} className="ml-1 text-xs text-amber-600">±</span>}</td>
-                  <td className="td min-w-[9.5rem]"><Link className="font-medium text-brand-700 hover:underline" to={`/candidates/${r.candidate_id}`}>{r.name}</Link><div className="text-xs text-slate-500">{r.latest_role ?? "—"}</div></td>
+                  <td className="td min-w-[9.5rem]"><Link className="font-medium text-brand-700 hover:underline" to={`/candidates/${r.candidate_id}`}>{r.name}</Link><div className="text-xs text-slate-500" title={r.role_source === "headline" ? "Role as the resume describes itself; no dated job title was found" : undefined}>{r.latest_role ? (r.role_source === "headline" ? <em>{r.latest_role} (profile)</em> : r.latest_role) : "Role not stated"}</div></td>
                   <td className="td"><ScoreBadge score={r.overall} low={r.score_low} high={r.score_high} />{r.override && <Chip tone="amber">override</Chip>}</td>
                   {Object.keys(COMP_LABEL).slice(0, 4).map((k) => <td key={k} className="td hidden xl:table-cell tabular-nums">{r.components[k]?.score == null ? "n/v" : fmt(r.components[k].score, 0)}</td>)}
-                  <td className="td tabular-nums">{fmt(r.relevant_years)} / {fmt(r.total_years)} y</td>
-                  <td className="td min-w-[14rem]" data-testid={`matched-${r.candidate_id}`}>
-                    {r.matched_skills.length === 0 ? <span className="text-xs text-slate-400">none matched</span> : (
-                      <div className="flex flex-wrap gap-1" title={`Matched: ${r.matched_skills.join(", ")}`}>
-                        {r.matched_skills.slice(0, 4).map((s) => <Chip key={s} tone="green">{s}</Chip>)}
-                        {r.matched_skills.length > 4 && <Chip>+{r.matched_skills.length - 4}</Chip>}
-                      </div>)}
-                    {r.missing_skills.length > 0 && <div className="mt-1 text-xs text-red-600" title={`Missing: ${r.missing_skills.join(", ")}`}>{r.missing_skills.length} missing</div>}
+                  <td className="td tabular-nums">{r.employment_count === 0 && !r.claimed_years
+                    ? <span className="text-xs text-slate-500" title="No Experience/Internship section with dates was found (typical for freshers)">No dated roles</span>
+                    : r.employment_count === 0 ? <span className="text-xs text-amber-700" title="Years stated in the resume text, not verifiable from dated roles">claims {r.claimed_years} y</span>
+                    : <>{fmt(r.relevant_years)} / {fmt(r.total_years)} y</>}</td>
+                  <td className="td min-w-[15rem]" data-testid={`matched-${r.candidate_id}`}>
+                    <SkillChips matched={r.matched_skills} related={r.related_skills} missing={r.missing_skills} max={{ matched: 3, related: 2, missing: 2 }} />
+                    <div className="mt-1 text-xs text-slate-500">{r.matched_skills.length} exact · {r.related_skills.length} related · {r.missing_skills.length} missing</div>
                   </td>
-                  <td className="td tabular-nums">{fmt(r.confidence, 0)}%{r.needs_review && <span className="ml-1"><Chip tone="amber">review</Chip></span>}</td>
+                  <td className="td tabular-nums">{fmt(r.confidence, 0)}%{r.needs_review && <span className="ml-1" title={r.parse_review?.reasons?.length ? r.parse_review.reasons.join(" ") : "Low confidence, incomplete data or a wide score range"}><Chip tone="amber">{r.parse_review?.needs_review ? "needs review" : "review"}</Chip></span>}</td>
                   <td className="td">{STATUS_LABEL[r.review_status] ?? r.review_status}</td></tr>))}
               </tbody></table>
               <Pager page={page} pageSize={PAGE} total={res.data.total} onPage={setPage} /></div>
           )}
+          <div className="mt-2"><SkillLegend /></div>
           <p className="mt-2 text-xs text-slate-500">“n/v” = not verifiable from the resume (not treated as a mismatch). “±” = rank is sensitive to weight changes. Score ranges show what the score could be if missing evidence were supplied.</p>
           <div className="mt-3"><Disclaimer /></div>
         </>

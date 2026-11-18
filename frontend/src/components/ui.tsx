@@ -58,6 +58,29 @@ export const Chip = ({ children, tone = "slate" }: { children: ReactNode; tone?:
   }[tone];
   return <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${c}`}>{children}</span>;
 };
+/** One skill, one of three visually distinct states (shape + icon + colour, so it does not rely on colour alone). */
+export function SkillChip({ name, kind }: { name: string; kind: "matched" | "related" | "missing" }) {
+  const base = "inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium";
+  if (kind === "matched") return <span data-kind="matched" className={`${base} bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-300`} title="Exact match: the skill is evidenced in the resume">✓ {name}</span>;
+  if (kind === "related") return <span data-kind="related" className={`${base} border border-dashed border-amber-500 bg-amber-50 text-amber-900`} title="Related skill only: partial credit, not treated as equivalent">≈ {name}</span>;
+  return <span data-kind="missing" className={`${base} border border-red-300 bg-white text-red-700`} title="No evidence in the resume">✗ {name}</span>;
+}
+/** Exact / related / missing skills, in that order. `max` caps each group (the rest collapse into "+N"). */
+export function SkillChips({ matched, related, missing, max }: { matched: string[]; related: string[]; missing: string[]; max?: { matched: number; related: number; missing: number } }) {
+  const groups: ["matched" | "related" | "missing", string[]][] = [["matched", matched], ["related", related], ["missing", missing]];
+  return (
+    <div className="flex flex-wrap gap-1">
+      {groups.flatMap(([kind, names]) => {
+        const cap = max ? max[kind] : names.length;
+        return [...names.slice(0, cap).map((n) => <SkillChip key={`${kind}-${n}`} name={n} kind={kind} />),
+          names.length > cap ? <span key={`${kind}-more`} className="inline-block rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600" title={names.slice(cap).join(", ")}>+{names.length - cap} {kind}</span> : null];
+      })}
+    </div>
+  );
+}
+export const SkillLegend = () => (
+  <p className="text-xs text-slate-500"><SkillChip name="exact match" kind="matched" /> <SkillChip name="related (partial credit)" kind="related" /> <SkillChip name="missing" kind="missing" /></p>
+);
 export const Disclaimer = ({ text }: { text?: string }) => (
   <p className="rounded-xl border border-slate-200/70 bg-slate-50 p-3 text-xs text-slate-600">{text ?? "Decision-support only. Scores are not hiring probabilities; a recruiter makes every decision."}</p>
 );

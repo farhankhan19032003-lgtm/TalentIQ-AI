@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle2, UploadCloud, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, UploadCloud, XCircle } from "lucide-react";
 import { api, errMsg } from "../api";
 import { Chip, ErrorBox, PageTitle } from "../components/ui";
 import { UploadItem, UploadResponse } from "../types";
@@ -69,8 +69,12 @@ export default function Upload() {
             <tbody className="divide-y divide-slate-100">
               {res.results.map((r, i) => (
                 <tr key={i}><td className="td">{r.filename}</td>
-                  <td className="td"><span className="inline-flex items-center gap-1">{r.status === "parsed" ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <XCircle className="h-4 w-4 text-red-500" />}{r.status}</span></td>
-                  <td className="td text-slate-600">{r.error_message ?? (r.possible_duplicate_of ? "Possible duplicate person (same email/name)" : r.warnings?.join("; ") ?? "")}</td>
+                  <td className="td"><span className="inline-flex items-center gap-1">{
+                    r.status === "parsed" && r.needs_review ? <><AlertTriangle className="h-4 w-4 text-amber-500" /><span className="text-amber-700">parsed: needs review</span></>
+                    : r.status === "parsed" ? <><CheckCircle2 className="h-4 w-4 text-emerald-600" />parsed</>
+                    : ["scanned_no_ocr", "no_text"].includes(r.error_code ?? "") ? <><AlertTriangle className="h-4 w-4 text-amber-500" /><span className="text-amber-700">needs review: no text</span></>
+                    : <><XCircle className="h-4 w-4 text-red-500" />{r.status}</>}</span></td>
+                  <td className="td text-slate-600">{r.error_message ?? (r.possible_duplicate_of ? "Possible duplicate person (same email/name)" : r.warnings?.join(" ") ?? "")}</td>
                   <td className="td">{r.status === "failed" && <button className="btn-ghost" onClick={() => retry(r)}>Retry</button>}</td></tr>
               ))}
             </tbody></table>
