@@ -26,9 +26,9 @@ Redux|Frontend||
 Next.js|Frontend|nextjs|
 Bootstrap|Frontend||
 jQuery|Frontend||
-FastAPI|Backend|fast api|
-Django|Backend|django rest framework;drf|
-Flask|Backend||
+FastAPI|Backend|fast api|Flask;Django
+Django|Backend|django rest framework;drf|Flask;FastAPI
+Flask|Backend||Django;FastAPI
 Spring Boot|Backend|springboot|
 Spring|Backend|spring framework|Spring Boot|ambiguous
 Hibernate|Backend|jpa|
@@ -42,8 +42,8 @@ gRPC|Backend||
 Celery|Backend||
 SQLAlchemy|Backend||
 SQL|Databases|structured query language;t-sql;pl/sql;sql queries|PostgreSQL;MySQL;SQLite;SQL Server;Oracle
-PostgreSQL|Databases|postgres;psql|
-MySQL|Databases|mariadb|
+PostgreSQL|Databases|postgres;psql|MySQL;SQL Server
+MySQL|Databases|mariadb|PostgreSQL;SQL Server
 SQLite|Databases||
 MongoDB|Databases|mongo|
 Redis|Databases||

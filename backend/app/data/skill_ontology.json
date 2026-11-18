@@ -315,7 +315,10 @@
    "aliases": [
     "fast api"
    ],
-   "related": [],
+   "related": [
+    "Flask",
+    "Django"
+   ],
    "ambiguous": false,
    "case_sensitive": false
   },
@@ -326,7 +329,10 @@
     "django rest framework",
     "drf"
    ],
-   "related": [],
+   "related": [
+    "Flask",
+    "FastAPI"
+   ],
    "ambiguous": false,
    "case_sensitive": false
   },
@@ -334,7 +340,10 @@
    "name": "Flask",
    "category": "Backend",
    "aliases": [],
-   "related": [],
+   "related": [
+    "Django",
+    "FastAPI"
+   ],
    "ambiguous": false,
    "case_sensitive": false
   },
@@ -498,7 +507,10 @@
     "postgres",
     "psql"
    ],
-   "related": [],
+   "related": [
+    "MySQL",
+    "SQL Server"
+   ],
    "ambiguous": false,
    "case_sensitive": false
   },
@@ -508,7 +520,10 @@
    "aliases": [
     "mariadb"
    ],
-   "related": [],
+   "related": [
+    "PostgreSQL",
+    "SQL Server"
+   ],
    "ambiguous": false,
    "case_sensitive": false
   },

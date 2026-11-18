@@ -121,3 +121,12 @@ def test_missing_fields_are_null_not_invented():
     assert p["fields"]["phone"]["value"] is None and p["fields"]["linkedin"]["value"] is None
     assert p["fields"]["phone"]["status"] == "unknown"
     assert p["employment"] == [] and p["education"] == []
+
+
+def test_peer_skills_give_related_credit_but_are_not_equivalent():
+    """Same-tier alternatives (Flask for Django, MySQL for PostgreSQL) are related evidence (partial credit, never a full match)."""
+    assert {"Flask", "Django"} <= set(ontology.related("FastAPI"))
+    assert {"Flask", "FastAPI"} <= set(ontology.related("Django"))
+    assert "MySQL" in ontology.related("PostgreSQL") and "PostgreSQL" in ontology.related("MySQL")
+    r = ex("Built services in Flask on MySQL")
+    assert "Django" not in r and "PostgreSQL" not in r      # extraction still reports only what is written
