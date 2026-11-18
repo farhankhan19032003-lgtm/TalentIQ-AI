@@ -44,7 +44,7 @@ Overall = 0.40 * Technical + 0.25 * Semantic + 0.20 * Experience + 0.10 * Educat
 - **Project/Domain:** overlap of project and domain terms with the JD.
 - A component the JD does not ask for is dropped and the others are renormalised. Missing evidence scores 0 but widens the score range (for example `62-75`) instead of counting as a mismatch.
 
-Details: `docs/AI_MATCHING_ALGORITHM.md`.
+Details: `docs/ALGORITHM.md`.
 
 ## Recording tips
 - Keep each take under about 9 minutes; cut the pauses while matching runs (it takes about 5 seconds).

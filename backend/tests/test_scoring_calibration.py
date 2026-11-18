@@ -128,3 +128,20 @@ def test_headline_sentence_is_plain_language(scored):
     h = headline(m)
     assert h.startswith(fit_label(m["overall"])) and "must-have" in h and "Relevant experience" in h
     assert fit_label(85) == "Strong match" and fit_label(72) == "Good match" and fit_label(55) == "Partial match" and fit_label(10) == "Poor match"
+
+
+def test_merged_requirement_survives_saving_through_the_api(client):
+    """Regression: the API schema used to drop `any_of`, turning 'Unit Testing (pytest)' into a literal text search that matched nothing."""
+    from helpers import make_docx
+    analysis = client.post("/api/jobs/analyze", json={"description": JD_TEXT}).json()
+    job = client.post("/api/jobs", json={**analysis, "description": JD_TEXT, "title": "Python Backend Developer (calibration test)"}).json()
+    req = next(r for r in job["requirements"] if r["name"] == "Unit Testing (pytest)")
+    assert req["any_of"] == ["Unit Testing", "pytest"] and not req["custom"]
+    up = client.post("/api/resumes/upload", files=[("files", ("diya_calibration.docx", make_docx(MEDIUM), "application/octet-stream"))]).json()
+    cid = up["results"][0]["candidate_id"]
+    assert cid
+    client.post(f"/api/matching/run/{job['id']}")
+    detail = client.get(f"/api/matching/candidate/{cid}", params={"job_id": job["id"]}).json()["result"]
+    ut = next(r for r in detail["requirements"] if r["name"] == "Unit Testing (pytest)")
+    assert ut["match_type"] == "exact" and ut["satisfied_by"] == "Unit Testing"
+    assert detail["explanation"]["headline"]

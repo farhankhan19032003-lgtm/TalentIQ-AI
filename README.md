@@ -25,7 +25,7 @@ Runs fully offline on a CPU-only laptop (8 GB RAM). No paid APIs, no LLM, no Oll
 ```
 Overall = 0.40·Technical + 0.25·Semantic + 0.20·Experience + 0.10·Education + 0.05·Project/Domain
 ```
-Weights are configurable (must sum to 100 %). Components a job does not require are dropped and the rest are renormalised. Missing candidate evidence scores 0 but **widens the score range** (shown as e.g. `62–75`) instead of being treated as a mismatch. Details: [docs/AI_MATCHING_ALGORITHM.md](docs/AI_MATCHING_ALGORITHM.md).
+Weights are configurable (must sum to 100 %); every other number (credits, thresholds, calibration ranges) lives in `backend/app/core/config.py` and is explained in [docs/ALGORITHM.md](docs/ALGORITHM.md). Components a job does not require are dropped and the rest are renormalised. Missing candidate evidence scores 0 but **widens the score range** (shown as e.g. `62–75`) instead of being treated as a mismatch. Details: [docs/ALGORITHM.md](docs/ALGORITHM.md).
 
 ### Architecture
 
@@ -42,6 +42,57 @@ flowchart LR
   MATCH --> RANK[Ranking + sensitivity] --> DB
   DB --> EXPL[Explanation + exports] --> API
 ```
+
+### Tech stack and why
+| Layer | Choice | Why |
+|---|---|---|
+| UI | React 18 + Vite + TypeScript + Tailwind + Recharts | typed components, fast dev loop, charts for the score breakdown |
+| API | FastAPI + Pydantic | automatic validation and OpenAPI docs (`/api/docs`), simple to test with `TestClient` |
+| Database | PostgreSQL 16 (SQLite fallback) via SQLAlchemy 2 + Alembic | the assignment prefers PostgreSQL; migrations are versioned; SQLite keeps local setup to zero |
+| Parsing | PyMuPDF (+ pdfplumber fallback), python-docx, optional Tesseract OCR | text PDFs, DOCX including tables/text boxes, scanned PDFs when Tesseract is installed |
+| Semantic matching | Sentence-Transformers `all-MiniLM-L6-v2` (pure-NumPy runtime included), TF-IDF fallback | small (90 MB), CPU-only, works offline; the fallback is labelled in the UI |
+| Skills | hand-edited 160-skill ontology (synonyms, related skills) | explainable, editable, no model needed for exact/related matching |
+| Packaging | Docker Compose (db + backend + nginx frontend), Codespaces config | one command to run |
+
+### Project structure
+```
+backend/app/
+  api/          FastAPI routers: jobs, resumes, matching, misc (reports, settings, analytics), shared row builders (views.py)
+  core/         config.py (ALL scoring weights, credits, thresholds and calibration ranges), database.py, errors.py
+  models/       SQLAlchemy tables      schemas/  request/response models
+  services/     document_parser.py     PDF/DOCX -> text (OCR, text boxes, tables)
+                resume_extractor.py    text -> name, contact, employment (dates), education, projects, skills
+                skill_extractor.py     ontology lookup, synonyms, listed-vs-context evidence
+                jd_analyzer.py         job text -> requirements, years, education
+                matching_pipeline.py   per-candidate scoring (the 5 components)
+                experience_analyzer.py month-set experience arithmetic + role relevance
+                semantic_matcher.py    MiniLM / TF-IDF similarity and calibration
+                ranking_engine.py      weights, final score, ranking, weight sensitivity
+                explanation_engine.py  headline, why matched / why not, per-component points
+                pipeline.py            ingestion + run orchestration      exports.py  CSV/Excel/PDF reports
+  data/         skill_ontology.json (+ editable source table)
+backend/tests/  pytest suite (parsing layouts, scoring bands, API, security, eval regression)
+backend/eval/   benchmark runner and recorded results
+frontend/src/   pages/ (Jobs, Upload, Ranking, Candidate, ...), components/, utils.ts, types.ts, test/
+sample_data/    fictional JDs and resumes, bad-file cases, ground truth, demo_set.json
+scripts/        load_samples.py, generate_sample_data.py, fetch_minilm.py, build_ontology.py
+docs/           ALGORITHM.md, ARCHITECTURE.md, API_DOCUMENTATION.md, DEMO_SCRIPT.md, INTERVIEW_PREP.md, ...
+```
+
+### API endpoints (full reference: [docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md), live docs at `/api/docs`)
+| Method and path | Purpose |
+|---|---|
+| `POST /api/jobs/analyze` · `POST /api/jobs/extract-text` | preview the extraction for pasted text / read text from an uploaded PDF, DOCX or TXT JD |
+| `POST /api/jobs` · `GET/PUT/DELETE /api/jobs/{id}` | save, read, edit (requirements, min years, qualification) and delete a job |
+| `POST /api/resumes/upload` | batch upload (multipart `files`): per-file `parsed` / `failed` / `rejected` / `duplicate`, plus `needs_review` |
+| `GET /api/resumes` · `GET /api/resumes/{id}` · `POST /api/resumes/{id}/retry` · `DELETE /api/resumes/{id}` | list, diagnostics, retry, delete |
+| `POST /api/matching/run/{job_id}` | score and rank every parsed candidate (custom weights optional) |
+| `GET /api/matching/results/{job_id}` | the ranking table (filters, sort, pagination) |
+| `GET /api/matching/candidate/{id}?job_id=` | candidate detail: extracted data, components, requirements, experience, explanation |
+| `GET /api/matching/compare` · `POST /api/matching/whatif/{job_id}` | side-by-side compare, weight what-if |
+| `GET /api/reports/{job_id}/csv\|excel\|pdf` | exports (contact details excluded in blind mode) |
+| `PATCH /api/candidates/{id}/status` · `POST /api/matching/results/{id}/override` | recruiter decisions (audit-logged, never automatic) |
+| `GET /api/health` · `GET /api/settings` | status (embedding backend, OCR) and the live scoring configuration |
 
 ## Quick start (Windows PowerShell)
 
@@ -69,7 +120,7 @@ Open http://localhost:5173 → **Jobs → New job** (paste or upload a JD, revie
 
 **Semantic matching.** The semantic component uses the sentence-embedding model all-MiniLM-L6-v2. `python scripts/fetch_minilm.py` downloads it once (about 90 MB, every file checked against the hash Hugging Face publishes) into `backend/storage/models/`. The app runs it with `sentence-transformers` when that is installed, and otherwise with its own **pure-NumPy implementation of the same model** (`backend/app/services/minilm_numpy.py`: same weights, same WordPiece tokenizer, mean pooling, 256-token limit; no torch needed, so it works on any Python version and on locked-down machines). `EMBEDDING_BACKEND=auto` (the default) uses MiniLM when the model files exist and otherwise falls back to TF-IDF, and the ranking page says which one was used and why. `EMBEDDING_BACKEND=tfidf` forces TF-IDF, `minilm` insists on MiniLM.
 
-**Sample data (all fictional).** `sample_data/` holds 6 job descriptions (`.txt`, plus a `.docx` copy of one), 35+ resumes (PDF and DOCX, from strong to poor fit), deliberately bad files (corrupt PDF/DOCX, password-protected PDF, fake extension, an image-only scanned PDF for OCR) and `ground_truth/ground_truth.json`. With the app running, load it through the API: `python scripts/load_samples.py` (Docker, port 8080) or `python scripts/load_samples.py --base http://localhost:8000 --jd python_backend_developer --no-bad-files --run`. Regenerate the files with `python scripts/generate_sample_data.py` (from the repo root).
+**Sample data (all fictional).** `sample_data/` holds 6 job descriptions (`.txt`, plus a `.docx` copy of one), 35+ resumes (PDF and DOCX, from strong to poor fit), deliberately bad files (corrupt PDF/DOCX, password-protected PDF, fake extension, an image-only scanned PDF for OCR) and `ground_truth/ground_truth.json`. With the app running, load it through the API: `python scripts/load_samples.py` (Docker, port 8080) or `python scripts/load_samples.py --base http://localhost:8000 --jd python_backend_developer --no-bad-files --run`. For a deterministic 3-minute demo use `python scripts/load_samples.py --demo --run`: it loads the Python Backend JD, **15 fictional resumes (8 PDF, 7 DOCX) from strong to poor fit** and 3 edge cases (scanned, corrupt, password-protected) listed in `sample_data/demo_set.json`. Regenerate the files with `python scripts/generate_sample_data.py` (from the repo root).
 
 ### Run with Docker (one command)
 
@@ -83,12 +134,13 @@ Three containers: **PostgreSQL 16**, the **FastAPI backend** (Python 3.13, Tesse
 
 On the repository page choose **Code, Codespaces, Create codespace on main**. The `.devcontainer/` config installs Docker inside the Codespace, builds the same `docker compose` stack and starts it. The first start takes several minutes (it builds the images and downloads the 90 MB MiniLM model); later starts reuse the images. When it is ready, open the **Ports** tab and click the globe icon next to port **8080** ("TalentIQ AI"). The app starts empty: upload a JD and resumes as usual. The port is private to your GitHub account by default; if you make it public to share a demo link, anyone with the link can use the app and see what is uploaded, so use only fictional resumes and switch it back to private afterwards. Codespaces has a free monthly quota and stops after inactivity, so the link only works while the Codespace is running. This setup was written to match the verified compose stack but has not been run on GitHub's infrastructure yet.
 
-### Tests
+### Tests and lint
 
 ```powershell
 cd backend ; python -m pytest -q          # backend suite
 cd ..\frontend ; npm test                 # component/unit tests
 cd ..\backend ; python eval\run_evaluation.py --backend minilm --tag mine  # benchmark (use --backend tfidf to compare)
+ruff check app tests eval                 # lint (rules in backend/ruff.toml)
 ```
 See [docs/TESTING.md](docs/TESTING.md) for what each suite covers and the latest recorded results.
 
@@ -110,7 +162,7 @@ Honest notes: the first run ranked three "Strong match" resumes 24th, 28th and 3
 Environment variables only (no `.env` auto-loading) — see [.env.example](.env.example). Set `API_KEY` for any shared deployment. `EMBEDDING_BACKEND` defaults to `auto` (options: `auto | minilm | tfidf`); `EMBEDDING_MODEL_DIR` points at the model files (default `backend/storage/models/all-MiniLM-L6-v2`).
 
 ## Documentation
-[Architecture](docs/ARCHITECTURE.md) · [Matching algorithm](docs/AI_MATCHING_ALGORITHM.md) · [API](docs/API_DOCUMENTATION.md) · [Testing](docs/TESTING.md) · [Security](docs/SECURITY.md) · [Demo script](docs/DEMO_SCRIPT.md) · [Audit report](docs/AUDIT_REPORT.md) · [Checklist](docs/CHECKLIST.md) · [Interview prep](interview_prep/)
+[Architecture](docs/ARCHITECTURE.md) · [Matching algorithm](docs/ALGORITHM.md) · [API](docs/API_DOCUMENTATION.md) · [Testing](docs/TESTING.md) · [Security](docs/SECURITY.md) · [Demo script](docs/DEMO_SCRIPT.md) · [Audit report](docs/AUDIT_REPORT.md) · [Checklist](docs/CHECKLIST.md) · [Interview prep](interview_prep/)
 
 ## Known limitations
 - **PDF fonts:** the PDF reports use bundled Noto Sans + Noto Sans Devanagari (SIL OFL, see `backend/app/assets/fonts/`), so Hindi in names, resume evidence and interview notes is shaped correctly (needs the `uharfbuzz` package; without it Hindi is drawn unshaped). Arabic, Chinese, Japanese and emoji have no bundled font and appear as `?`. A Hindi word glued to Latin text without a space gets a space inserted in the PDF (a reportlab limitation: a space-free word is drawn with one font).

@@ -93,7 +93,7 @@ def normalize_requirements(reqs: list[dict]) -> list[dict]:
             parts = [ontology.canonical(x) or x.strip() for x in re.split(r"\s+or\s+", name, flags=re.I) if x.strip()]
             anyof = parts if len(parts) > 1 else None
         if anyof:
-            canon = " or ".join(anyof)
+            canon = name if r.get("any_of") else " or ".join(anyof)      # an explicit group keeps its display name
         out.append({"id": r.get("id") or "req_" + slug(canon), "name": canon, "any_of": anyof,
                     "category": r.get("category") or (ontology.category(anyof[0] if anyof else canon) if (anyof or canon) in ontology.skills or anyof else "Custom"),
                     "importance": r.get("importance", "must") if r.get("importance") in ("must", "preferred", "ignored") else "must",

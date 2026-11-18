@@ -30,7 +30,7 @@ frontend/ (React 18, Vite, TS, Tailwind, Recharts, React Router, Axios, Lucide)
 | Evidence must be a verbatim substring of the resume | Prevents fabricated quotations; failed checks are surfaced as `failed_verification`. |
 | Missing evidence ≠ mismatch (score range) | A resume without an Education section should not look like "no degree". |
 | TF-IDF fitted on the JD + ontology texts only | Scores do not change when other candidates are uploaded (MiniLM embeddings are per-text, so they are pool-independent too). |
-| MiniLM run by a bundled pure-NumPy implementation when sentence-transformers is missing | Real sentence embeddings without torch, which is not installable everywhere (see `docs/AI_MATCHING_ALGORITHM.md`). |
+| MiniLM run by a bundled pure-NumPy implementation when sentence-transformers is missing | Real sentence embeddings without torch, which is not installable everywhere (see `docs/ALGORITHM.md`). |
 | Dates/separators stripped before semantic similarity | Removed a formatting-sensitivity bug (twin resumes differed by 0.8 points before the fix). |
 | Overrides stored separately | The machine score and rank stay auditable; the recruiter's decision is visible next to it. |
 | SQLite default, Postgres-compatible | Zero setup locally; SQLAlchemy 2 + Alembic keep the schema portable (verified on PostgreSQL 16.4). |

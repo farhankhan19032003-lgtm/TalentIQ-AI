@@ -1,6 +1,6 @@
 # Matching algorithm v2.0.0 — interview version
 
-Authoritative description: `../docs/AI_MATCHING_ALGORITHM.md`.
+Authoritative description: `../docs/ALGORITHM.md`.
 
 **Formula:** `Overall = 0.40·Technical + 0.25·Semantic + 0.20·Experience + 0.10·Education + 0.05·Project`, with absent components dropped and weights renormalised.
 

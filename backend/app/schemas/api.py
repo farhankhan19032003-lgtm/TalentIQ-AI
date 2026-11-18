@@ -10,6 +10,7 @@ class RequirementIn(BaseModel):
     category: str | None = None
     importance: Literal["must", "preferred", "ignored"] = "must"
     weight: float = Field(default=1.0, ge=0, le=5)
+    any_of: list[str] | None = Field(default=None, max_length=8)   # alternatives ("FastAPI or Django") or a merged practice+tool ("Unit Testing (pytest)")
 
 
 class JobIn(BaseModel):

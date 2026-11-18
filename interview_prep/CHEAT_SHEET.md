@@ -13,7 +13,7 @@ All numbers below were measured on the fictional `sample_data/` (Python Backend 
 4. **Output** -> ranking table (score, experience, matched skills), candidate page with per-component points, matched/related/missing skills, experience vs JD, "why / why not" with verbatim resume evidence. Missing evidence widens a score *range* (e.g. 64.7-69.7); it is not treated as a mismatch.
 5. **Stack**: React + Vite + Tailwind, FastAPI, SQLAlchemy + Alembic, PostgreSQL (SQLite fallback), Docker compose (db + backend + nginx).
 
-Worked example (Sana Qureshi, rank 1): Technical 48.26 (5.55 / 11.5 weighted credit), Semantic 61.66, Experience 100, Education 100, Project 0 (unverified) -> **64.72**. Full table: `docs/AI_MATCHING_ALGORITHM.md`.
+Worked example (Sana Qureshi, rank 1): Technical 48.26 (5.55 / 11.5 weighted credit), Semantic 61.66, Experience 100, Education 100, Project 0 (unverified) -> **64.72**. Full table: `docs/ALGORITHM.md`.
 
 ## 10 questions you will probably get
 1. **How is the percentage calculated?** The weighted sum above; weights are configurable and renormalised when the JD does not need a component. Each point on the candidate page traces to a component.

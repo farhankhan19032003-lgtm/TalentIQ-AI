@@ -14,6 +14,7 @@ export default function JobEditor() {
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [minYears, setMinYears] = useState<string>("");
+  const [eduLevel, setEduLevel] = useState<string>("");   // "" = as extracted from the JD, "0" = not required, 2-5 = diploma..PhD
   const [reqs, setReqs] = useState<Requirement[] | null>(null);
   const [extraMust, setExtraMust] = useState("");
   const [extraOpt, setExtraOpt] = useState("");
@@ -27,12 +28,13 @@ export default function JobEditor() {
     api.get<Job>(`/jobs/${id}`).then((r) => {
       const j = r.data; setTitle(j.title); setDesc(j.description); setReqs(j.requirements); setAnalysis(j.analysis);
       setMinYears(j.min_experience_years ? String(j.min_experience_years) : "");
+      setEduLevel(j.education_level != null ? String(j.education_level) : "");
     }).catch((e) => setErr(errMsg(e))).finally(() => setLoading(false));
   }, [id, editing]);
 
   const analyse = async () => {
     setErr(null); setBusy(true);
-    try { const a = (await api.post("/jobs/analyze", { title: title || undefined, description: desc })).data; setAnalysis(a); setReqs(a.requirements); if (a.experience.min_years) setMinYears(String(a.experience.min_years)); if (!title && a.title) setTitle(a.title); }
+    try { const a = (await api.post("/jobs/analyze", { title: title || undefined, description: desc })).data; setAnalysis(a); setReqs(a.requirements); if (a.experience.min_years) setMinYears(String(a.experience.min_years)); setEduLevel(a.education.required_level ? String(a.education.required_level) : ""); if (!title && a.title) setTitle(a.title); }
     catch (e) { setErr(errMsg(e)); } finally { setBusy(false); }
   };
   const uploadJd = async (f: File) => {
@@ -42,6 +44,7 @@ export default function JobEditor() {
       setDesc(r.text); setAnalysis(r.analysis); setReqs(r.analysis.requirements);
       if (!title && r.analysis.title) setTitle(r.analysis.title);                               // same as "Analyse": Save stays disabled without a title
       if (r.analysis.experience.min_years) setMinYears(String(r.analysis.experience.min_years));
+      setEduLevel(r.analysis.education.required_level ? String(r.analysis.education.required_level) : "");
     } catch (e) { setErr(errMsg(e)); }
   };
   const setImp = (i: number, imp: Requirement["importance"]) => setReqs((rs) => rs!.map((r, k) => (k === i ? { ...r, importance: imp } : r)));
@@ -51,7 +54,7 @@ export default function JobEditor() {
   };
   const save = async () => {
     setErr(null); setBusy(true);
-    const body: any = { title, description: desc, min_experience_years: minYears ? Number(minYears) : undefined };
+    const body: any = { title, description: desc, min_experience_years: minYears ? Number(minYears) : undefined, education_level: eduLevel !== "" ? Number(eduLevel) : undefined };
     try {
       if (editing) { body.requirements = reqs; await api.put(`/jobs/${id}`, body); nav("/jobs"); }
       else {
@@ -78,8 +81,9 @@ export default function JobEditor() {
             <label className="btn-ghost cursor-pointer">Upload JD (.pdf/.docx/.txt)<input type="file" hidden accept=".pdf,.docx,.txt" onChange={(e) => e.target.files?.[0] && uploadJd(e.target.files[0])} /></label>
             <button className="btn-ghost" disabled={desc.length < 20 || busy} onClick={analyse}>Analyse requirements</button>
           </div>
-          <div className="grid grid-cols-3 gap-3">
-            <div><label className="label" htmlFor="my">Min. years</label><input id="my" type="number" min={0} step={0.5} className="input" value={minYears} onChange={(e) => setMinYears(e.target.value)} /></div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div><label className="label" htmlFor="my">Min. years of experience</label><input id="my" type="number" min={0} step={0.5} className="input" value={minYears} onChange={(e) => setMinYears(e.target.value)} /></div>
+            <div><label className="label" htmlFor="edu">Minimum qualification</label><select id="edu" className="input" value={eduLevel} onChange={(e) => setEduLevel(e.target.value)}><option value="">As extracted from the JD</option><option value="0">Not required</option><option value="2">Diploma</option><option value="3">Bachelor's degree</option><option value="4">Master's degree</option><option value="5">PhD</option></select></div>
             {!editing && <><div><label className="label" htmlFor="em">Extra must-have</label><input id="em" className="input" placeholder="SQL, Docker" value={extraMust} onChange={(e) => setExtraMust(e.target.value)} /></div>
               <div><label className="label" htmlFor="eo">Extra preferred</label><input id="eo" className="input" placeholder="Redis" value={extraOpt} onChange={(e) => setExtraOpt(e.target.value)} /></div></>}
           </div>
@@ -100,7 +104,7 @@ export default function JobEditor() {
                 ))}
               </ul>
               <CustomAdder onAdd={addCustom} />
-              {analysis && <p className="mt-3 text-xs text-slate-500">Experience: {analysis.experience.min_years ? `${analysis.experience.min_years}+ years required` : "no minimum stated"} · Education: {analysis.education.required_label || "not specified"}</p>}
+              {analysis && <p className="mt-3 text-sm text-slate-700" data-testid="jd-summary">Extracted from the JD: <strong>{analysis.experience.min_years ? `${analysis.experience.min_years}+ years of experience` : "no experience minimum stated"}</strong> · <strong>{analysis.education.required_label ? `${analysis.education.required_label} degree` : "no education requirement stated"}</strong>. Both fields above are editable before you save.</p>}
             </>
           )}
         </div>

@@ -215,7 +215,7 @@ def match_candidate(parsed: dict, pages: list[str], job: dict, engine: Similarit
                              "verification": "verified" if verify_snippet(r["evidence"], r["page"], pages) else "unverified"})
 
     # --- F: education ---------------------------------------------------------------------------
-    edu_req = job.get("education_level")
+    edu_req = job.get("education_level") or None      # 0 / None = no qualification required
     edu_pref = job.get("preferred_education_level")
     edu_list = parsed.get("education", [])
     cand_level = max([e["level"] for e in edu_list], default=None)

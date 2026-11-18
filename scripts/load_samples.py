@@ -3,6 +3,7 @@
     python scripts/load_samples.py                        # http://localhost:8080 (Docker) , all 6 JDs + all resumes
     python scripts/load_samples.py --base http://localhost:8000 --jd python_backend_developer --no-bad-files
     python scripts/load_samples.py --run                  # also run matching for every job it created
+    python scripts/load_samples.py --demo --run           # the curated 3-minute demo: 1 JD, 15 resumes, 3 edge cases
 
 Standard library only. All people in sample_data/ are fictional; the folder also contains deliberately bad files
 (corrupt, password-protected, fake extension) to show the error handling - skip them with --no-bad-files.
@@ -40,13 +41,18 @@ def main():
     ap.add_argument("--jd", action="append", help="JD file stem to load (repeatable); default: all .txt JDs")
     ap.add_argument("--no-bad-files", action="store_true", help="skip the corrupt / password-protected / fake-extension files")
     ap.add_argument("--run", action="store_true", help="run matching for each created job")
+    ap.add_argument("--demo", action="store_true", help="load only the curated demo set listed in sample_data/demo_set.json")
     a = ap.parse_args()
 
     jds = sorted((ROOT / "job_descriptions").glob("*.txt"))
     if a.jd:
         jds = [p for p in jds if p.stem in a.jd]
     resumes = sorted(p for p in (ROOT / "resumes").iterdir() if p.suffix in (".pdf", ".docx"))
-    if a.no_bad_files:
+    if a.demo:
+        demo = json.loads((ROOT / "demo_set.json").read_text(encoding="utf-8"))
+        jds = [ROOT / demo["job_description"]]
+        resumes = [ROOT / "resumes" / n for n in demo["resumes"] + demo["edge_cases"]]
+    elif a.no_bad_files:
         resumes = [p for p in resumes if not p.stem.startswith(BAD)]
 
     job_ids = []

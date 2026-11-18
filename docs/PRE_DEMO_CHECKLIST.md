@@ -54,7 +54,7 @@ Status written 2026-11-16, Windows. Everything under "Already verified" was run;
 
 ## 6. Deliverables the assignment names
 - [ ] GitHub repository link (section 5).
-- [ ] README with setup + usage: done. Algorithm explanation: `docs/AI_MATCHING_ALGORITHM.md`. Architecture: `docs/ARCHITECTURE.md`. Test evidence: `docs/TESTING.md`, `docs/AUDIT_REPORT.md`.
+- [ ] README with setup + usage: done. Algorithm explanation: `docs/ALGORITHM.md`. Architecture: `docs/ARCHITECTURE.md`. Test evidence: `docs/TESTING.md`, `docs/AUDIT_REPORT.md`.
 - [ ] **YOU** Demo video recorded (use section 3), saved as MP4, link or file ready.
 - [ ] **YOU** Open the final video once from start to end: audio audible, text readable, no personal data on screen, no error boxes.
 
