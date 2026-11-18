@@ -41,6 +41,40 @@ Levels: diploma < bachelor < master < doctorate. `100` if candidate level ≥ re
 ## E. Projects & domain (5 %)
 Base = mean of document-level and responsibility-level similarity against project text; plus a bonus `(100 − base)·0.5·(domain hits / domains)` that can only **add**. No projects section → `unverified`.
 
+## Worked example (real output, synthetic candidate)
+Job: *Python Backend Developer* (`sample_data/job_descriptions/python_backend_developer.txt`: 3+ years, Bachelor's). Candidate: *Sana Qureshi* (`sample_data/resumes/sana_qureshi.docx`, fictional; Python/Flask developer, 4.5 relevant years). Run with MiniLM, default weights.
+
+**A. Technical skills.** Requirement weight m(r): must = 1, preferred = 0.5, skill in the job title (Python) x2.
+
+| Requirement | m(r) | Evidence in resume | Credit | m x credit |
+|---|---|---|---|---|
+| Python | 2.0 | used in experience | 1.00 | 2.00 |
+| REST APIs | 1.0 | used in experience | 1.00 | 1.00 |
+| Unit Testing | 1.0 | used in experience | 1.00 | 1.00 |
+| Git | 1.0 | only in a skills list | 0.85 | 0.85 |
+| FastAPI **or** Django | 1.0 | has Flask (related, not equivalent) | 0.35 | 0.35 |
+| PostgreSQL | 1.0 | has MySQL (related, not equivalent) | 0.35 | 0.35 |
+| Docker, pytest | 1.0 each | none | 0 | 0 |
+| Celery, AWS, Redis, CI/CD, Kubernetes | 0.5 each | none | 0 | 0 |
+| **Total** | **11.5** | | | **5.55** |
+
+`Technical = 100 x 5.55 / 11.5 = 48.26`
+
+**B. Semantic relevance.** Document-level cosine calibrates to 98.54 and the mean best-match per responsibility to 24.77, so `0.5 x 98.54 + 0.5 x 24.77 = 61.66`.
+
+**C. Experience.** 4.5 relevant years vs a 3-year minimum: `min(1, 4.5 / 3) = 1` so **100**. **D. Education.** Bachelor's meets Bachelor's: **100**. **E. Projects/domain.** Not extractable from this resume: `unverified`, scored 0.
+
+| Component | Score | Weight | Points |
+|---|---|---|---|
+| Technical | 48.26 | 0.40 | 19.30 |
+| Semantic | 61.66 | 0.25 | 15.42 |
+| Experience | 100 | 0.20 | 20.00 |
+| Education | 100 | 0.10 | 10.00 |
+| Project/domain | 0 (unverified) | 0.05 | 0.00 |
+| **Overall** | | | **64.72** |
+
+Because the project/domain component is unverified, the score range is shown as **64.72 - 69.72** (the upper end assumes it would score 100: 0.05 x 100 = 5 points). The candidate page lists the same lines as "why matched / why not matched" with the resume text each one came from.
+
 ## Confidence and completeness (kept separate from the score)
 - *Confidence* = mean(parse confidence, share of evidence snippets verified, date certainty).
 - *Completeness* = share of 8 field checks present (name, contact, summary, employment, education, skills, projects, dates).
