@@ -9,16 +9,16 @@ from __future__ import annotations
 import re
 from datetime import date
 
-from ..core.config import ALGORITHM_VERSION, COMPONENTS
+from ..core.config import ALGORITHM_VERSION, COMPONENTS, SCORING
 from .experience_analyzer import analyze_experience
 from .resume_extractor import RANGE_RE
 from .ranking_engine import compute_overall
 from .semantic_matcher import SimilarityEngine
 from .skill_extractor import Ontology
 
-MUST_WEIGHT, PREFERRED_WEIGHT = 1.0, 0.5
-CREDIT = {"context": 1.0, "listed_only": 0.85, "partial": 0.35}
-SEMANTIC_CREDIT_MIN, SEMANTIC_CREDIT_MAX = 0.10, 0.25
+MUST_WEIGHT, PREFERRED_WEIGHT = SCORING["must_weight"], SCORING["preferred_weight"]
+CREDIT = {"context": SCORING["credit_context"], "listed_only": SCORING["credit_listed_only"], "partial": SCORING["partial_credit"]}
+SEMANTIC_CREDIT_MIN, SEMANTIC_CREDIT_MAX = SCORING["semantic_credit_min"], SCORING["semantic_credit_max"]
 
 
 def _norm_ws(s: str) -> str:
@@ -186,7 +186,7 @@ def match_candidate(parsed: dict, pages: list[str], job: dict, engine: Similarit
         if resp and exp_units:
             M = engine.similarity(resp, [u["clean"] for u in exp_units])
             best = M.max(axis=1)
-            s_resp = engine.to_score(float(best.mean()))
+            s_resp = engine.to_score(float(best.mean()), "resp")
             for i, rline in enumerate(resp):
                 j = int(M[i].argmax())
                 semantic["responsibility_pairs"].append({"responsibility": rline, "best_resume_text": exp_units[j]["text"],
@@ -199,8 +199,12 @@ def match_candidate(parsed: dict, pages: list[str], job: dict, engine: Similarit
     # --- E: experience --------------------------------------------------------------------------
     jd_skill_set = {n for r in reqs for n in (r.get("any_of") or [r["name"]])}
     jd_skill_set |= {x for n in list(jd_skill_set) for x in onto.related(n)}
+    exp_reqs = [{"names": r.get("any_of") or [r["name"]], "weight": (MUST_WEIGHT if r["importance"] == "must" else PREFERRED_WEIGHT) * float(r.get("weight", 1.0))}
+                for r in reqs]
     exp = analyze_experience(parsed.get("employment", []), {"experience": {"min_years": job.get("min_years"), "preferred_years": job.get("preferred_years")}},
-                             jd_skill_set, as_of, job["analysis"].get("title") or job.get("title"))
+                             jd_skill_set, as_of, job["analysis"].get("title") or job.get("title"),
+                             requirements=exp_reqs, related={n: onto.related(n) for n in jd_skill_set},
+                             claimed_years=(parsed.get("fields", {}).get("claimed_years") or {}).get("value"))
     comps["relevant_experience"] = {"score": exp["score"], "status": exp["status"]}
     for r in exp["roles"]:
         if r["relevant"]:
@@ -248,7 +252,7 @@ def match_candidate(parsed: dict, pages: list[str], job: dict, engine: Similarit
         s_resp = None
         if resp:
             Mp = engine.similarity(resp, [u for p in projects for u in [p["name"] + ". " + " ".join(p["description"])]] + [d for p in projects for d in p["description"]])
-            s_resp = engine.to_score(float(Mp.max(axis=1).mean()))
+            s_resp = engine.to_score(float(Mp.max(axis=1).mean()), "resp")
         base = s_doc if s_resp is None else 0.5 * s_doc + 0.5 * s_resp
         all_text = "\n".join(it["text"] for sec in ("summary", "experience", "internships", "projects") for it in parsed.get("sections", {}).get(sec, []))
         hits = [d for d in domains if re.search(rf"\b{re.escape(d)}\b", all_text, re.I)]

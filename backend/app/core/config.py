@@ -25,6 +25,33 @@ COMPONENT_LABELS = {
     "project_domain": "Project & Domain Relevance",
 }
 
+# --- Scoring knobs (every number the score depends on lives here; docs/ALGORITHM.md explains each one) ---------------
+SCORING = {
+    "must_weight": 1.0,             # requirement weight of a must-have skill
+    "preferred_weight": 0.5,        # ... of a preferred (good-to-have) skill
+    "credit_context": 1.0,          # skill used in experience/projects text
+    "credit_listed_only": 0.85,     # skill only named in a skills list
+    "partial_credit": 0.35,         # a related (same-family / parent) skill instead of the requested one
+    "semantic_credit_min": 0.10,    # skill not named but a resume line is similar enough ...
+    "semantic_credit_max": 0.25,    # ... credit grows linearly with similarity up to this cap
+    "rel_fit_min": 0.25,            # a role is 'relevant experience' if it shows >= 25 % of the weighted requirements ...
+    "rel_fit_min_title": 0.15,      # ... or >= 15 % when its job title matches the JD title
+    "claimed_years_credit": 0.6,    # "5+ years" stated in text but no dated roles: credited at 60 % (unverifiable)
+    "high_match": 70.0,             # UI/analytics threshold for 'high match' (display only, never used to reject)
+    # Components that carry no resume evidence AND are low-stakes are left out of the point estimate (the other weights are
+    # renormalised) instead of being scored 0; the score range still shows the 0..100 possibilities. Technical, semantic,
+    # experience and education stay at 0 when unverified, so an empty/unreadable resume can never score well.
+    "renormalise_unverified": ["project_domain"],
+}
+# Cosine -> 0..100 calibration. 'doc' maps whole-narrative similarity, 'resp' maps (JD responsibility, best resume line)
+# similarity. Sentence-to-sentence cosines are systematically lower than document-to-document ones, so they get their own
+# range. Ranges are anchored on the synthetic benchmark (see docs/ALGORITHM.md "Calibration"), not learned from real data.
+CALIBRATION = {
+    "minilm": {"doc": (0.25, 0.75), "resp": (0.15, 0.45), "evidence_threshold": 0.50},
+    "tfidf": {"doc": (0.02, 0.40), "resp": (0.02, 0.30), "evidence_threshold": 0.28},
+}
+HIGH_SCORE = SCORING["high_match"]
+
 
 def _bool(name: str, default: bool) -> bool:
     return os.environ.get(name, str(default)).strip().lower() in ("1", "true", "yes", "on")

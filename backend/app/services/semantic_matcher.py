@@ -11,14 +11,9 @@ import time
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from ..core.config import settings
+from ..core.config import CALIBRATION, settings  # noqa: F401  (CALIBRATION re-exported for the settings endpoint)
 
 log = logging.getLogger("talentiq.semantic")
-
-CALIBRATION = {  # cosine -> 0..100 mapping range, and requirement-level semantic evidence threshold
-    "minilm": {"lo": 0.20, "hi": 0.65, "evidence_threshold": 0.50},
-    "tfidf": {"lo": 0.02, "hi": 0.40, "evidence_threshold": 0.28},
-}
 
 
 class SimilarityEngine:
@@ -116,7 +111,8 @@ class SimilarityEngine:
         A, B = self._tfidf.transform(a), self._tfidf.transform(b)
         return (A @ B.T).toarray()
 
-    def to_score(self, cos: float) -> float:
-        """Linear calibration of a raw cosine to a 0..100 component score (documented heuristic)."""
-        c = self.calibration
-        return float(max(0.0, min(100.0, (cos - c["lo"]) / (c["hi"] - c["lo"]) * 100)))
+    def to_score(self, cos: float, level: str = "doc") -> float:
+        """Linear calibration of a raw cosine to a 0..100 component score (documented heuristic).
+        `level` is "doc" (narrative vs narrative) or "resp" (one JD responsibility vs its best resume line)."""
+        lo, hi = self.calibration[level]
+        return float(max(0.0, min(100.0, (cos - lo) / (hi - lo) * 100)))

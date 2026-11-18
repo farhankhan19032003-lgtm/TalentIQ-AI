@@ -4,6 +4,7 @@ from __future__ import annotations
 import re
 from datetime import date
 
+from ..core.config import SCORING
 from .resume_extractor import month_index
 
 PART_WEIGHT = 0.5
@@ -58,13 +59,46 @@ def title_tokens_of(title: str | None) -> set[str]:
 
 
 def is_relevant(entry: dict, jd_skills: set[str], jd_title_tokens: set[str]) -> tuple[bool, list[str]]:
+    """Legacy rule (used when the job's weighted requirements are not supplied): >= 2 shared skills, or 1 plus a title match."""
     overlap = sorted(set(entry.get("skills", [])) & jd_skills)
     title_tokens = title_tokens_of(entry.get("title"))
     title_hit = bool(title_tokens & jd_title_tokens)
     return (len(overlap) >= 2 or (len(overlap) >= 1 and title_hit)), overlap
 
 
-def analyze_experience(employment: list[dict], jd: dict, jd_skill_set: set[str], as_of: date, jd_title: str | None) -> dict:
+def role_fit(entry: dict, requirements: list[dict], related: dict[str, list[str]] | None = None) -> tuple[float, list[str]]:
+    """Weighted share (0..1) of the job's requirements that one role demonstrates.
+
+    `requirements` = [{"names": [alt, ...], "weight": w}]; a requirement counts fully if any alternative appears in the
+    role's skills, and at `SCORING["partial_credit"]` if only a related skill does (same rule as the technical score).
+    This stops generic tools (Git, Docker) from making every role 'relevant' to every job."""
+    have = set(entry.get("skills", []))
+    got, total, hits = 0.0, 0.0, []
+    for r in requirements:
+        total += r["weight"]
+        names = r["names"]
+        if have & set(names):
+            got += r["weight"]
+            hits.extend(sorted(have & set(names)))
+        elif related and any(have & set(related.get(n, [])) for n in names):
+            got += r["weight"] * SCORING["partial_credit"]
+    return (got / total if total else 0.0), sorted(set(hits))
+
+
+def is_relevant_by_fit(entry: dict, fit: float, jd_title_tokens: set[str]) -> bool:
+    """A role counts as relevant when it covers `rel_fit_min` of the weighted requirements (a lower bar if the title matches)."""
+    title_hit = bool(title_tokens_of(entry.get("title")) & jd_title_tokens)
+    return fit >= (SCORING["rel_fit_min_title"] if title_hit else SCORING["rel_fit_min"])
+
+
+def analyze_experience(employment: list[dict], jd: dict, jd_skill_set: set[str], as_of: date, jd_title: str | None,
+                       requirements: list[dict] | None = None, related: dict[str, list[str]] | None = None,
+                       claimed_years: float | None = None) -> dict:
+    """Score a candidate's relevant experience against the JD.
+
+    When `requirements` (weighted, with alternatives) is given, a role is relevant by `role_fit`; otherwise the legacy
+    shared-skill rule on `jd_skill_set` is used. `claimed_years` ("5+ years of experience" written in the summary) is used only
+    when no dated employment exists, and is credited at SCORING["claimed_years_credit"] because it cannot be verified."""
     jd_tokens = title_tokens_of(jd_title) - {
         "senior", "junior", "sr", "jr", "lead", "associate", "i", "ii", "iii", "the", "of", "and", "engineer", "developer",
         "specialist", "staff", "principal", "intern", "manager"}
@@ -77,12 +111,16 @@ def analyze_experience(employment: list[dict], jd: dict, jd_skill_set: set[str],
         dated.append((e, b))
     rel_entries = []
     for e, b in dated:
-        rel, overlap = is_relevant(e, jd_skill_set, jd_tokens)
+        if requirements:
+            fit, overlap = role_fit(e, requirements, related)
+            rel = is_relevant_by_fit(e, fit, jd_tokens)
+        else:
+            fit, (rel, overlap) = None, is_relevant(e, jd_skill_set, jd_tokens)
         months = b[1] - b[0] + 1
         roles.append({"title": e.get("title"), "company": e.get("company"), "type": e["type"], "months": months,
                       "start": f"{e['start']['year']}-{e['start']['month']:02d}",
                       "end": "present" if e["end"].get("current") else f"{e['end']['year']}-{e['end']['month']:02d}",
-                      "relevant": rel, "matching_skills": overlap, "date_uncertain": e.get("date_uncertain", False),
+                      "relevant": rel, "fit": None if fit is None else round(fit, 3), "matching_skills": overlap, "date_uncertain": e.get("date_uncertain", False),
                       "page": e.get("page"), "evidence": e.get("evidence")})
         if rel:
             rel_entries.append((e, b))
@@ -101,9 +139,22 @@ def analyze_experience(employment: list[dict], jd: dict, jd_skill_set: set[str],
     if mn is None and pf is None:
         score, status = None, "not_required"
         notes.append("The job description does not state an experience requirement; this component is excluded and the other weights are renormalised.")
+    elif not employment and claimed_years:
+        credited = claimed_years * SCORING["claimed_years_credit"]
+        total_eff, rel_eff, status = claimed_years, credited, "scored"
+        base = min(1.0, credited / mn) if mn else 1.0
+        score = base
+        if pf and mn is not None and pf > mn:
+            score = 0.7 * base + 0.3 * min(1.0, credited / pf)
+        elif pf and mn is None:
+            score = min(1.0, credited / pf)
+        score = round(score * 100, 2)
+        notes.append(f"No dated roles were found; the resume states about {claimed_years:g} years of experience. A stated figure cannot be verified, "
+                     f"so it is credited at {SCORING['claimed_years_credit']:.0%} ({credited:.1f} y).")
     elif not employment:
         score, status = 0.0, "unverified"
-        notes.append("No employment history could be extracted. This is missing evidence, not confirmed lack of experience.")
+        notes.append("No dated work experience was found (no Experience/Internship section with dates). This is missing evidence, not confirmed lack of experience - "
+                     "typical for freshers, whose projects and education are scored separately.")
     elif not dated:
         score, status = 0.0, "unverified"
         notes.append("Employment entries were found but none had parsable dates.")
@@ -124,5 +175,5 @@ def analyze_experience(employment: list[dict], jd: dict, jd_skill_set: set[str],
         "score": score, "status": status, "total_effective_years": round(total_eff, 2), "relevant_effective_years": round(rel_eff, 2),
         "total_breakdown": tot_break, "relevant_breakdown": rel_break, "required_min_years": mn, "preferred_years": pf,
         "roles": roles, "gaps_info_only": gaps, "uncertain": bool(uncertain), "notes": notes, "methodology": METHODOLOGY,
-        "undated_entries": len(undated),
+        "undated_entries": len(undated), "claimed_years": claimed_years if (not employment and claimed_years) else None,
     }

@@ -3,7 +3,7 @@ from datetime import date
 import numpy as np
 import pytest
 
-from app.core.config import DEFAULT_WEIGHTS
+from app.core.config import DEFAULT_WEIGHTS, SCORING
 from app.services.document_parser import PageText, ParsedDocument
 from app.services.explanation_engine import explain
 from app.services.jd_analyzer import analyze_jd
@@ -88,12 +88,12 @@ def test_synonym_alias_match():
 
 class StubEngine:
     method = "tfidf"
-    calibration = {"lo": 0.02, "hi": 0.4, "evidence_threshold": 0.28}
+    calibration = {"doc": (0.02, 0.4), "resp": (0.02, 0.3), "evidence_threshold": 0.28}
     model_name, fallback_reason = "stub", None
 
     def prepare(self, *_): pass
     def similarity(self, a, b): return np.full((len(a), len(b)), 0.5)
-    def to_score(self, c): return 50.0
+    def to_score(self, c, level="doc"): return 50.0
 
 
 def test_semantic_only_evidence_is_weak_and_inferred():
@@ -126,7 +126,7 @@ def test_alternative_requirement_satisfied_by_either():
 def test_missing_sections_are_unverified_not_mismatch():
     m, _ = match(["Jane Roe", "Skills", "Python, Docker, Machine Learning"], JD)
     assert m["components"]["education"]["status"] == "unverified" and m["components"]["relevant_experience"]["status"] == "unverified"
-    assert m["score_high"] > m["overall"] and m["score_low"] == m["overall"]
+    assert m["score_low"] <= m["overall"] < m["score_high"]
     assert m["completeness"] < 60
     text = " ".join(explain(m)["missing_information"])
     assert "not as a mismatch" in text or "unverified" in text
@@ -135,7 +135,8 @@ def test_missing_sections_are_unverified_not_mismatch():
 def test_overall_equals_documented_formula():
     m, _ = match(RES_FULL, JD)
     c = m["components"]
-    active = {k: v for k, v in c.items() if v["status"] != "not_required"}
+    skip = set(SCORING["renormalise_unverified"])
+    active = {k: v for k, v in c.items() if v["status"] != "not_required" and not (v["status"] == "unverified" and k in skip)}
     tw = sum(DEFAULT_WEIGHTS[k] for k in active)
     manual = sum(DEFAULT_WEIGHTS[k] / tw * (v["score"] or 0) for k, v in active.items())
     assert m["overall"] == pytest.approx(manual, abs=0.01)

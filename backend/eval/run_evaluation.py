@@ -28,7 +28,7 @@ import numpy as np  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 from sklearn.feature_extraction.text import TfidfVectorizer  # noqa: E402
 
-from app.core.config import ALGORITHM_VERSION, COMPONENTS  # noqa: E402
+from app.core.config import ALGORITHM_VERSION, COMPONENTS, SCORING  # noqa: E402
 from app.main import app  # noqa: E402
 from app.services import pipeline  # noqa: E402
 from app.services.experience_analyzer import analyze_experience  # noqa: E402
@@ -173,7 +173,8 @@ def main():
             # score calculation correctness (independent recomputation from stored components)
             for it in res["items"]:
                 comps = it["components"]
-                active = {k: v for k, v in comps.items() if v["status"] != "not_required"}
+                skip = set(SCORING["renormalise_unverified"])   # unverified low-stakes components are left out of the point estimate
+                active = {k: v for k, v in comps.items() if v["status"] != "not_required" and not (v["status"] == "unverified" and k in skip)}
                 tw = sum(run["weights"][k] for k in active)
                 manual = sum(run["weights"][k] / tw * (v["score"] or 0) for k, v in active.items())
                 corr_n += 1

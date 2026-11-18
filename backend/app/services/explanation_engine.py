@@ -1,10 +1,37 @@
 """Builds readable explanations strictly from computed match data. No generative text, no invented quotes."""
 from __future__ import annotations
 
-from ..core.config import COMPONENT_LABELS, COMPONENTS
+from ..core.config import COMPONENT_LABELS, COMPONENTS, SCORING
 
 DISCLAIMER = ("The match score is a decision-support signal (0-100) comparing resume evidence with job requirements. "
               "It is not a probability of being hired or of job performance. A recruiter makes every decision.")
+
+
+def fit_label(score: float) -> str:
+    """Plain-language band for an overall score (display only; never used to reject anyone)."""
+    return ("Strong match" if score >= SCORING["high_match"] + 10 else "Good match" if score >= SCORING["high_match"]
+            else "Partial match" if score >= 50 else "Weak match" if score >= 30 else "Poor match")
+
+
+def headline(m: dict) -> str:
+    """One readable sentence for the top of the candidate page, built only from computed numbers."""
+    reqs = m["requirements"]
+    must = [r for r in reqs if r["importance"] == "must"]
+    direct = [r for r in must if r["match_type"] in ("exact", "synonym")]
+    part = [r for r in must if r["match_type"] == "partial"]
+    e = m["experience"]
+    bits = [f"{fit_label(m['overall'])} ({m['overall']:.0f}/100)."]
+    if must:
+        bits.append(f"Direct evidence for {len(direct)} of {len(must)} must-have skills" + (f" and related evidence for {len(part)} more" if part else "") + ".")
+    if e["status"] == "scored" and e.get("required_min_years"):
+        verdict = "meets" if e["relevant_effective_years"] >= e["required_min_years"] else "is below"
+        bits.append(f"Relevant experience {e['relevant_effective_years']:.1f} y ({e['total_effective_years']:.1f} y total) {verdict} the {e['required_min_years']:g}+ y required.")
+    elif e["status"] == "unverified":
+        bits.append("No dated work experience was found, so experience could not be verified.")
+    miss = [r["name"] for r in must if r["match_type"] == "none"]
+    if miss:
+        bits.append("Missing must-haves: " + ", ".join(miss[:4]) + (" and more." if len(miss) > 4 else "."))
+    return " ".join(bits)
 
 
 def explain(m: dict) -> dict:
@@ -76,6 +103,9 @@ def explain(m: dict) -> dict:
         c = comps[k]
         if c["status"] == "not_required":
             effects.append({"component": k, "label": COMPONENT_LABELS[k], "text": f"{COMPONENT_LABELS[k]}: not required by this job - excluded; remaining weights renormalised."})
+        elif c["status"] == "unverified" and not c["weight_effective"]:
+            effects.append({"component": k, "label": COMPONENT_LABELS[k], "score": None, "weight": 0.0, "contribution": 0.0, "status": "unverified",
+                            "text": f"{COMPONENT_LABELS[k]}: no evidence in the resume - left out of the score (not counted as a mismatch); the score range shows the effect."})
         else:
             effects.append({"component": k, "label": COMPONENT_LABELS[k], "score": c["score"], "weight": round(c["weight_effective"] * 100, 1),
                             "contribution": round(c["contribution"], 2), "status": c["status"],
@@ -87,5 +117,5 @@ def explain(m: dict) -> dict:
     summary = (f"Overall match {m['overall']:.1f}/100 (range {m['score_low']:.1f}-{m['score_high']:.1f} if missing evidence were found); "
                f"confidence {m['confidence']:.0f}/100, data completeness {m['completeness']:.0f}/100. "
                f"{len(matched)} direct, {len(partial)} related, {len(semantic)} semantic, {len(missing)} without evidence out of {len(reqs)} skill requirements.")
-    return {"summary": summary, "why_matched": why, "why_not_matched": why_not, "missing_information": missing_info,
+    return {"headline": headline(m), "summary": summary, "why_matched": why, "why_not_matched": why_not, "missing_information": missing_info,
             "component_effects": effects, "evidence_supporting_score": ev, "disclaimer": DISCLAIMER}

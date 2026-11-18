@@ -1,7 +1,7 @@
 """Transparent, configurable, reproducible scoring. Pure functions only (no I/O, no randomness)."""
 from __future__ import annotations
 
-from ..core.config import ALGORITHM_VERSION, COMPONENTS, COMPONENT_LABELS, DEFAULT_WEIGHTS
+from ..core.config import ALGORITHM_VERSION, COMPONENTS, COMPONENT_LABELS, DEFAULT_WEIGHTS, SCORING
 from ..core.errors import AppError
 
 
@@ -19,18 +19,26 @@ def validate_weights(weights: dict | None) -> dict:
 
 def compute_overall(components: dict, weights: dict) -> dict:
     """components: {key: {"score": float|None, "status": 'scored'|'unverified'|'not_required'}}.
-    Components the JD does not require are excluded and the remaining weights renormalised.
-    score_high = what the score would be if every *unverified* (missing-evidence) component were fully satisfied."""
+
+    * Components the JD does not require are excluded and the remaining weights renormalised.
+    * Components in SCORING["renormalise_unverified"] (default: project/domain) that have no resume evidence are also left
+      out of the point estimate instead of counting as 0 (missing information is not a mismatch).
+    * Every other unverified component scores 0.
+    `score_low` = the score if every left-out component had scored 0, `score_high` = if every unverified component scored 100.
+    Always score_low <= overall <= score_high."""
+    skip_if_unverified = set(SCORING["renormalise_unverified"])
     active = [k for k in COMPONENTS if components[k]["status"] != "not_required" and weights[k] > 0]
-    tw = sum(weights[k] for k in active)
+    counted = [k for k in active if not (components[k]["status"] == "unverified" and k in skip_if_unverified)] or active
+    tw_all, tw = sum(weights[k] for k in active), sum(weights[k] for k in counted)
     if tw <= 0:
         return {"overall": 0.0, "score_low": 0.0, "score_high": 0.0, "effective_weights": {}, "contributions": {}}
-    eff = {k: weights[k] / tw for k in active}
+    eff = {k: (weights[k] / tw if k in counted else 0.0) for k in active}
     contrib = {k: eff[k] * (components[k]["score"] or 0.0) for k in active}
     overall = sum(contrib.values())
-    high = sum(eff[k] * (100.0 if components[k]["status"] == "unverified" else (components[k]["score"] or 0.0)) for k in active)
+    low = sum(weights[k] / tw_all * (components[k]["score"] or 0.0) for k in counted)
+    high = sum(weights[k] / tw_all * (100.0 if components[k]["status"] == "unverified" else (components[k]["score"] or 0.0)) for k in active)
     clamp = lambda x: round(max(0.0, min(100.0, x)), 2)
-    return {"overall": clamp(overall), "score_low": clamp(overall), "score_high": clamp(high),
+    return {"overall": clamp(overall), "score_low": clamp(low), "score_high": clamp(high),
             "effective_weights": {k: round(v, 6) for k, v in eff.items()},
             "contributions": {k: round(v, 4) for k, v in contrib.items()}}
 
