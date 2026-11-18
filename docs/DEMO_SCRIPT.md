@@ -1,19 +1,44 @@
-# 5-minute demo plan
+# Demo script (3 minutes)
 
-**Setup (before the audience arrives):** both servers running, **empty database**, `python scripts/fetch_minilm.py` already run, browser at http://localhost:5173. Use only resumes you have consent to show (your own, or volunteers'). Flow: Jobs → New job → upload a JD (.pdf/.docx/.txt) or paste one → Save; then Upload resumes → select 10+ PDF/DOCX files.
+Covers: create a JD by pasting, upload 12+ resumes in one batch, show the ranking, open the top candidate, explain a score with the worked example, show failed files handled gracefully. Everything is fictional sample data.
 
-| Min | Do | Say |
+## Before recording (2 minutes, once)
+```powershell
+docker compose down -v                  # empty database, so the ranking contains only the demo resumes
+docker compose up -d --build            # http://localhost:8080  (first build takes several minutes)
+```
+Have these ready in File Explorer: `sample_data\job_descriptions\python_backend_developer.txt` (open it to copy) and the 15 + 3 files listed in `sample_data\demo_set.json` (select them all in `sample_data\resumes\`). Shortcut that skips the clicking (not for the video): `python scripts/load_samples.py --demo --run`.
+
+Expected, so nothing surprises you (measured on a fresh stack): upload of 18 files ~4 s; first "Run matching" ~9 s (the model loads once), later runs ~1 s.
+
+## The 3 minutes
+
+| Time | Do | Say |
 |---|---|---|
-| 0:00 | Dashboard | "TalentIQ ranks candidates *and shows the resume text behind every score*. It is decision support — it never rejects anyone." |
-| 0:30 | Upload resumes → select 10+ PDF/DOCX files (add one corrupted file to show error handling) | "A batch of resumes, PDF and DOCX mixed. One bad file must not stop the batch." Point at the summary chips (parsed, failed, duplicate, rejected). |
-| 1:15 | Jobs → open **AI/ML Engineer** (Edit) | "Requirements are extracted from the JD and you can change must/preferred/ignore. 'FastAPI or Django' style alternatives are understood." |
-| 1:45 | Rank → **Run matching** | "Hybrid score: 40 technical, 25 semantic, 20 experience, 10 education, 5 project. Open *Scoring weights* to show sliders that must total 100 %." Point at "MiniLM sentence embeddings" in the run line: the semantic part compares meaning, not just shared words (hover it for the model name). |
-| 2:30 | Open the #1 candidate | Walk the bar chart and the points table summing to the overall score. |
-| 3:00 | Expand a requirement | "Highlighted text is a **verbatim** substring of the resume, with page and section. If a snippet cannot be verified it is discarded." Expand a *missing* one: "No evidence" — never invented. |
-| 3:30 | Toggle **Blind screening** | "Names and contacts vanish; ranking is unchanged." |
-| 3:45 | What-if | Set min years to 6 → "Preview only, nothing saved." |
-| 4:15 | Override | Enter 90 + reason → "The machine score stays; the override sits beside it and is audit-logged." |
-| 4:40 | Export PDF/CSV, Analytics | Show score distribution and "most missing skills". |
-| 5:00 | Close | State limitations: synthetic benchmark only, tiny margin over the TF-IDF baseline (MiniLM 0.945 vs TF-IDF 0.943 NDCG@5: a tie on this set), weights are hand-set, PostgreSQL tested on one version (16.4) and not under load. |
+| **0:00** | **Jobs → New job.** Paste the JD, click **Analyse requirements**. Point at the line "3+ years of experience · Bachelor's degree", the minimum-years box and the **Minimum qualification** dropdown, then the requirement list. Click **Save job**. | "Module 1. I paste a job description, or I could upload a PDF, DOCX or TXT. It extracts the skills and splits them into must-have and preferred, reads the experience and the degree requirement, and all of it is editable before I save. Note `Unit Testing (pytest)` is one requirement, not two, and `FastAPI or Django` is satisfied by either." |
+| **0:35** | **Upload resumes.** Click the drop zone, select the 18 files, **Upload & parse**. When the result appears, point at the chips (`16 parsed · 2 failed`) and the table. | "Module 2. Fifteen resumes, a mix of PDF and DOCX, plus three deliberately hard files, in one batch. 16 parsed. The corrupted PDF and the password-protected PDF are rejected with a clear reason and the rest of the batch is untouched." Point at the two amber rows (**parsed: needs review**): "The scanned, image-only PDF was read with OCR, so it is flagged for review instead of being treated like a normal resume." |
+| **1:15** | **Ranking → Run matching.** Show the table: Candidate, Experience, Match %, Matched skills. Hover a related chip. | "Module 3 and 4. It scores every resume from 0 to 100 using skills, semantic similarity from MiniLM embeddings, experience, education and projects, and ranks them. Skills have three looks: **✓ exact**, **≈ related, partial credit**, **✗ missing**. The top three are Lakshmi 97, Vikram 92, Manish 77; the weak fits, an accountant and a statistician, are around 10." |
+| **1:40** | **Click Lakshmi Narayan.** Scroll slowly: headline sentence, profile, skills, experience comparison. | "Module 5. The first thing is a plain sentence: *Strong match, 97. Direct evidence for 7 of 7 must-haves. 11.4 years relevant experience meets the 3+ required.* Below it: the extracted profile, the skills, and an experience card that compares what the job requires with what she has." |
+| **2:05** | **Back to ranking, click Sana Qureshi (rank 4).** Show the score table and "Skills vs the job". | "Now the score explained. Sana scores **71.27**. Technical is **52.86**: 5.55 weighted credit out of 10.5. Python, REST APIs and Unit Testing are full credit, Git is 0.85 because it is only in a skills list, and Flask and MySQL earn **0.35 related credit** for Django and PostgreSQL. Docker is missing. Semantic is **66.25**, experience **100** because 4.5 relevant years beats the 3 required, education **100**. Weights 40, 25, 20 and 10, with projects left out because her resume has no project section: that is 22.26 + 17.43 + 21.05 + 10.53 = **71.27**, and the range 67.7 to 72.7 shows what the missing section could change." |
+| **2:40** | **Open the scanned candidate, Ritu Sharma, or the Resume batches page.** Show the amber **Needs review** banner or the failure reasons. | "Failures are handled per file and never silently scored: a scanned file is clearly marked for review, and files that cannot be read are rejected with the reason." |
+| **2:55** | Close on the ranking page. | "It is decision support: no one is auto-rejected, and every evidence line is the exact text from the resume." |
 
-**Fallback if something breaks:** `docs/AUDIT_REPORT.md` has the recorded test evidence; `python -m pytest -q` runs in about a minute (237 tests). Before recording, tick every box in [PRE_DEMO_CHECKLIST.md](PRE_DEMO_CHECKLIST.md).
+## If something goes wrong on camera
+- Ranking empty → you are on the wrong **Active job** (top bar); pick *Python Backend Developer*.
+- First match is slow → the model loads once; run it once before recording.
+- Different numbers → you did not start from an empty database, or you changed weights. `docker compose down -v` and repeat.
+
+## Run-through result (executed, not assumed)
+This script was run in a real browser (Chrome driven by Playwright) against a fresh `docker compose` stack with an empty PostgreSQL database, using the file chooser for the upload.
+
+| Step | Result |
+|---|---|
+| 1. paste JD, analyse, save | OK: "3+ years of experience · Bachelor's degree", editable fields shown |
+| 2. upload 18 files in one batch | OK: 16 parsed, 2 failed (corrupted, password-protected), 2 of the 16 flagged "needs review" (the scanned PDF and the near-empty resume) |
+| 3. run matching | OK: 16 candidates ranked, no console errors, no failed HTTP calls |
+| 4. top candidate | OK: "Strong match (97/100). Direct evidence for 7 of 7 must-have skills ..." |
+| 5. Sana Qureshi | OK: 71.27, 4 exact / 2 related / 6 missing skills, experience verdict "Meets the requirement" |
+| 6. scanned file | OK: "Needs review. Scanned/image-only file read with OCR ..." banner |
+| 7. failed files on Resume batches | OK: both listed with their reasons |
+
+Nothing broke. One thing to know: a candidate parsed before a parser upgrade keeps its old parse until the resume is re-uploaded.

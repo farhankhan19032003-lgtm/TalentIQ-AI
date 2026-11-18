@@ -145,6 +145,8 @@ ruff check app tests eval                 # lint (rules in backend/ruff.toml)
 See [docs/TESTING.md](docs/TESTING.md) for what each suite covers and the latest recorded results.
 
 ### 50-resume test pack (2026-11-16)
+> Measured **before** the 2026-11-18 parsing/scoring calibration (scores and some rank positions have shifted since; the current calibration evidence is in [docs/ALGORITHM.md](docs/ALGORITHM.md), section 3).
+
 A separate pack of 50 fictional PDF resumes with an answer key (5 intended profile groups of 10, one AI/ML JD) was run through the real UI on an empty database: JD pasted and saved, all 50 PDFs attached through the file chooser, matching run with MiniLM.
 
 | Check | Result |

@@ -3,12 +3,25 @@
 ## How to run
 ```powershell
 cd backend ; python ..\scripts\fetch_minilm.py   # once: the embedding model (without it the MiniLM tests are skipped)
-python -m pytest -q                         # 237 tests collected
-cd ..\frontend ; npm test                   # 31 tests
+python -m pytest -q                         # 265 tests collected
+ruff check app tests eval                   # lint (backend/ruff.toml)
+cd ..\frontend ; npm test                   # 37 tests
 cd ..\backend ; python eval\run_evaluation.py --backend minilm --tag mine   # and --backend tfidf to compare
 ```
 
-## Latest recorded results (Windows, Python 3.15, 2026-11-16; MiniLM via the pure-NumPy runtime)
+## Latest run (2026-11-18, after the parsing and scoring-calibration work)
+| Check | Result |
+|---|---|
+| Backend pytest (Docker image, Python 3.13, SQLite test DB) | **265 passed** (new: `test_resume_layouts.py` 19 tests over 14 layouts, `test_scoring_calibration.py` 8 tests incl. strong/medium/weak bands under TF-IDF and MiniLM and an API regression for merged requirements) |
+| `ruff check app tests eval` | all checks passed |
+| Frontend `tsc --noEmit` / vitest | clean / **37 passed** (new: `skillchips.test.tsx`: exact, related and missing chips look different; experience and education verdicts) |
+| Browser run of `docs/DEMO_SCRIPT.md` on a fresh `docker compose` stack (Playwright + Chrome, upload through the file chooser) | 7/7 steps OK, 0 console errors, 0 failed HTTP calls |
+| Parsing vs answer key (34 parsable synthetic resumes) | name 34/34, email 34/34, experience years 34/34, education level 34/34 |
+| Scoring vs author grades (210 JD/resume pairs, MiniLM) | 89.8 % of ordered pairs correct; grade-3 median 91, grade-0 median 18 (see `docs/ALGORITHM.md`, Calibration) |
+
+The local Windows venv cannot run scipy (blocked by an Application Control policy), so the backend suite above ran inside the Docker image. The older recorded results below are from 2026-11-16 and predate these changes.
+
+## Earlier recorded results (Windows, Python 3.15, 2026-11-16; MiniLM via the pure-NumPy runtime)
 | Suite | Result |
 |---|---|
 | Backend pytest | **237 passed, 0 skipped** (the conftest forces TF-IDF for the older tests; `test_minilm_numpy.py` and the MiniLM test in `test_semantic_matching.py` use the real model) |
