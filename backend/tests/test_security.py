@@ -5,7 +5,7 @@ import pytest
 
 from app.core.config import settings
 from app.services import security as sec
-from helpers import RES, make_docx, make_pdf
+from helpers import make_docx, make_pdf
 
 
 def test_valid_pdf_and_docx_accepted():

@@ -70,16 +70,18 @@ class SimilarityEngine:
 
     @property
     def model_name(self) -> str:
+        """Display name of the active similarity model and runtime."""
         if self.method != "minilm":
             return "tfidf(word 1-2gram, sublinear tf)"
         return settings.embedding_model + (" (pure NumPy inference)" if SimilarityEngine._runtime == "numpy" else "")
 
     @property
     def calibration(self) -> dict:
+        """Cosine -> 0..100 ranges for the active method (see core.config.CALIBRATION)."""
         return CALIBRATION[self.method]
 
     # -- fitting (TF-IDF only) -------------------------------------------------------
-    def prepare(self, job_texts: list[str]):
+    def prepare(self, job_texts: list[str]) -> None:
         if self.method != "tfidf":
             return
         self._tfidf = TfidfVectorizer(ngram_range=(1, 2), sublinear_tf=True, stop_words="english",

@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 
-import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -37,13 +36,11 @@ def test_no_gendered_or_demographic_features_in_explanations(client, loaded):
 
 def test_evaluation_regression():
     """Re-run the synthetic benchmark; guards against silent accuracy regressions (floors, not claims)."""
-    import glob, shutil, subprocess, sys
+    import glob, subprocess, sys
     latest = ROOT / "backend/eval/results/latest.json"
     backup = latest.read_bytes() if latest.exists() else None
     out = subprocess.run([sys.executable, "eval/run_evaluation.py", "--backend", "tfidf", "--tag", "pytest"],
                          cwd=ROOT / "backend", capture_output=True, text=True, timeout=600)
-    for f in glob.glob(str(ROOT / "backend/eval/results/evaluation_*_pytest*")):
-        pass                                   # keep until read below
     if backup is not None:
         latest.write_bytes(backup)             # do not clobber the recorded final results
     assert out.returncode == 0, out.stderr[-800:]

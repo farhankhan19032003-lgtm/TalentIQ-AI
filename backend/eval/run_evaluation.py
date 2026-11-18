@@ -28,7 +28,7 @@ import numpy as np  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 from sklearn.feature_extraction.text import TfidfVectorizer  # noqa: E402
 
-from app.core.config import ALGORITHM_VERSION, COMPONENTS, SCORING  # noqa: E402
+from app.core.config import ALGORITHM_VERSION, SCORING  # noqa: E402
 from app.main import app  # noqa: E402
 from app.services import pipeline  # noqa: E402
 from app.services.experience_analyzer import analyze_experience  # noqa: E402
@@ -146,7 +146,7 @@ def main():
         rank_rows, corr_ok, corr_n, weight_ok = [], 0, 0, True
         sens_stable = sens_n = 0
         texts = {f: (s.get(M.Candidate, cid).resume.raw_text or "") for f, cid in by_file.items() if f in grade}
-        for key, j in jobs.items():
+        for j in jobs.values():
             t0 = time.time()
             run = c.post(f"/api/matching/run/{j['id']}", json={}).json()
             dur = time.time() - t0
@@ -194,7 +194,7 @@ def main():
         fa = next(r for r in GT["resumes"] if r.get("tags") and "fairness_pair" in r["tags"] and r["name"] == "Karan Arora")
         fb = next(r for r in GT["resumes"] if r.get("tags") and "fairness_pair" in r["tags"] and r["name"] == "Kavita Arora")
         diffs = []
-        for key, j in jobs.items():
+        for j in jobs.values():
             res = c.get(f"/api/matching/results/{j['id']}?page_size=100").json()
             m = {file_of[it["candidate_id"]]: it for it in res["items"]}
             diffs.append(abs(m[fa["file"]]["overall"] - m[fb["file"]]["overall"]))

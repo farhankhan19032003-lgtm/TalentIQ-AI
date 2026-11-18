@@ -34,6 +34,7 @@ def sanitize_filename(name: str) -> str:
 
 
 def sha256(data: bytes) -> str:
+    """Hex SHA-256 of the file bytes (duplicate detection)."""
     return hashlib.sha256(data).hexdigest()
 
 
@@ -92,6 +93,7 @@ def store_file(data: bytes, kind: str) -> str:
 
 
 def read_stored(stored: str) -> bytes | None:
+    """Read a stored upload by its random storage name."""
     path = (settings.upload_dir / Path(stored).name).resolve()
     if settings.upload_dir.resolve() not in path.parents or not path.exists():
         return None
@@ -99,6 +101,7 @@ def read_stored(stored: str) -> bytes | None:
 
 
 def delete_stored(stored: str | None) -> bool:
+    """Delete a stored upload (missing files are ignored)."""
     if not stored:
         return False
     path = (settings.upload_dir / Path(stored).name).resolve()

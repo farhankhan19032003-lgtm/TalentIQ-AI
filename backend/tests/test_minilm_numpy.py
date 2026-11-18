@@ -6,7 +6,6 @@ import numpy as np
 import pytest
 
 from app.core.config import settings
-from app.services import minilm_numpy as mn
 from app.services.minilm_numpy import MiniLMNumpy, WordPieceTokenizer, read_safetensors
 from app.services.semantic_matcher import SimilarityEngine
 

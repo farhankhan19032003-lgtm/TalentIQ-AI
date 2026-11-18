@@ -1,6 +1,6 @@
 import hmac
 
-from fastapi import Depends, Header
+from fastapi import Header
 
 from ..core.config import settings
 from ..core.database import get_db  # noqa: F401

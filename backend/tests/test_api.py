@@ -6,7 +6,7 @@ import openpyxl
 import pytest
 
 from app.core.config import settings
-from helpers import RES, make_pdf, simple_resume
+from helpers import make_pdf, simple_resume
 
 GT = json.loads((Path(__file__).resolve().parents[2] / "sample_data/ground_truth/ground_truth.json").read_text())
 
@@ -140,7 +140,7 @@ def test_job_analyze_preview_and_text_upload(client, jd_text):
 
 
 def test_templates_seed(client):
-    r = client.post("/api/demo/seed-jobs").json()
+    client.post("/api/demo/seed-jobs")
     assert len(client.get("/api/jobs?templates=true").json()["items"]) >= 6
     assert client.post("/api/demo/seed-jobs").json()["created"] == []         # idempotent
 

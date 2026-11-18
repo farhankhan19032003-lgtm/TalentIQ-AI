@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends, File, Query, UploadFile
+from fastapi import APIRouter, Depends, File, UploadFile
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 

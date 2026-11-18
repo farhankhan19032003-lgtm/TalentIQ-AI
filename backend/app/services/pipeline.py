@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import re
 import time
-import uuid
 from datetime import date, datetime, timedelta
 
 from sqlalchemy import select
@@ -18,7 +17,7 @@ from .explanation_engine import explain
 from .jd_analyzer import analyze_jd, slug
 from .matching_pipeline import jd_narrative, match_candidate
 from .resume_extractor import ResumeExtractor
-from .security import UploadRejected, delete_stored, detect_injection, read_stored, sanitize_filename, sha256, store_file, validate_upload
+from .security import UploadRejected, delete_stored, sanitize_filename, sha256, store_file, validate_upload
 from .semantic_matcher import SimilarityEngine
 from .skill_extractor import Ontology, SkillExtractor
 
@@ -28,17 +27,18 @@ resume_extractor = ResumeExtractor(skill_extractor)
 _onto_texts: list[str] | None = None
 
 
-def audit(db: Session, action: str, entity_type: str | None = None, entity_id: int | None = None, details: dict | None = None, actor="recruiter"):
+def audit(db: Session, action: str, entity_type: str | None = None, entity_id: int | None = None, details: dict | None = None, actor="recruiter") -> None:
     db.add(M.AuditLog(action=action, entity_type=entity_type, entity_id=entity_id, details=details or {}, actor=actor))
 
 
-def reload_ontology():
+def reload_ontology() -> None:
     global _onto_texts
     ontology.reload()
     _onto_texts = None
 
 
 def ontology_texts() -> list[str]:
+    """Text of every ontology skill, used to fit the TF-IDF fallback."""
     global _onto_texts
     if _onto_texts is None:
         _onto_texts = [ontology.semantic_query(n) for n in ontology.skills]
@@ -46,6 +46,7 @@ def ontology_texts() -> list[str]:
 
 
 def display_name(c: M.Candidate, blind: bool) -> str:
+    """Candidate name, or an anonymous 'Candidate #id' label in blind-screening mode."""
     if blind:
         return f"Candidate C-{c.id:04d}"
     return c.name or f"Unknown (candidate #{c.id})"
@@ -53,10 +54,12 @@ def display_name(c: M.Candidate, blind: bool) -> str:
 
 # ---------------------------------------------------------------------------- jobs
 def build_job_analysis(description: str, title: str | None) -> dict:
+    """Run the JD analyzer and shape its output for storage on a Job row."""
     return analyze_jd(description, skill_extractor, ontology, title)
 
 
 def merge_user_skills(requirements: list[dict], required: list[str], optional: list[str]) -> list[dict]:
+    """Add recruiter-supplied skills to the extracted requirement list."""
     by_name = {r["name"].lower(): r for r in requirements}
     for names, imp in ((optional, "preferred"), (required, "must")):
         for n in names or []:
@@ -77,6 +80,7 @@ def merge_user_skills(requirements: list[dict], required: list[str], optional: l
 
 
 def normalize_requirements(reqs: list[dict]) -> list[dict]:
+    """Validate and normalise a requirement list coming from the API (importance, weight, alternatives)."""
     out, seen = [], set()
     for r in reqs:
         name = (r.get("name") or "").strip()
@@ -98,6 +102,7 @@ def normalize_requirements(reqs: list[dict]) -> list[dict]:
 
 
 def job_to_dict(job: M.Job) -> dict:
+    """Plain-dict view of a Job for the matching engine."""
     return {"id": job.id, "title": job.title, "description": job.description, "analysis": job.analysis or {}, "requirements": job.requirements or [],
             "min_years": job.min_experience_years, "preferred_years": job.preferred_experience_years,
             "education_level": job.education_level, "preferred_education_level": job.preferred_education_level}
@@ -149,7 +154,7 @@ def _persist_candidate(db: Session, resume: M.Resume, parsed: dict) -> M.Candida
     return c
 
 
-def process_resume_record(db: Session, resume: M.Resume, data: bytes):
+def process_resume_record(db: Session, resume: M.Resume, data: bytes) -> None:
     """Parse + extract + persist for an existing Resume row. Never raises: failures are recorded on the row."""
     t0 = time.time()
     try:
@@ -186,6 +191,7 @@ def _scrub(text: str) -> str:
 
 
 def ingest_resume(db: Session, filename: str, data: bytes, batch_id: str) -> dict:
+    """Validate, store, hash and parse one uploaded file; returns a per-file result (parsed / failed / rejected / duplicate)."""
     safe = sanitize_filename(filename)
     try:
         kind = validate_upload(filename, data)
@@ -226,6 +232,7 @@ def ingest_resume(db: Session, filename: str, data: bytes, batch_id: str) -> dic
 
 # ---------------------------------------------------------------------------- matching
 def make_engine(job: dict) -> SimilarityEngine:
+    """Build the similarity engine requested by settings (MiniLM when available, else TF-IDF) fitted on the job text."""
     eng = SimilarityEngine(ontology_texts=ontology_texts())
     eng.prepare([jd_narrative(job), job.get("description", "")] + [ontology.semantic_query(r["name"]) for r in job["requirements"]]
                 + job["analysis"].get("responsibilities", []))
@@ -248,6 +255,7 @@ def _score_all(db: Session, job: dict, weights: dict, candidates: list[M.Candida
 
 
 def run_matching(db: Session, job: M.Job, weights: dict | None, resume_ids: list[int] | None = None, as_of: date | None = None) -> M.MatchRun:
+    """Score every parsed candidate against a job, rank them and persist the run."""
     w = ranking_engine.validate_weights(weights)
     as_of = as_of or date.today()
     q = select(M.Candidate).join(M.Resume, M.Resume.candidate_id == M.Candidate.id).where(M.Resume.status == "parsed")
@@ -291,6 +299,7 @@ def run_matching(db: Session, job: M.Job, weights: dict | None, resume_ids: list
 
 
 def latest_run(db: Session, job_id: int) -> M.MatchRun | None:
+    """Most recent matching run for a job, or None."""
     return db.scalar(select(M.MatchRun).where(M.MatchRun.job_id == job_id).order_by(M.MatchRun.id.desc()))
 
 
@@ -341,6 +350,7 @@ def simulate(db: Session, job: M.Job, mods: dict, blind: bool = False) -> dict:
 
 # ---------------------------------------------------------------------------- deletion / retention
 def delete_candidate(db: Session, c: M.Candidate) -> bool:
+    """Erase a candidate, their resume file and all derived data."""
     removed_file = False
     if c.resume:
         removed_file = delete_stored(c.resume.stored_filename)
@@ -351,7 +361,7 @@ def delete_candidate(db: Session, c: M.Candidate) -> bool:
     return removed_file
 
 
-def delete_resume(db: Session, r: M.Resume):
+def delete_resume(db: Session, r: M.Resume) -> None:
     if r.candidate_id:
         c = db.get(M.Candidate, r.candidate_id)
         if c:
@@ -365,6 +375,7 @@ def delete_resume(db: Session, r: M.Resume):
 
 
 def purge_expired(db: Session, days: int | None = None) -> int:
+    """Delete resumes older than the retention period (no-op when retention is 0)."""
     days = settings.retention_days if days is None else days
     if days <= 0:
         return 0

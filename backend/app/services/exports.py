@@ -418,7 +418,6 @@ def _multiline(s) -> str:
 
 def _interview_flow(iv: dict, st) -> list:
     """Interview notes section of the candidate PDF. All free text is escaped; nothing here feeds the match score."""
-    from reportlab.lib import colors
     from reportlab.lib.styles import ParagraphStyle
     from reportlab.platypus import KeepTogether, Paragraph, Spacer, Table, TableStyle
     out = [Spacer(1, 8), Paragraph("Interview notes", st["Heading3"]),

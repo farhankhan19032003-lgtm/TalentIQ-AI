@@ -16,7 +16,7 @@ def emp(title, start, end, typ="full_time", skills=(), year_only=False):
             "date_uncertain": year_only, "page": 1, "evidence": "ev", "description": []}
 
 
-def run(emps, mn=2, pf=None, skills={"Python", "SQL"}):
+def run(emps, mn=2, pf=None, skills=("Python", "SQL")):
     return analyze_experience(emps, {"experience": {"min_years": mn, "preferred_years": pf}}, set(skills), AS_OF, "Python Developer")
 
 

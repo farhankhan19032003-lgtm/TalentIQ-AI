@@ -1,11 +1,10 @@
 from pathlib import Path
 import os
 import importlib.util
-import math
 from collections import Counter
 from datetime import date
 
-from fastapi import APIRouter, Depends, File, Response, UploadFile
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -18,8 +17,8 @@ from ..services import exports, pipeline
 from ..services.experience_analyzer import analyze_experience
 from ..services.ranking_engine import describe_formula
 from .deps import require_access
-from .matching import _candidate_view, _job, _run
-from .views import HIGH_SCORE, job_out, rows_for_run, run_info
+from .matching import _job, _run
+from .views import HIGH_SCORE, rows_for_run, run_info
 
 public = APIRouter(prefix="")
 router = APIRouter(dependencies=[Depends(require_access)])

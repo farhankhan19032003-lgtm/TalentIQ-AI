@@ -90,6 +90,7 @@ def _parse_date(s: str, end: bool = False):
 
 
 def month_index(d: dict) -> int:
+    """Months since year 0 for a parsed date dict (for month-set arithmetic)."""
     return d["year"] * 12 + d["month"] - 1
 
 
@@ -99,6 +100,7 @@ class ResumeExtractor:
 
     # ---------------------------------------------------------------- segmentation
     def segment(self, doc: ParsedDocument) -> tuple[list[Line], int]:
+        """Split the document into labelled lines (header, experience, education, ...) and drop protected-attribute lines."""
         lines, section, removed = [], "header", 0
         for pg in doc.pages:
             for raw in pg.text.split("\n"):
@@ -120,6 +122,7 @@ class ResumeExtractor:
 
     # ---------------------------------------------------------------- main
     def extract(self, doc: ParsedDocument, today: date | None = None) -> dict:
+        """Parse a document into structured candidate data: contact fields, employment, education, projects, skills, with provenance for each value."""
         lines, removed = self.segment(doc)
         body = [l for l in lines if not l.section.startswith("heading:")]
         header = [l for l in body if l.section == "header"]
@@ -324,7 +327,7 @@ class ResumeExtractor:
     # ---------------------------------------------------------------- education
     def _education(self, items: list[dict]) -> list[dict]:
         out, cur = [], None
-        def flush():
+        def flush() -> None:
             nonlocal cur
             if cur:
                 out.append(cur)

@@ -6,6 +6,7 @@ from ..core.errors import AppError
 
 
 def validate_weights(weights: dict | None) -> dict:
+    """Return a complete, validated weight dict (must total 100 %), or raise AppError."""
     w = dict(DEFAULT_WEIGHTS if not weights else weights)
     if set(w) != set(COMPONENTS):
         raise AppError(f"Weights must contain exactly: {', '.join(COMPONENTS)}", 422, "invalid_weights")
@@ -76,4 +77,5 @@ def sensitivity(items: list[dict], weights: dict, delta: float = 0.10) -> dict:
 
 
 def describe_formula(weights: dict) -> str:
+    """Human-readable scoring formula for the given weights."""
     return "Overall = " + " + ".join(f"({COMPONENT_LABELS[k]} × {weights[k]:.2f})" for k in COMPONENTS) + f"   [algorithm v{ALGORITHM_VERSION}]"

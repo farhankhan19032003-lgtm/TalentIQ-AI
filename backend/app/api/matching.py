@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from ..core.config import COMPONENTS, DEFAULT_WEIGHTS
+from ..core.config import DEFAULT_WEIGHTS
 from ..core.database import get_db
 from ..core.errors import AppError
 from ..models import db as M
@@ -132,7 +132,6 @@ def compare(job_id: int, ids: str, blind: bool = False, db: Session = Depends(ge
     rows = [r for r in rows_for_run(db, run, blind) if r["candidate_id"] in idl]
     if len(rows) != len(set(idl)):
         raise AppError("One or more candidates are not part of the latest run.", 404, "not_found")
-    names = [r["name"] for r in run.job_snapshot["requirements"] if r["importance"] in ("must", "preferred")]
     return {"run": run_info(run), "requirements": [r for r in run.job_snapshot["requirements"] if r["importance"] in ("must", "preferred")], "candidates": rows}
 
 

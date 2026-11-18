@@ -35,7 +35,7 @@ class Ontology:
         self.path = Path(path or settings.ontology_path)
         self.reload()
 
-    def reload(self):
+    def reload(self) -> None:
         doc = json.loads(self.path.read_text(encoding="utf-8"))
         self.version = doc.get("version", "0")
         self.domains = doc.get("domains", [])
@@ -61,24 +61,29 @@ class Ontology:
 
     # -- lookups ------------------------------------------------------------------
     def canonical(self, text: str) -> str | None:
+        """Canonical skill name for an alias/synonym, or None."""
         return self.lookup.get(text.strip().lower())
 
     def category(self, name: str) -> str:
+        """Ontology category of a skill ('Other' if unknown)."""
         return self.skills.get(name, {}).get("category", "Other")
 
     def related(self, name: str) -> list[str]:
+        """Skills whose presence gives partial credit for `name`."""
         return self.skills.get(name, {}).get("related", [])
 
     def is_soft(self, name: str) -> bool:
+        """True for soft skills (communication, leadership, ...), which are not scored as technical requirements."""
         return self.category(name) == SOFT
 
     def semantic_query(self, name: str) -> str:
+        """Text describing a skill, used for embedding-based evidence search."""
         s = self.skills.get(name)
         if not s:
             return name
         return " ".join([name] + [a.lstrip("!") for a in s.get("aliases", [])] + s.get("related", []))
 
-    def save(self, doc: dict):
+    def save(self, doc: dict) -> None:
         self.path.write_text(json.dumps(doc, indent=1), encoding="utf-8")
         self.reload()
 
@@ -139,6 +144,7 @@ class SkillExtractor:
         return out
 
     def extract(self, lines: list[Line], extra_skills: list[str] | None = None) -> dict:
+        """Find ontology skills in labelled lines; returns {skill: {mentions, listed_only, proficiency, ...}}."""
         found: dict[str, dict] = {}
         for ln in lines:
             if ln.section == "header" or not ln.text.strip():

@@ -137,6 +137,7 @@ def _ocr_available() -> bool:
 
 
 def parse_pdf(data: bytes) -> ParsedDocument:
+    """Extract reading-ordered text from a PDF (PyMuPDF; OCR for image-only pages; raises DocumentError for password-protected, corrupt or empty files)."""
     import pymupdf
     pymupdf.TOOLS.mupdf_display_errors(False)
     try:
@@ -227,6 +228,7 @@ def _textbox_lines(paragraph_el, doc, para_text) -> list[str]:
 
 
 def parse_docx(data: bytes) -> ParsedDocument:
+    """Extract text from a DOCX in document order: paragraphs, list bullets, tables (layout tables read column-wise) and text boxes."""
     from docx import Document
     from docx.table import Table
     from docx.text.paragraph import Paragraph
@@ -292,6 +294,7 @@ def parse_docx(data: bytes) -> ParsedDocument:
 
 
 def parse_document(data: bytes, kind: str) -> ParsedDocument:
+    """Dispatch on file type ('pdf' or 'docx') and return a ParsedDocument; raises DocumentError for anything unreadable."""
     if kind == "pdf":
         return parse_pdf(data)
     if kind == "docx":

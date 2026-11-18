@@ -35,6 +35,7 @@ def headline(m: dict) -> str:
 
 
 def explain(m: dict) -> dict:
+    """Turn one candidate's match result into readable text: headline, why matched / why not, missing information and per-component points."""
     reqs = m["requirements"]
     matched = [r for r in reqs if r["match_type"] in ("exact", "synonym")]
     partial = [r for r in reqs if r["match_type"] == "partial"]

@@ -4,7 +4,7 @@ import pytest
 
 from app.core.config import settings
 from app.services.document_parser import DocumentError, normalize_text, parse_document, parse_pdf, text_quality
-from helpers import RES, make_docx, make_pdf
+from helpers import RES, make_pdf
 
 
 def test_pdf_single_column():

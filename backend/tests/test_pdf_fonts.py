@@ -1,5 +1,4 @@
 """Bundled Unicode fonts: Hindi (Devanagari) in the PDF reports."""
-import io
 
 import pymupdf
 import pytest

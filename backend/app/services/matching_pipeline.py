@@ -55,6 +55,7 @@ def build_units(parsed: dict) -> list[dict]:
 
 
 def narrative(parsed: dict, sections=("summary", "experience", "internships")) -> str:
+    """Resume prose (summary + experience) used for the document-level semantic comparison; skills lists are excluded to avoid double counting."""
     out = []
     for s in sections:
         for it in parsed.get("sections", {}).get(s, []):
@@ -65,6 +66,7 @@ def narrative(parsed: dict, sections=("summary", "experience", "internships")) -
 
 
 def jd_narrative(job: dict) -> str:
+    """Job text used for semantic comparison: title, responsibilities and required qualifications."""
     a = job["analysis"]
     parts = [a.get("title") or job.get("title", "")] + a.get("responsibilities", []) + a.get("required_qualifications", [])
     text = "\n".join(p for p in parts if p).strip()

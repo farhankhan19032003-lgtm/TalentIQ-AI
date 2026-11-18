@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 
 from .resume_extractor import LEVEL_RE
-from .skill_extractor import Line, Ontology, SkillExtractor, SOFT
+from .skill_extractor import Line, Ontology, SkillExtractor
 
 RE_PREF = re.compile(r"\b(preferred|nice[\s\-]to[\s\-]have|good[\s\-]to[\s\-]have|bonus|a plus|is a plus|are a plus|desirable|optional|familiarity with|exposure to|advantageous)\b", re.I)
 RE_MUST = re.compile(r"\b(must|required|mandatory|essential|minimum)\b", re.I)
@@ -32,6 +32,7 @@ GROUPS = {
 
 
 def slug(s: str) -> str:
+    """Lower-case identifier used for requirement ids."""
     return re.sub(r"[^a-z0-9]+", "_", s.lower()).strip("_")
 
 
@@ -73,6 +74,7 @@ def _merge_concepts(requirements: list[dict], technical: dict[str, str]) -> None
 
 
 def analyze_jd(text: str, extractor: SkillExtractor, onto: Ontology, title: str | None = None) -> dict:
+    """Parse free-text job description into editable requirements (must/preferred, 'X or Y' alternatives, merged practice+tool), years and education."""
     raw_lines = [l.rstrip() for l in text.replace("\r", "").split("\n")]
     lines = [l for l in raw_lines if l.strip()]
     if not title:

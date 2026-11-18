@@ -148,7 +148,7 @@ class MiniLMNumpy:
         self.layers = []
         for i in range(self.n_layers):
             p = f"encoder.layer.{i}."
-            lin = lambda name: (np.ascontiguousarray(w[p + name + ".weight"].T), w[p + name + ".bias"])   # stored [out, in] -> x @ W.T
+            lin = lambda name, p=p: (np.ascontiguousarray(w[p + name + ".weight"].T), w[p + name + ".bias"])   # stored [out, in] -> x @ W.T
             self.layers.append({
                 "q": lin("attention.self.query"), "k": lin("attention.self.key"), "v": lin("attention.self.value"),
                 "o": lin("attention.output.dense"), "ln1": (w[p + "attention.output.LayerNorm.weight"], w[p + "attention.output.LayerNorm.bias"]),

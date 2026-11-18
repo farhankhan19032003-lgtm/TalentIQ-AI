@@ -1,0 +1,6 @@
+# Lint pass used for the take-home (run: ruff check app tests eval). Correctness rules only (pyflakes, syntax, bugbear);
+# one-line compound statements and short names like `l` for a text line are a deliberate style choice here.
+line-length = 160
+[lint]
+select = ["F", "E9", "E7", "B"]
+ignore = ["E701", "E702", "E731", "E741", "B008", "B904", "B905"]

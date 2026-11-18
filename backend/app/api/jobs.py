@@ -1,4 +1,3 @@
-import io
 
 from fastapi import APIRouter, Depends, File, UploadFile
 from sqlalchemy import select
