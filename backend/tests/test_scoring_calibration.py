@@ -145,3 +145,14 @@ def test_merged_requirement_survives_saving_through_the_api(client):
     ut = next(r for r in detail["requirements"] if r["name"] == "Unit Testing (pytest)")
     assert ut["match_type"] == "exact" and ut["satisfied_by"] == "Unit Testing"
     assert detail["explanation"]["headline"]
+
+
+def test_minilm_semantic_scale_does_not_saturate_for_strong_matches():
+    """Measured on the synthetic benchmark: strong resumes have document cosines up to ~0.90 and sentence-level cosines up to ~0.46.
+    The upper anchors sit above that, so a very strong match still scores below 100 and stays distinguishable from a strong one."""
+    eng = SimilarityEngine.__new__(SimilarityEngine)   # to_score only needs the method name
+    eng.method = "minilm"
+    strong, very_strong = eng.to_score(0.77, "doc"), eng.to_score(0.87, "doc")
+    assert strong < very_strong < 100
+    assert eng.to_score(0.46, "resp") < eng.to_score(0.50, "resp") < 100
+    assert eng.to_score(0.25, "doc") == 0 and eng.to_score(0.15, "resp") == 0

@@ -47,7 +47,7 @@ SCORING = {
 # similarity. Sentence-to-sentence cosines are systematically lower than document-to-document ones, so they get their own
 # range. Ranges are anchored on the synthetic benchmark (see docs/ALGORITHM.md "Calibration"), not learned from real data.
 CALIBRATION = {
-    "minilm": {"doc": (0.25, 0.75), "resp": (0.15, 0.45), "evidence_threshold": 0.50},
+    "minilm": {"doc": (0.25, 0.90), "resp": (0.15, 0.55), "evidence_threshold": 0.50},
     "tfidf": {"doc": (0.02, 0.40), "resp": (0.02, 0.30), "evidence_threshold": 0.28},
 }
 HIGH_SCORE = SCORING["high_match"]
