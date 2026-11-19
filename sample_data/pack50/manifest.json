@@ -1,0 +1,356 @@
+{
+ "synthetic": true,
+ "note": "Fictional people; all e-mails are @example.com.",
+ "resumes": [
+  {
+   "file": "resume_01_rohan_bose.pdf",
+   "name": "Rohan Bose",
+   "email": "rohan.bose@example.com",
+   "family": "backend_related",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_02_anika_das.pdf",
+   "name": "Anika Das",
+   "email": "anika.das@example.com",
+   "family": "backend",
+   "tier": "weak"
+  },
+  {
+   "file": "resume_03_rahul_menon.pdf",
+   "name": "Rahul Menon",
+   "email": "rahul.menon@example.com",
+   "family": "fullstack",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_04_jatin_reddy.pdf",
+   "name": "Jatin Reddy",
+   "email": "jatin.reddy@example.com",
+   "family": "backend",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_05_naveen_bhatt.pdf",
+   "name": "Naveen Bhatt",
+   "email": "naveen.bhatt@example.com",
+   "family": "data",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_06_kabir_chopra.pdf",
+   "name": "Kabir Chopra",
+   "email": "kabir.chopra@example.com",
+   "family": "fullstack",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_07_nisha_malhotra.pdf",
+   "name": "Nisha Malhotra",
+   "email": "nisha.malhotra@example.com",
+   "family": "backend",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_08_simran_iyer.pdf",
+   "name": "Simran Iyer",
+   "email": "simran.iyer@example.com",
+   "family": "backend",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_09_tanya_trivedi.pdf",
+   "name": "Tanya Trivedi",
+   "email": "tanya.trivedi@example.com",
+   "family": "java",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_10_chirag_kapoor.pdf",
+   "name": "Chirag Kapoor",
+   "email": "chirag.kapoor@example.com",
+   "family": "devops",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_11_yash_mehta.pdf",
+   "name": "Yash Mehta",
+   "email": "yash.mehta@example.com",
+   "family": "ml",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_12_lakshmi_ali.pdf",
+   "name": "Lakshmi Ali",
+   "email": "lakshmi.ali@example.com",
+   "family": "ml",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_13_aman_yadav.pdf",
+   "name": "Aman Yadav",
+   "email": "aman.yadav@example.com",
+   "family": "sales",
+   "tier": "weak"
+  },
+  {
+   "file": "resume_14_pranav_pillai.pdf",
+   "name": "Pranav Pillai",
+   "email": "pranav.pillai@example.com",
+   "family": "java",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_15_sahil_joshi.pdf",
+   "name": "Sahil Joshi",
+   "email": "sahil.joshi@example.com",
+   "family": "ml",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_16_meera_sethi.pdf",
+   "name": "Meera Sethi",
+   "email": "meera.sethi@example.com",
+   "family": "data",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_17_aarav_patil.pdf",
+   "name": "Aarav Patil",
+   "email": "aarav.patil@example.com",
+   "family": "data",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_18_ishaan_verma.pdf",
+   "name": "Ishaan Verma",
+   "email": "ishaan.verma@example.com",
+   "family": "data",
+   "tier": "weak"
+  },
+  {
+   "file": "resume_19_mira_desai.pdf",
+   "name": "Mira Desai",
+   "email": "mira.desai@example.com",
+   "family": "backend",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_20_dev_shah.pdf",
+   "name": "Dev Shah",
+   "email": "dev.shah@example.com",
+   "family": "backend_related",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_21_bhavna_gupta.pdf",
+   "name": "Bhavna Gupta",
+   "email": "bhavna.gupta@example.com",
+   "family": "backend",
+   "tier": "weak"
+  },
+  {
+   "file": "resume_22_arjun_sharma.pdf",
+   "name": "Arjun Sharma",
+   "email": "arjun.sharma@example.com",
+   "family": "sales",
+   "tier": "weak"
+  },
+  {
+   "file": "resume_23_mohan_hasan.pdf",
+   "name": "Mohan Hasan",
+   "email": "mohan.hasan@example.com",
+   "family": "accountant",
+   "tier": "weak"
+  },
+  {
+   "file": "resume_24_sameer_sen.pdf",
+   "name": "Sameer Sen",
+   "email": "sameer.sen@example.com",
+   "family": "devops",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_25_riya_rao.pdf",
+   "name": "Riya Rao",
+   "email": "riya.rao@example.com",
+   "family": "ml",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_26_gaurav_khan.pdf",
+   "name": "Gaurav Khan",
+   "email": "gaurav.khan@example.com",
+   "family": "backend",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_27_manav_nair.pdf",
+   "name": "Manav Nair",
+   "email": "manav.nair@example.com",
+   "family": "backend",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_28_ananya_pawar.pdf",
+   "name": "Ananya Pawar",
+   "email": "ananya.pawar@example.com",
+   "family": "backend",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_29_leela_kulkarni.pdf",
+   "name": "Leela Kulkarni",
+   "email": "leela.kulkarni@example.com",
+   "family": "backend",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_30_kavya_singh.pdf",
+   "name": "Kavya Singh",
+   "email": "kavya.singh@example.com",
+   "family": "data",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_31_kunal_bose.pdf",
+   "name": "Kunal Bose",
+   "email": "kunal.bose@example.com",
+   "family": "accountant",
+   "tier": "weak"
+  },
+  {
+   "file": "resume_32_diya_das.pdf",
+   "name": "Diya Das",
+   "email": "diya.das@example.com",
+   "family": "backend_related",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_33_isha_menon.pdf",
+   "name": "Isha Menon",
+   "email": "isha.menon@example.com",
+   "family": "data",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_34_kiran_reddy.pdf",
+   "name": "Kiran Reddy",
+   "email": "kiran.reddy@example.com",
+   "family": "devops",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_35_aditya_bhatt.pdf",
+   "name": "Aditya Bhatt",
+   "email": "aditya.bhatt@example.com",
+   "family": "fullstack",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_36_zoya_chopra.pdf",
+   "name": "Zoya Chopra",
+   "email": "zoya.chopra@example.com",
+   "family": "java",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_37_imran_malhotra.pdf",
+   "name": "Imran Malhotra",
+   "email": "imran.malhotra@example.com",
+   "family": "devops",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_38_vivaan_iyer.pdf",
+   "name": "Vivaan Iyer",
+   "email": "vivaan.iyer@example.com",
+   "family": "ml",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_39_sana_trivedi.pdf",
+   "name": "Sana Trivedi",
+   "email": "sana.trivedi@example.com",
+   "family": "data",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_40_varun_kapoor.pdf",
+   "name": "Varun Kapoor",
+   "email": "varun.kapoor@example.com",
+   "family": "devops",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_41_reyansh_mehta.pdf",
+   "name": "Reyansh Mehta",
+   "email": "reyansh.mehta@example.com",
+   "family": "ml",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_42_omkar_ali.pdf",
+   "name": "Omkar Ali",
+   "email": "omkar.ali@example.com",
+   "family": "java",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_43_ritu_yadav.docx",
+   "name": "Ritu Yadav",
+   "email": "ritu.yadav@example.com",
+   "family": "accountant",
+   "tier": "weak"
+  },
+  {
+   "file": "resume_44_tara_pillai.docx",
+   "name": "Tara Pillai",
+   "email": "tara.pillai@example.com",
+   "family": "data",
+   "tier": "weak"
+  },
+  {
+   "file": "resume_45_priya_joshi.docx",
+   "name": "Priya Joshi",
+   "email": "priya.joshi@example.com",
+   "family": "fullstack",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_46_pooja_sethi.docx",
+   "name": "Pooja Sethi",
+   "email": "pooja.sethi@example.com",
+   "family": "fullstack",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_47_divya_patil.docx",
+   "name": "Divya Patil",
+   "email": "divya.patil@example.com",
+   "family": "backend",
+   "tier": "medium"
+  },
+  {
+   "file": "resume_48_harsh_verma.docx",
+   "name": "Harsh Verma",
+   "email": "harsh.verma@example.com",
+   "family": "backend",
+   "tier": "weak"
+  },
+  {
+   "file": "resume_49_neha_desai.docx",
+   "name": "Neha Desai",
+   "email": "neha.desai@example.com",
+   "family": "java",
+   "tier": "strong"
+  },
+  {
+   "file": "resume_50_farah_shah.docx",
+   "name": "Farah Shah",
+   "email": "farah.shah@example.com",
+   "family": "backend_related",
+   "tier": "medium"
+  }
+ ]
+}

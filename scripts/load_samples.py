@@ -4,6 +4,7 @@
     python scripts/load_samples.py --base http://localhost:8000 --jd python_backend_developer --no-bad-files
     python scripts/load_samples.py --run                  # also run matching for every job it created
     python scripts/load_samples.py --demo --run           # the curated 3-minute demo: 1 JD, 15 resumes, 3 edge cases
+    python scripts/load_samples.py --pack50 --run         # the 50-resume pack (resume_XX_name) + 4 edge cases + the sample JD
 
 Standard library only. All people in sample_data/ are fictional; the folder also contains deliberately bad files
 (corrupt, password-protected, fake extension) to show the error handling - skip them with --no-bad-files.
@@ -42,6 +43,7 @@ def main():
     ap.add_argument("--no-bad-files", action="store_true", help="skip the corrupt / password-protected / fake-extension files")
     ap.add_argument("--run", action="store_true", help="run matching for each created job")
     ap.add_argument("--demo", action="store_true", help="load only the curated demo set listed in sample_data/demo_set.json")
+    ap.add_argument("--pack50", action="store_true", help="load the 50-resume pack in sample_data/pack50 with its edge cases and the sample JD")
     a = ap.parse_args()
 
     jds = sorted((ROOT / "job_descriptions").glob("*.txt"))
@@ -52,6 +54,12 @@ def main():
         demo = json.loads((ROOT / "demo_set.json").read_text(encoding="utf-8"))
         jds = [ROOT / demo["job_description"]]
         resumes = [ROOT / "resumes" / n for n in demo["resumes"] + demo["edge_cases"]]
+    elif a.pack50:
+        pack = ROOT / "pack50"
+        jds = [ROOT / "job_descriptions" / "python_backend_developer.txt"]
+        resumes = sorted(p for p in pack.iterdir() if p.suffix in (".pdf", ".docx"))
+        if not a.no_bad_files:
+            resumes += sorted((pack / "edge_cases").iterdir())
     elif a.no_bad_files:
         resumes = [p for p in resumes if not p.stem.startswith(BAD)]
 
