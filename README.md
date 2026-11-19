@@ -54,6 +54,16 @@ flowchart LR
 | Skills | hand-edited 160-skill ontology (synonyms, related skills) | explainable, editable, no model needed for exact/related matching |
 | Packaging | Docker Compose (db + backend + nginx frontend), Codespaces config | one command to run |
 
+### Data storage
+
+**What is used.** PostgreSQL 16 under Docker Compose (the stack on http://localhost:8080) and in the portable setup from `scripts/setup_postgres.ps1`; plain SQLite (`backend/talentiq.db`) only when no `DATABASE_URL` is set, so the first local run needs no database. The same SQLAlchemy models and Alembic migrations (`backend/alembic/versions`) run on both; the test suite uses SQLite and the migrations were checked against PostgreSQL. Nothing is kept in memory only: candidates, parsed fields with evidence, match runs and results, overrides and the audit log are rows. Original uploaded files go to `backend/storage/` (or the `uploads` volume in Docker) and can be switched off with `STORE_ORIGINAL_FILES=false`.
+
+**Why a relational database.** Every score has to be traceable: a result row points to its run, its candidate, its per-component scores and its evidence lines, and runs are immutable snapshots (`MatchRun.job_snapshot`). That is joins and constraints (`uq_resume_hash`, `uq_run_candidate`), which a relational schema gives for free.
+
+**Replacing it.** Only `app/core/database.py` (engine and session) and `app/models/db.py` know the database. Another SQL engine is a `DATABASE_URL` change plus `alembic upgrade head`. MongoDB would mean rewriting `models/db.py` and the queries in `app/api/*` and `services/pipeline.py` against a document model: one `candidates` document with embedded skills, employment and education, a `match_runs` collection holding results as embedded arrays, and a unique index on `file_hash`. It is not implemented and not needed for this scope; the trade-off is that cross-run queries (rank history, audit joins) become aggregation pipelines.
+
+**Accounting for every file.** `GET /api/resumes/accounting?job_id=` returns files received, stored, parsed, failed, identical duplicates skipped (byte-identical files are not stored twice; each skip is recorded in the audit log and listed), how many parsed resumes the latest ranking covers, and how many are not in it. The Ranking page shows the same line and, when resumes were uploaded after the last run, a "N parsed resumes are not ranked, re-run" banner.
+
 ### Project structure
 ```
 backend/app/
@@ -85,6 +95,7 @@ docs/           ALGORITHM.md, ARCHITECTURE.md, API_DOCUMENTATION.md, DEMO_SCRIPT
 | `POST /api/jobs/analyze` · `POST /api/jobs/extract-text` | preview the extraction for pasted text / read text from an uploaded PDF, DOCX or TXT JD |
 | `POST /api/jobs` · `GET/PUT/DELETE /api/jobs/{id}` | save, read, edit (requirements, min years, qualification) and delete a job |
 | `POST /api/resumes/upload` | batch upload (multipart `files`): per-file `parsed` / `failed` / `rejected` / `duplicate`, plus `needs_review` |
+| `GET /api/resumes/accounting?job_id=` | every file accounted for: received, parsed, failed, duplicates skipped (listed), ranked vs not yet ranked |
 | `GET /api/resumes` · `GET /api/resumes/{id}` · `POST /api/resumes/{id}/retry` · `DELETE /api/resumes/{id}` | list, diagnostics, retry, delete |
 | `POST /api/matching/run/{job_id}` | score and rank every parsed candidate (custom weights optional) |
 | `GET /api/matching/results/{job_id}` | the ranking table (filters, sort, pagination) |

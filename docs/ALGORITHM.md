@@ -3,7 +3,7 @@
 How TalentIQ turns a job description and a resume into a 0-100 score and an explanation. Every number named here lives in
 `backend/app/core/config.py` (`DEFAULT_WEIGHTS`, `SCORING`, `CALIBRATION`); nothing is hidden in the code.
 
-All results below were produced on the **fictional** sample set in `sample_data/` (6 JDs, 35 parsable resumes = 210 JD/resume pairs). See [Limitations](#limitations-and-future-work).
+All results below were produced on the **fictional** sample set in `sample_data/` (6 JDs, 35 parsable resumes = 210 JD/resume pairs, 204 of them with an author grade). See [Limitations](#limitations-and-future-work).
 
 ## 1. Pipeline at a glance
 
@@ -43,6 +43,8 @@ A 160-skill ontology maps aliases to one canonical name ("postgres", "psql" → 
 - **document level**: JD narrative (title + responsibilities + required qualifications) vs resume narrative (summary + experience);
 - **responsibility level**: each JD responsibility vs its best-matching resume line, averaged.
 
+**Scaling a cosine to 0-100 (and why it must not saturate).** A raw cosine is not a percentage, so each level is mapped linearly between two anchors and clipped: `score = 100 · (cos − lo) / (hi − lo)`, `lo` = what an unrelated pair typically gives (→ 0), `hi` = what a near-perfect pair gives (→ 100). MiniLM anchors: **document 0.25 → 0, 0.90 → 100; responsibility 0.15 → 0, 0.55 → 100** (`CALIBRATION` in `core/config.py`; TF-IDF has its own ranges). The semantic component is the mean of the two. The upper anchors were first 0.75 and 0.45; a live run showed that was a bug-in-waiting: three candidates with document cosines 0.75, 0.77 and 0.87 all scored 100 and became indistinguishable. Strong resumes measured up to 0.90 (document) and 0.46 (responsibility), so the anchors now sit above that: **0 of 204 graded pairs reach 100** (3 did before), and 0.77 vs 0.87 now score 80.0 vs 95.4. `tests/test_scoring_calibration.py::test_minilm_semantic_scale_does_not_saturate_for_strong_matches` guards it. Reproduce the numbers with `python eval/calibration_report.py`. The anchors are a documented heuristic fitted on synthetic data, not learned from real hiring outcomes.
+
 ### Step 5-6. Components and final score
 
 ```
@@ -75,7 +77,7 @@ Weights: must = 1.0, preferred = 0.5, title skill x2. "X or Y" takes the best al
 
 ## 2. Worked example (real output)
 
-Job: *Python Backend Developer* (`sample_data/job_descriptions/python_backend_developer.txt`). Candidate: **Sana Qureshi** (`sana_qureshi.docx`, fictional). MiniLM, default weights. Live result: **71.27, "Good match", rank 4 of 17**.
+Job: *Python Backend Developer* (`sample_data/job_descriptions/python_backend_developer.txt`). Candidate: **Sana Qureshi** (`sana_qureshi.docx`, fictional). MiniLM, default weights. Live result on a fresh stack with the 15-resume demo set: **67.11, "Partial match", rank 4 of 16**.
 
 **Requirements (weight m, credit c):**
 
@@ -93,7 +95,7 @@ Job: *Python Backend Developer* (`sample_data/job_descriptions/python_backend_de
 
 **A. Technical** = 100 × 5.55 / 10.5 = **52.86**
 
-**B. Semantic.** Document cosine 0.6435 → (0.6435 − 0.25) / (0.75 − 0.25) = 78.69. Responsibility cosines 0.473, 0.156, 0.432, 0.185 → mean 0.3115 → (0.3115 − 0.15) / (0.45 − 0.15) = 53.82. Semantic = 0.5 × 78.69 + 0.5 × 53.82 = **66.25**
+**B. Semantic.** Document cosine 0.6435 → (0.6435 − 0.25) / (0.90 − 0.25) = 60.53. Responsibility cosines 0.473, 0.156, 0.432, 0.185 → mean 0.3115 → (0.3115 − 0.15) / (0.55 − 0.15) = 40.36. Semantic = 0.5 × 60.53 + 0.5 × 40.36 = **50.45**
 
 **C. Experience.** Role "Python Developer" (Jun 2022 - present): fit 0.448 ≥ 0.25 → relevant, 4.5 years. The 5-month internship has fit 0.19 → not relevant. 4.5 ≥ 3 required → **100**.
 
@@ -102,13 +104,13 @@ Job: *Python Backend Developer* (`sample_data/job_descriptions/python_backend_de
 | Component | Score | Weight | Effective weight (÷ 0.95) | Points |
 |---|---|---|---|---|
 | Technical | 52.86 | 0.40 | 0.4211 | 22.26 |
-| Semantic | 66.25 | 0.25 | 0.2632 | 17.43 |
+| Semantic | 50.45 | 0.25 | 0.2632 | 13.28 |
 | Experience | 100 | 0.20 | 0.2105 | 21.05 |
 | Education | 100 | 0.10 | 0.1053 | 10.53 |
 | Project/Domain | unverified | 0.05 | 0 | 0.00 |
-| **Overall** | | | | **71.27** |
+| **Overall** | | | | **67.11** |
 
-Range: low = (0.40·52.86 + 0.25·66.25 + 0.20·100 + 0.10·100) = **67.71**; high = low + 0.05·100 = **72.71**. Headline shown on the candidate page: *"Good match (71/100). Direct evidence for 4 of 7 must-have skills and related evidence for 2 more. Relevant experience 4.5 y (4.7 y total) meets the 3+ y required. Missing must-haves: Docker."*
+Range: low = (0.40·52.86 + 0.25·50.45 + 0.20·100 + 0.10·100) = **63.76**; high = low + 0.05·100 = **68.76**. Headline shown on the candidate page: *"Partial match (67/100). Direct evidence for 4 of 7 must-have skills and related evidence for 2 more. Relevant experience 4.5 y (4.7 y total) meets the 3+ y required. Missing must-haves: Docker."*
 
 ## 3. Calibration: what was changed and why
 
@@ -131,25 +133,28 @@ Range: low = (0.40·52.86 + 0.25·66.25 + 0.20·100 + 0.10·100) = **67.71**; hi
 | # | Change | Reason |
 |---|---|---|
 | 1 | Role relevance by weighted **fit** (≥ 25 %) instead of "≥ 2 shared skills" | the old rule counted Git + Docker as relevant to any job, giving unrelated candidates 100 on Experience |
-| 2 | Separate range for responsibility-level cosine: `0.15 → 0`, `0.45 → 100` (document level `0.25 → 0`, `0.75 → 100`) | responsibility pairs are sentence-to-sentence, so their cosines are systematically lower; ranges are anchored on the table above (unrelated ≈ 0.2 → ~20, strong ≈ 0.41 → ~87) |
+| 2 | Separate range for responsibility-level cosine: `0.15 → 0`, `0.55 → 100` (document level `0.25 → 0`, `0.90 → 100`) | responsibility pairs are sentence-to-sentence, so their cosines are systematically lower; ranges are anchored on the table above (unrelated ≈ 0.2 → ~12, strong ≈ 0.41 → ~65); upper anchors moved from 0.75 / 0.45 to 0.90 / 0.55 after a live run showed strong candidates saturating at 100 (see Step 4) |
 | 3 | Unverified Project/Domain is left out of the point estimate (range kept) | "no Projects section" is missing information, not a mismatch; counted as 0 it capped every such resume at 95 |
 | 4 | `Unit Testing` + `pytest` merged into one requirement | one concept was counted (and missed) twice |
 | 5 | Peer skills give 0.35 related credit | a Flask developer is closer to a Django job than to an accounting job; they are still never shown as exact |
 
-**Not inflated.** Weights, credits and the 0.35 / 0.85 values are unchanged. Poor fits got *lower* (grade-1 median 48 → 34), strong fits got higher only because structural penalties were removed.
+**Not inflated.** Weights, credits and the 0.35 / 0.85 values are unchanged. Poor fits got *lower*, not higher. The last change (anchors 0.75/0.45 → 0.90/0.55) lowers every semantic score a little and therefore every overall score by a few points; it was kept because it removes saturation and the strong band still clears 80. Measured with `python eval/calibration_report.py` (MiniLM, 204 graded JD/resume pairs; the earlier "210" counted six pairs without a grade):
 
-| Relevance grade | Median score before → after | Range after | n |
-|---|---|---|---|
-| 3 strong | 81 → **91** | 67 - 97 | 13 |
-| 2 | 63 → 67 | 36 - 82 | 22 |
-| 1 | 48 → 34 | 7 - 68 | 48 |
-| 0 unrelated | 18 → 18 | 4 - 58 | 127 |
+| Relevance grade | Median score, anchors 0.75 / 0.45 | Median now (0.90 / 0.55) | Range now | n |
+|---|---|---|---|---|
+| 3 strong | 89.4 | **84.9** | 64 - 94 | 12 |
+| 2 | 67.0 | 63.2 | 34 - 77 | 21 |
+| 1 | 33.4 | 30.0 | 6 - 64 | 47 |
+| 0 unrelated | 17.5 | 16.4 | 4 - 54 | 124 |
 
-| Evidence of fit | Result |
+(Before any calibration, grade-3 median was 81 and grade-1 median 48.)
+
+| Evidence of fit | Result now |
 |---|---|
-| ≥ 75 % of must-haves directly evidenced (11 pairs) | 9 of 11 score ≥ 80 (median 91) |
-| ≤ 25 % of must-haves evidenced (145 pairs) | 138 of 145 score < 40 |
-| Pairs ordered correctly against the grades | 88.5 % → **89.8 %** |
+| ≥ 75 % of must-haves directly evidenced (10 pairs) | 8 of 10 score ≥ 80 (median 87.3) |
+| ≤ 25 % of must-haves evidenced (142 pairs) | 136 of 142 score < 40 |
+| Pairs ordered correctly against the grades | **89.2 %** (1592 of 1784; 89.8 % with the old anchors) |
+| Semantic component saturated at 100 | **0 of 204** (3 with the old anchors) |
 
 Guard-rail test (`test_scoring_calibration.py`): a clearly strong, a medium and a clearly weak fictional resume must satisfy `strong > medium > weak`, `strong ≥ 80`, `50 ≤ medium < 80`, `weak < 40` with both TF-IDF and MiniLM.
 
