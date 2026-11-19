@@ -48,3 +48,19 @@ describe("verdicts", () => {
     expect(warningText("ocr_used")).toMatch(/OCR/);
   });
 });
+
+import { rescaleNote } from "../utils";
+describe("rescaleNote", () => {
+  it("explains rescaled weights when Projects had no evidence", () => {
+    const note = rescaleNote({
+      technical_skills: { status: "scored", weight_configured: 0.4, weight_effective: 0.4211 },
+      project_domain: { status: "unverified", weight_configured: 0.05, weight_effective: 0 },
+    });
+    expect(note).toMatch(/Projects & domain had no evidence/);
+    expect(note).toMatch(/rescaled to add up to 100%/);
+    expect(note).toMatch(/42\.1% instead of the configured 40%/);
+  });
+  it("stays silent when nothing was left out", () => {
+    expect(rescaleNote({ technical_skills: { status: "scored", weight_configured: 0.4, weight_effective: 0.4 } })).toBeNull();
+  });
+});

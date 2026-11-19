@@ -150,3 +150,16 @@ export const WARNING_TEXT: Record<string, string | null> = {
   scanned_page_no_ocr: "A scanned page could not be read (no OCR).",
 };
 export const warningText = (code: string): string | null => (code in WARNING_TEXT ? WARNING_TEXT[code] : code);
+
+interface CompWeight { status?: string; weight_configured?: number | null; weight_effective?: number | null }
+const COMP_NAME: Record<string, string> = { technical_skills: "Technical skills", semantic_relevance: "Semantic relevance", relevant_experience: "Experience", education: "Education", project_domain: "Projects & domain" };
+
+/** Plain-language note shown under the score table when a component was left out and the other weights were rescaled to 100 %. */
+export function rescaleNote(components: Record<string, CompWeight>): string | null {
+  const left = Object.entries(components).filter(([, c]) => c.status === "not_required" || (c.status === "unverified" && !c.weight_effective));
+  if (!left.length) return null;
+  const why = left.map(([k, c]) => `${COMP_NAME[k] ?? k} ${c.status === "not_required" ? "is not required by this job" : "had no evidence in the resume"}`).join("; ");
+  const kept = Object.entries(components).find(([, c]) => c.status === "scored" && c.weight_configured && c.weight_effective);
+  const example = kept ? ` For example, ${COMP_NAME[kept[0]] ?? kept[0]} counts ${(kept[1].weight_effective! * 100).toFixed(1)}% instead of the configured ${(kept[1].weight_configured! * 100).toFixed(0)}%.` : "";
+  return `${why}, so the remaining weights were rescaled to add up to 100%.${example}`;
+}

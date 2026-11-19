@@ -156,7 +156,7 @@ export default function Ranking() {
               <tbody className="divide-y divide-slate-100">{items.map((r) => (
                 simple ? (
                 <tr key={r.result_id} className="hover:bg-slate-50" data-testid="simple-row">
-                  <td className="td min-w-[9.5rem]"><Link className="font-medium text-brand-700 hover:underline" to={`/candidates/${r.candidate_id}`}>{r.name}</Link><div className="text-xs text-slate-500">{r.latest_role ? (r.role_source === "headline" ? <em>{r.latest_role} (profile)</em> : r.latest_role) : "Role not stated"}</div></td>
+                  <td className="td min-w-[9.5rem]"><Link className="font-medium text-brand-700 hover:underline" to={`/candidates/${r.candidate_id}`}>{r.name}</Link><div className="text-xs text-slate-500">{r.latest_role ? (r.role_source === "headline" ? <em>{r.latest_role} (profile)</em> : r.latest_role) : "Role not found"}</div></td>
                   <td className="td tabular-nums">{r.employment_count === 0 && !r.claimed_years ? <span className="text-xs text-slate-500" title="No dated roles found in the resume">No dated roles</span>
                     : r.employment_count === 0 ? <span className="text-amber-700" title="Stated in the resume text, not verifiable from dated roles">claims {r.claimed_years} years</span>
                     : <>{fmt(r.total_years)} {r.total_years === 1 ? "year" : "years"}</>}</td>
@@ -166,7 +166,7 @@ export default function Ranking() {
                 <tr key={r.result_id} className="hover:bg-slate-50">
                   <td className="td"><input type="checkbox" aria-label={`Select ${r.name}`} checked={sel.includes(r.candidate_id)} onChange={() => toggle(r.candidate_id)} /></td>
                   <td className="td font-semibold">{r.rank}{r.sensitivity && !r.sensitivity.stable && <span title={`Rank varies ${r.sensitivity.rank_min}–${r.sensitivity.rank_max} under ±10pp weight changes`} className="ml-1 text-xs text-amber-600">±</span>}</td>
-                  <td className="td min-w-[9.5rem]"><Link className="font-medium text-brand-700 hover:underline" to={`/candidates/${r.candidate_id}`}>{r.name}</Link><div className="text-xs text-slate-500" title={r.role_source === "headline" ? "Role as the resume describes itself; no dated job title was found" : undefined}>{r.latest_role ? (r.role_source === "headline" ? <em>{r.latest_role} (profile)</em> : r.latest_role) : "Role not stated"}</div></td>
+                  <td className="td min-w-[9.5rem]"><Link className="font-medium text-brand-700 hover:underline" to={`/candidates/${r.candidate_id}`}>{r.name}</Link><div className="text-xs text-slate-500" title={r.role_source === "headline" ? "Role as the resume describes itself; no dated job title was found" : undefined}>{r.latest_role ? (r.role_source === "headline" ? <em>{r.latest_role} (profile)</em> : r.latest_role) : "Role not found"}</div></td>
                   <td className="td"><ScoreBadge score={r.overall} low={r.score_low} high={r.score_high} />{r.override && <Chip tone="amber">override</Chip>}</td>
                   {Object.keys(COMP_LABEL).slice(0, 4).map((k) => <td key={k} className="td hidden xl:table-cell tabular-nums">{r.components[k]?.status === "not_required" ? "no req." : r.components[k]?.score == null ? "n/v" : fmt(r.components[k].score, 0)}</td>)}
                   <td className="td tabular-nums">{r.employment_count === 0 && !r.claimed_years

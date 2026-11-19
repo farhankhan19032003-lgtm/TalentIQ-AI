@@ -47,7 +47,7 @@ LEVELS = [("phd", 5, r"ph\.?\s?d|doctorate"), ("masters", 4, r"m\.?\s?tech|m\.?e
           ("bachelors", 3, r"b\.?\s?tech|b\.?e\.?(?=\s|,|$)|b\.?sc|bca|b\.?s\.?(?=\s|,|$)|bachelor(?:'?s)?|b\.?com|b\.?a\.?(?=\s|,|$)|undergraduate"),
           ("diploma", 2, r"diploma|polytechnic|associate degree")]
 LEVEL_RE = [(n, lv, re.compile(rf"\b(?:{p})", re.I)) for n, lv, p in LEVELS]
-ROLE_NOUN = r"(?:engineer|developer|analyst|scientist|manager|architect|consultant|designer|programmer|administrator|specialist|researcher|intern|tester|devops)"
+ROLE_NOUN = r"(?:engineer|developer|analyst|scientist|manager|architect|consultant|designer|programmer|administrator|specialist|researcher|intern|tester|devops|accountant|executive|associate|officer|coordinator|recruiter|trainee|professional)"
 HEADLINE_SUMMARY_RE = re.compile(rf"^(?:(?:an?|the)\s+)?(?:(?:experienced|results[- ]driven|motivated|passionate|dedicated|enthusiastic|aspiring|talented|detail[- ]oriented|"
                                  rf"driven|skilled|proficient|dynamic|creative|ambitious|highly\s+\w+)\s+)*((?:[A-Za-z/+.&#-]+\s+){{0,3}}?{ROLE_NOUN})\b", re.I)
 CLAIMED_YEARS_RE = re.compile(r"(\d{1,2}(?:\.\d)?)\s*\+?\s*(?:years?|yrs?)(?:\s+of)?(?:\s+[\w/&+.-]+){0,4}?\s+experience|"
@@ -233,8 +233,8 @@ class ResumeExtractor:
         s = summary.get("value")
         if s:
             m = HEADLINE_SUMMARY_RE.match(s.strip())
-            if m:
-                val = " ".join(w if any(c.isupper() for c in w) else w.capitalize() for w in m.group(1).split())
+            val = " ".join(w if any(c.isupper() for c in w) else w.capitalize() for w in m.group(1).split()) if m else ""
+            if val and val.lower() != "professional":      # a bare "Experienced professional" says nothing about the role
                 return _fld(val, summary.get("page"), s[:160], "summary_first_clause", 0.55)
         return _fld(None)
 

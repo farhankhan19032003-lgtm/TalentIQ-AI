@@ -9,7 +9,7 @@ import EvidenceViewer from "../components/EvidenceViewer";
 import InterviewNotes from "../components/InterviewNotes";
 import { Chip, Disclaimer, ErrorBox, MatchTag, PageTitle, ScoreBadge, SkillChips, SkillLegend, Spinner } from "../components/ui";
 import { CandidateDetail } from "../types";
-import { COMP_LABEL, EDU_LABEL, STATUSES, STATUS_LABEL, educationVerdict, experienceVerdict, fmt, warningText } from "../utils";
+import { COMP_LABEL, EDU_LABEL, STATUSES, STATUS_LABEL, educationVerdict, experienceVerdict, fmt, rescaleNote, warningText } from "../utils";
 
 export default function Candidate() {
   const { id } = useParams();
@@ -39,7 +39,7 @@ export default function Candidate() {
   const shownWarnings = (c.diagnostics.warnings as string[]).map(warningText).filter((w): w is string => !!w);
   return (
     <div>
-      <PageTitle title={c.name} sub={`${r.latest_role ?? "Role not stated"} · rank #${r.rank} for this job`}>
+      <PageTitle title={c.name} sub={`${r.latest_role ?? "Role not found"} · rank #${r.rank} for this job`}>
         <button className="btn-ghost" onClick={() => download(`/reports/${jobId}/candidate/${c.id}/pdf?blind=${blind}`, `candidate_${c.id}.pdf`).catch((e) => setErr(errMsg(e)))}><Download className="h-4 w-4" />PDF report</button>
         <button className="btn-danger" onClick={() => { if (confirm("Permanently delete this candidate, their resume file and all extracted data?")) act(async () => { await api.delete(`/candidates/${c.id}`); nav("/ranking"); }); }}><Trash2 className="h-4 w-4" />Delete data</button>
       </PageTitle>
@@ -69,6 +69,7 @@ export default function Candidate() {
             <table className="mt-2 w-full text-sm"><thead><tr><th className="th">Component</th><th className="th">Score</th><th className="th">Effective weight</th><th className="th">Points</th></tr></thead>
               <tbody className="divide-y divide-slate-100">{ex.component_effects.map((e) => <tr key={e.component}><td className="td">{e.label}</td><td className="td">{e.status === "not_required" ? "no requirement" : e.score == null ? "n/a" : fmt(e.score)}</td><td className="td">{e.score == null && e.status !== "not_required" ? "left out (no evidence)" : `${fmt(e.weight)}%`}</td><td className="td">{fmt(e.contribution, 2)}</td></tr>)}
                 <tr className="font-semibold"><td className="td">Total</td><td className="td" /><td className="td">100%</td><td className="td">{fmt(r.overall, 2)}</td></tr></tbody></table>
+            {rescaleNote(r.components) && <p className="mt-2 rounded-md bg-slate-50 p-2 text-xs text-slate-600" data-testid="rescale-note"><b>Why the weights differ from Settings:</b> {rescaleNote(r.components)}</p>}
           </section>
 
           <section className="card p-5" data-testid="skills-glance">

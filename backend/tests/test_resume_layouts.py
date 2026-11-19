@@ -1,4 +1,4 @@
-"""Parsing accuracy across 14 different resume layouts (fictional people only).
+"""Parsing accuracy across 18 different resume layouts (fictional people only).
 
 Each case is rendered as a real DOCX or PDF, parsed with the production parser/extractor, and checked for the fields the
 ranking depends on: name, role, dated employment, experience years and education level."""
@@ -147,7 +147,7 @@ def test_scanned_pdf_is_flagged_for_review_when_ocr_was_used():
     class Doc:  # minimal stand-in for ParsedDocument
         ocr_used, quality, warnings = True, 0.8, ["ocr_used"]
         pages = [type("P", (), {"text": "x" * 500})()]
-    parsed = {"fields": {"name": {"value": "Jane Roe"}}}
+    parsed = {"fields": {"name": {"value": "Jane Roe"}, "headline": {"value": "Data Analyst"}}, "employment": []}
     r = build_review(Doc, parsed)
     assert r["needs_review"] and r["codes"] == ["scanned_ocr"] and r["reasons"] == [REVIEW_REASONS["scanned_ocr"]]
 
@@ -157,3 +157,37 @@ def test_clean_text_pdf_is_not_flagged():
                     "• Built APIs and services in Python for payment workflows and reporting dashboards", "Skills", "Python, Docker, SQL",
                     "Education", EDU], "pdf")
     assert not build_review(doc, p)["needs_review"]
+
+
+# Resumes with no dated job: the role must come from the headline / summary / objective, never be invented.
+HEADLINE_CASES = [
+    ("summary_sales_professional", ["Aman Yadav", "aman.yadav@example.com", "Summary", "Sales professional, recent graduate.", "Education", EDU,
+                                    "Skills", "Excel, Communication"], "Sales Professional"),
+    ("summary_accountant", ["Kunal Bose", "kunal.bose@example.com", "Summary", "Accountant, recent graduate.", "Education", EDU,
+                            "Skills", "Excel"], "Accountant"),
+    ("objective_style", ["Ritu Das", "ritu.das@example.com", "Objective", "Data Analyst looking to apply SQL and Tableau skills in a product team.",
+                         "Education", EDU, "Skills", "SQL, Tableau"], "Data Analyst"),
+    ("title_under_name_pdf", ["Gita Rao", "Backend Developer", "gita.rao@example.com", "Skills", "Python, Docker", "Education", EDU], "Backend Developer"),
+]
+
+
+@pytest.mark.parametrize("cid,lines,role", HEADLINE_CASES, ids=[c[0] for c in HEADLINE_CASES])
+def test_role_from_headline_when_no_dated_job(cid, lines, role):
+    p, _ = parse(lines, "pdf" if cid.endswith("pdf") else "docx")
+    assert p["employment"] == []
+    assert (p["fields"]["headline"]["value"] or "").lower() == role.lower()
+
+
+def test_role_truly_absent_is_flagged_not_guessed():
+    p, doc = parse(["Neha Banerjee", "neha.banerjee@example.com", "Skills", "Python, SQL, Docker, Git, REST APIs, PostgreSQL, pytest",
+                    "Projects", "Resume Ranker", "• Built a ranking service with FastAPI and PostgreSQL for matching resumes against job descriptions",
+                    "Education", EDU])
+    assert p["employment"] == [] and not p["fields"]["headline"]["value"]
+    review = build_review(doc, p)
+    assert review["needs_review"] and "role_not_found" in review["codes"]
+    assert REVIEW_REASONS["role_not_found"] in review["reasons"]
+
+
+def test_bare_professional_is_not_a_role():
+    p, _ = parse(["Sam Roy", "sam.roy@example.com", "Summary", "Experienced professional with a strong work ethic.", "Education", EDU])
+    assert not p["fields"]["headline"]["value"]

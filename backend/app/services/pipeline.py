@@ -114,6 +114,7 @@ REVIEW_REASONS = {
     "low_text_quality": "The extracted text is of low quality (garbled or very short), so parsed fields may be wrong.",
     "recovered_with_fallback": "The PDF was malformed and was recovered with a fallback reader; check the parsed fields.",
     "name_not_found": "No candidate name could be extracted.",
+    "role_not_found": "No job title or role headline was found in the resume (shown as 'not found', not guessed).",
 }
 
 
@@ -128,6 +129,8 @@ def build_review(doc, parsed: dict) -> dict:
         codes.append("recovered_with_fallback")
     if not parsed["fields"]["name"]["value"]:
         codes.append("name_not_found")
+    if not parsed["employment"] and not (parsed["fields"].get("headline") or {}).get("value"):
+        codes.append("role_not_found")
     return {"needs_review": bool(codes), "codes": codes, "reasons": [REVIEW_REASONS[c] for c in codes]}
 
 

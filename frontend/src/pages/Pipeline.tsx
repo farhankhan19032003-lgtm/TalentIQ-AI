@@ -88,7 +88,7 @@ export default function Pipeline() {
                         <GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-slate-300" aria-hidden />
                         <div className="min-w-0 flex-1">
                           <Link to={`/candidates/${c.candidate_id}`} className="block truncate text-sm font-semibold text-brand-700 hover:underline">{c.name}</Link>
-                          <div className="truncate text-xs text-slate-500">{c.latest_role ?? "No role extracted"}</div>
+                          <div className="truncate text-xs text-slate-500">{c.latest_role ?? "Role not found"}</div>
                         </div>
                         <ScoreBadge score={c.overall} low={c.score_low} high={c.score_high} />
                       </div>
