@@ -1,10 +1,10 @@
 {
-  "_comment": "Curated 3-minute demo: one JD, 15 fictional resumes (8 PDF, 7 DOCX) from strong to poor fit, plus 3 edge cases. All people are fictional (name@example.com). Load with: python scripts/load_samples.py --demo --run",
+  "_comment": "Curated 3-minute demo: one JD, 15 fictional resumes (8 PDF, 7 DOCX) from strong to poor fit, plus 4 edge cases (scanned, corrupt, password-protected, byte-identical duplicate). All people are fictional (name@example.com). Load with: python scripts/load_samples.py --demo --run",
   "job_description": "job_descriptions/python_backend_developer.txt",
   "resumes": [
     "lakshmi_narayan.pdf", "vikram_joshi.pdf", "manish_kulkarni.pdf", "anika_menon.pdf", "sana_qureshi.docx",
     "chirag_bhatt.pdf", "gaurav_mehta.pdf", "neel_kapoor.docx", "divya_krishnan.docx", "rohan_varma.docx",
     "farah_ali.pdf", "rahul_menon.docx", "tara_bose.docx", "meenal_shah.docx", "neha_banerjee.pdf"
   ],
-  "edge_cases": ["scanned_resume_image_only.pdf", "corrupted_resume.pdf", "password_protected_resume.pdf"]
+  "edge_cases": ["scanned_resume_image_only.pdf", "corrupted_resume.pdf", "password_protected_resume.pdf", "anika_menon_resume_copy.pdf"]
 }

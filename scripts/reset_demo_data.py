@@ -3,6 +3,7 @@
     python scripts/reset_demo_data.py                 # Docker Compose stack (default): removes the DB volume and uploads, restarts, loads the 50-resume pack
     python scripts/reset_demo_data.py --local         # local run: deletes backend/talentiq.db and backend/storage/uploads/* (stop the backend first), then you start it and run load_samples.py
     python scripts/reset_demo_data.py --set demo      # load the curated 15-resume demo set instead of the pack
+    python scripts/reset_demo_data.py --set none      # wipe only: an EMPTY database, e.g. before recording the demo (you upload the files yourself)
     python scripts/reset_demo_data.py --yes           # do not ask for confirmation
 
 Standard library only. Docker mode runs `docker compose down -v`, which deletes EVERY row and uploaded file of this compose project.
@@ -38,7 +39,7 @@ def wait_for(base: str, seconds: int = 240) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--local", action="store_true", help="reset the local SQLite database and upload folder instead of the Docker stack")
-    ap.add_argument("--set", choices=["pack50", "demo"], default="pack50", help="which synthetic set to load afterwards (default: pack50)")
+    ap.add_argument("--set", choices=["pack50", "demo", "none"], default="pack50", help="which synthetic set to load afterwards (default: pack50)")
     ap.add_argument("--base", default="http://localhost:8080")
     ap.add_argument("--yes", action="store_true", help="skip the confirmation prompt")
     a = ap.parse_args()
@@ -53,12 +54,15 @@ def main() -> None:
         for f in up.glob("*"):
             if f.name != ".gitkeep":
                 shutil.rmtree(f) if f.is_dir() else f.unlink()
-        print("local data wiped. Start the backend, then run: python scripts/load_samples.py --base http://localhost:8000 --" + ("pack50" if a.set == "pack50" else "demo") + " --run")
+        print("local data wiped. Start the backend" + ("." if a.set == "none" else f", then run: python scripts/load_samples.py --base http://localhost:8000 --{a.set} --run"))
         return
     run(["docker", "compose", "down", "-v"])
     run(["docker", "compose", "up", "-d", "--build"])
     wait_for(a.base)
-    run([sys.executable, "scripts/load_samples.py", "--base", a.base, "--" + ("pack50" if a.set == "pack50" else "demo"), "--run"])
+    if a.set == "none":
+        print("database is empty; upload the files yourself.")
+        return
+    run([sys.executable, "scripts/load_samples.py", "--base", a.base, "--" + a.set, "--run"])
 
 
 if __name__ == "__main__":
