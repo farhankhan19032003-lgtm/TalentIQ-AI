@@ -1,0 +1,6 @@
+# Separate, EMPTY demo instance next to your normal stack (own database volume, own port).
+#   docker compose -p talentiq-demo -f docker-compose.yml -f docker-compose.demo.yml up -d --build   -> http://localhost:8090
+#   docker compose -p talentiq-demo -f docker-compose.yml -f docker-compose.demo.yml down -v          -> delete it again
+services:
+  frontend:
+    ports: !override [ "8090:80" ]
