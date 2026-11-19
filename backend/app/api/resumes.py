@@ -11,6 +11,7 @@ from ..models import db as M
 from ..services import pipeline
 from ..services.security import read_stored
 from .deps import require_access
+from .views import pool_accounting
 
 router = APIRouter(prefix="/resumes", tags=["resumes"], dependencies=[Depends(require_access)])
 
@@ -61,6 +62,16 @@ def stats(db: Session = Depends(get_db)):
     errs = dict(db.execute(select(M.Resume.error_code, func.count()).where(M.Resume.status == "failed").group_by(M.Resume.error_code)).all())
     return {"total": total, "parsed": by.get("parsed", 0), "failed": by.get("failed", 0),
             "success_rate": round(by.get("parsed", 0) / total * 100, 1) if total else None, "failures_by_reason": errs}
+
+
+@router.get("/accounting")
+def accounting(job_id: int | None = None, db: Session = Depends(get_db)):
+    """Every uploaded file accounted for; with job_id also how many parsed resumes the latest run ranked."""
+    run = pipeline.latest_run(db, job_id) if job_id else None
+    dups = list(db.scalars(select(M.AuditLog).where(M.AuditLog.action == "resume.duplicate_skipped").order_by(M.AuditLog.id.desc()).limit(200)))
+    kept = {r.id: r.original_filename for r in db.scalars(select(M.Resume).where(M.Resume.id.in_([d.entity_id for d in dups])))}
+    return {**pool_accounting(db, run), "duplicates": [{"skipped_at": d.ts.isoformat(), "identical_to_resume_id": d.entity_id,
+                                                        "identical_to_filename": kept.get(d.entity_id)} for d in dups]}
 
 
 @router.get("/batches/{batch_id}")

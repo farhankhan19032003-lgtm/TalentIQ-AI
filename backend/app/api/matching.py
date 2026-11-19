@@ -11,7 +11,7 @@ from ..models import db as M
 from ..schemas.api import RATING_CRITERIA, BulkStatusIn, InterviewIn, InterviewPatch, NoteIn, OverrideIn, RunIn, StatusIn, WhatIfIn
 from ..services import pipeline
 from .deps import require_access
-from .views import HIGH_SCORE, mask_fields, result_row, rows_for_run, run_info
+from .views import HIGH_SCORE, mask_fields, pool_accounting, result_row, rows_for_run, run_info
 
 router = APIRouter(tags=["matching"], dependencies=[Depends(require_access)])
 
@@ -87,7 +87,7 @@ def results(job_id: int, run_id: int | None = None, q: str | None = None, min_sc
                "high_matching": sum(r["overall"] >= HIGH_SCORE for r in allrows), "needs_review": sum(r["needs_review"] for r in allrows),
                "high_threshold": HIGH_SCORE}
     return {"job": {"id": job.id, "title": job.title}, "run": run_info(run), "summary": summary, "total": total, "page": page,
-            "page_size": page_size, "items": items}
+            "page_size": page_size, "items": items, "pool": pool_accounting(db, run)}
 
 
 def _candidate_view(db, c: M.Candidate, blind: bool):

@@ -67,7 +67,7 @@ export default function Candidate() {
                 <Bar dataKey="score">{chart.map((d, i) => <Cell key={i} fill={d.nv ? "#cbd5e1" : "#4f46e5"} />)}</Bar></BarChart></ResponsiveContainer>
             </div>
             <table className="mt-2 w-full text-sm"><thead><tr><th className="th">Component</th><th className="th">Score</th><th className="th">Effective weight</th><th className="th">Points</th></tr></thead>
-              <tbody className="divide-y divide-slate-100">{ex.component_effects.map((e) => <tr key={e.component}><td className="td">{e.label}</td><td className="td">{e.status === "not_required" || e.score == null ? "n/a" : fmt(e.score)}</td><td className="td">{e.score == null && e.status !== "not_required" ? "left out (no evidence)" : `${fmt(e.weight)}%`}</td><td className="td">{fmt(e.contribution, 2)}</td></tr>)}
+              <tbody className="divide-y divide-slate-100">{ex.component_effects.map((e) => <tr key={e.component}><td className="td">{e.label}</td><td className="td">{e.status === "not_required" ? "no requirement" : e.score == null ? "n/a" : fmt(e.score)}</td><td className="td">{e.score == null && e.status !== "not_required" ? "left out (no evidence)" : `${fmt(e.weight)}%`}</td><td className="td">{fmt(e.contribution, 2)}</td></tr>)}
                 <tr className="font-semibold"><td className="td">Total</td><td className="td" /><td className="td">100%</td><td className="td">{fmt(r.overall, 2)}</td></tr></tbody></table>
           </section>
 

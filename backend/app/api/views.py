@@ -1,7 +1,7 @@
 """Shared serialisation helpers (blind-screening aware)."""
 from __future__ import annotations
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from ..core.config import COMPONENTS, HIGH_SCORE  # noqa: F401
@@ -61,6 +61,18 @@ def rows_for_run(db: Session, run: M.MatchRun, blind: bool) -> list[dict]:
     results = list(db.scalars(select(M.MatchResult).where(M.MatchResult.run_id == run.id).order_by(M.MatchResult.rank)))
     cands = {c.id: c for c in db.scalars(select(M.Candidate).where(M.Candidate.id.in_([r.candidate_id for r in results])))}
     return [result_row(r, cands[r.candidate_id], blind) for r in results if r.candidate_id in cands]
+
+
+def pool_accounting(db: Session, run: M.MatchRun | None) -> dict:
+    """Account for every uploaded file: parsed / failed / identical duplicates skipped, and which parsed resumes the run did not rank."""
+    by = dict(db.execute(select(M.Resume.status, func.count()).group_by(M.Resume.status)).all())
+    dups = db.scalar(select(func.count()).select_from(M.AuditLog).where(M.AuditLog.action == "resume.duplicate_skipped")) or 0
+    parsed_ids = set(db.scalars(select(M.Resume.candidate_id).where(M.Resume.status == "parsed", M.Resume.candidate_id.is_not(None))))
+    ranked_ids = set(db.scalars(select(M.MatchResult.candidate_id).where(M.MatchResult.run_id == run.id))) if run else set()
+    stored = sum(by.values())
+    return {"files_received": stored + dups, "stored": stored, "parsed": by.get("parsed", 0), "failed": by.get("failed", 0),
+            "duplicates_skipped": dups, "ranked_in_run": len(ranked_ids & parsed_ids), "not_in_run": len(parsed_ids - ranked_ids),
+            "run_is_stale": bool(run) and bool(parsed_ids - ranked_ids)}
 
 
 def run_info(run: M.MatchRun) -> dict:

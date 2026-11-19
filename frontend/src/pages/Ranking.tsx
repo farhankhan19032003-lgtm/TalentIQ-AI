@@ -5,6 +5,7 @@ import { api, download, errMsg } from "../api";
 import { useApp } from "../ctx";
 import { useAsync } from "../hooks";
 import { useToast } from "../components/Toast";
+import PoolBanner from "../components/PoolBanner";
 import WeightsPanel from "../components/WeightsPanel";
 import { Chip, Disclaimer, Empty, ErrorBox, PageTitle, Pager, ScoreBadge, SkillChips, SkillLegend, Spinner, Stat } from "../components/ui";
 import { ResultsResponse, RunInfo, Settings } from "../types";
@@ -19,6 +20,7 @@ export default function Ranking() {
   const { toast } = useToast();
   const { jobId, blind } = useApp();
   const [busyBulk, setBusyBulk] = useState(false);
+  const [simple, setSimple] = useState(true);   // M4 "Simple view": Candidate | Experience | Match % | Matched Skills
   const settings = useAsync(() => api.get<Settings>("/settings").then((r) => r.data), []);
   const [page, setPage] = useState(1);
   const [f, setF] = useState({ q: "", min_score: "", min_exp: "", skills: "", review_status: "", sort: "overall", order: "desc" });
@@ -109,6 +111,7 @@ export default function Ranking() {
 
       {res.loading ? <Spinner /> : !res.data ? <Empty>No ranking yet for this job. Upload resumes, then click “Run matching”.</Empty> : (
         <>
+          <PoolBanner pool={res.data.pool} jobId={jobId} onRerun={run} />
           <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
             <Stat label="Candidates ranked" value={res.data.summary.total_ranked} /><Stat label="Average score" value={fmt(res.data.summary.average_score)} />
             <Stat label={`≥ ${res.data.summary.high_threshold} match`} value={res.data.summary.high_matching} /><Stat label="Needs review" value={res.data.summary.needs_review} hint="Low confidence or missing info" />
@@ -126,6 +129,8 @@ export default function Ranking() {
           </div>
 
           <div className="mb-2 flex flex-wrap items-center gap-3 text-sm">
+            <label className="mr-2 inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 font-medium" title="Simple view shows only Candidate, Experience, Match % and Matched skills">
+              <input type="checkbox" role="switch" checked={simple} onChange={(e) => setSimple(e.target.checked)} />Simple view</label>
             <button className="btn-primary" disabled={sel.length < 2 || sel.length > 5} title={sel.length > 5 ? "Compare works with 2 to 5 candidates" : undefined} onClick={() => nav(`/compare?ids=${sel.join(",")}`)}><GitCompare className="h-4 w-4" />Compare ({sel.length}/5)</button>
             <button className="btn-ghost" onClick={selectHighMatches} title="Select every candidate at or above the high-match score, across all pages"><Sparkles className="h-4 w-4" />Select all ≥ {threshold}</button>
             {topMissing.length > 0 && <span className="text-xs text-slate-500">Most missing on this page: {topMissing.map(([s, n]) => `${s} (${n})`).join(", ")}</span>}
@@ -143,16 +148,27 @@ export default function Ranking() {
           )}
           {!items.length ? <Empty>No candidates match these filters.</Empty> : (
             <div className="card overflow-x-auto"><table className="w-full">
-              <thead className="border-b border-slate-200"><tr><th className="th"><input type="checkbox" aria-label="Select all on this page" checked={allOnPage} onChange={toggleAllOnPage} /></th><th className="th">#</th><th className="th">Candidate</th><th className="th">Match %</th>
+              <thead className="border-b border-slate-200">{simple
+                ? <tr><th className="th">Candidate</th><th className="th">Experience</th><th className="th">Match %</th><th className="th">Matched Skills</th></tr>
+                : <tr><th className="th"><input type="checkbox" aria-label="Select all on this page" checked={allOnPage} onChange={toggleAllOnPage} /></th><th className="th">#</th><th className="th">Candidate</th><th className="th">Match %</th>
                 {Object.keys(COMP_LABEL).slice(0, 4).map((k) => <th key={k} className="th hidden xl:table-cell">{COMP_LABEL[k].split(" ")[0]}</th>)}
-                <th className="th">Experience (relevant / total)</th><th className="th">Matched skills (exact / related / missing)</th><th className="th">Confidence</th><th className="th">Status</th></tr></thead>
+                <th className="th">Experience (relevant / total)</th><th className="th">Matched skills (exact / related / missing)</th><th className="th">Confidence</th><th className="th">Status</th></tr>}</thead>
               <tbody className="divide-y divide-slate-100">{items.map((r) => (
+                simple ? (
+                <tr key={r.result_id} className="hover:bg-slate-50" data-testid="simple-row">
+                  <td className="td min-w-[9.5rem]"><Link className="font-medium text-brand-700 hover:underline" to={`/candidates/${r.candidate_id}`}>{r.name}</Link><div className="text-xs text-slate-500">{r.latest_role ? (r.role_source === "headline" ? <em>{r.latest_role} (profile)</em> : r.latest_role) : "Role not stated"}</div></td>
+                  <td className="td tabular-nums">{r.employment_count === 0 && !r.claimed_years ? <span className="text-xs text-slate-500" title="No dated roles found in the resume">No dated roles</span>
+                    : r.employment_count === 0 ? <span className="text-amber-700" title="Stated in the resume text, not verifiable from dated roles">claims {r.claimed_years} years</span>
+                    : <>{fmt(r.total_years)} {r.total_years === 1 ? "year" : "years"}</>}</td>
+                  <td className="td"><ScoreBadge score={r.overall} low={r.score_low} high={r.score_high} /></td>
+                  <td className="td min-w-[15rem]" data-testid={`matched-${r.candidate_id}`}><SkillChips matched={r.matched_skills} related={r.related_skills} missing={r.missing_skills} max={{ matched: 4, related: 2, missing: 2 }} /></td>
+                </tr>) : (
                 <tr key={r.result_id} className="hover:bg-slate-50">
                   <td className="td"><input type="checkbox" aria-label={`Select ${r.name}`} checked={sel.includes(r.candidate_id)} onChange={() => toggle(r.candidate_id)} /></td>
                   <td className="td font-semibold">{r.rank}{r.sensitivity && !r.sensitivity.stable && <span title={`Rank varies ${r.sensitivity.rank_min}–${r.sensitivity.rank_max} under ±10pp weight changes`} className="ml-1 text-xs text-amber-600">±</span>}</td>
                   <td className="td min-w-[9.5rem]"><Link className="font-medium text-brand-700 hover:underline" to={`/candidates/${r.candidate_id}`}>{r.name}</Link><div className="text-xs text-slate-500" title={r.role_source === "headline" ? "Role as the resume describes itself; no dated job title was found" : undefined}>{r.latest_role ? (r.role_source === "headline" ? <em>{r.latest_role} (profile)</em> : r.latest_role) : "Role not stated"}</div></td>
                   <td className="td"><ScoreBadge score={r.overall} low={r.score_low} high={r.score_high} />{r.override && <Chip tone="amber">override</Chip>}</td>
-                  {Object.keys(COMP_LABEL).slice(0, 4).map((k) => <td key={k} className="td hidden xl:table-cell tabular-nums">{r.components[k]?.score == null ? "n/v" : fmt(r.components[k].score, 0)}</td>)}
+                  {Object.keys(COMP_LABEL).slice(0, 4).map((k) => <td key={k} className="td hidden xl:table-cell tabular-nums">{r.components[k]?.status === "not_required" ? "no req." : r.components[k]?.score == null ? "n/v" : fmt(r.components[k].score, 0)}</td>)}
                   <td className="td tabular-nums">{r.employment_count === 0 && !r.claimed_years
                     ? <span className="text-xs text-slate-500" title="No Experience/Internship section with dates was found (typical for freshers)">No dated roles</span>
                     : r.employment_count === 0 ? <span className="text-xs text-amber-700" title="Years stated in the resume text, not verifiable from dated roles">claims {r.claimed_years} y</span>
@@ -162,7 +178,7 @@ export default function Ranking() {
                     <div className="mt-1 text-xs text-slate-500">{r.matched_skills.length} exact · {r.related_skills.length} related · {r.missing_skills.length} missing</div>
                   </td>
                   <td className="td tabular-nums">{fmt(r.confidence, 0)}%{r.needs_review && <span className="ml-1" title={r.parse_review?.reasons?.length ? r.parse_review.reasons.join(" ") : "Low confidence, incomplete data or a wide score range"}><Chip tone="amber">{r.parse_review?.needs_review ? "needs review" : "review"}</Chip></span>}</td>
-                  <td className="td">{STATUS_LABEL[r.review_status] ?? r.review_status}</td></tr>))}
+                  <td className="td">{STATUS_LABEL[r.review_status] ?? r.review_status}</td></tr>)))}
               </tbody></table>
               <Pager page={page} pageSize={PAGE} total={res.data.total} onPage={setPage} /></div>
           )}

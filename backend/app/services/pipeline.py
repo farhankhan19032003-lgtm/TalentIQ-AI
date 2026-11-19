@@ -201,6 +201,8 @@ def ingest_resume(db: Session, filename: str, data: bytes, batch_id: str) -> dic
     h = sha256(data)
     existing = db.scalar(select(M.Resume).where(M.Resume.file_hash == h))
     if existing:
+        audit(db, "resume.duplicate_skipped", "resume", existing.id, {"size": len(data)})
+        db.commit()
         return {"filename": safe, "status": "duplicate", "resume_id": existing.id, "candidate_id": existing.candidate_id,
                 "error_code": "duplicate_file", "error_message": f"Identical file already uploaded as '{existing.original_filename}'."}
     stored = store_file(data, kind) if settings.store_original_files else None

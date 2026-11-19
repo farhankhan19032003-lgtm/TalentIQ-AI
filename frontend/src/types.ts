@@ -29,7 +29,13 @@ export interface ResultRow {
 export interface ResultsResponse {
   job: { id: number; title: string }; run: RunInfo; total: number; page: number; page_size: number; items: ResultRow[];
   summary: { total_ranked: number; average_score: number; high_matching: number; needs_review: number; high_threshold: number };
+  pool: Pool;
 }
+export interface Pool {
+  files_received: number; stored: number; parsed: number; failed: number; duplicates_skipped: number;
+  ranked_in_run: number; not_in_run: number; run_is_stale: boolean;
+}
+export interface Accounting extends Pool { duplicates: { skipped_at: string; identical_to_resume_id: number; identical_to_filename: string | null }[] }
 export interface Evidence { requirement_id: string; requirement: string; category: string; match_type: string; text: string | null; page: number | null; similarity: number | null; verification: string }
 export interface Field { value: string | null; page: number | null; evidence: string | null; method: string; confidence: number; status: string }
 export interface CandidateDetail {
