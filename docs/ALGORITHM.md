@@ -53,6 +53,14 @@ Overall = 0.40·Technical + 0.25·Semantic + 0.20·Experience + 0.10·Education 
 
 Components the JD does not require are dropped and the remaining weights renormalised. A component with **no resume evidence** is `unverified`: **Project/Domain** is then left out of the point estimate (weights renormalised), every other unverified component scores 0. The page always shows the range `low-high`: *low* = left-out components scored 0, *high* = unverified components scored 100; the headline score is between them.
 
+**Weight renormalisation (why the candidate page can show 42.1 % while Settings says 40 %).** Let `w_k` be the configured weight and `A` the set of *active* components, those that are required by the job and, for Project/Domain, have evidence. The effective weight and the overall score are
+
+```
+w'_k = w_k / sum(w_j for j in A)          overall = sum(w'_k * score_k for k in A)
+```
+
+Example (Sana Qureshi, no projects section): `A` = Technical, Semantic, Experience, Education, so `sum = 0.40 + 0.25 + 0.20 + 0.10 = 0.95`, giving `w'` = 42.1 %, 26.3 %, 21.1 %, 10.5 % (each configured weight divided by 0.95). The same happens when a JD states no degree: Education is dropped and the other four are divided by 0.90. The candidate page prints a note under the score table ("Projects & domain had no evidence, so the remaining weights were rescaled to add up to 100 %"), and the score *range* still shows what the left-out component could have added. Components that are required but unverified for any other reason (e.g. no dates for Experience) are **not** dropped: they count as 0 and widen the range, because dropping them would reward missing information.
+
 | Component | Weight | How it is scored |
 |---|---|---|
 | **Technical skills** | 40 % | per requirement `credit x weight`, divided by the total weight (table below) |
@@ -175,5 +183,12 @@ Sort by overall desc, technical desc, candidate id asc (deterministic). Sensitiv
 - Candidates parsed before a parser upgrade keep their old parse until re-uploaded.
 - Future work: learn calibration from recruiter decisions, embed skills with a larger model, per-role fit shown as evidence highlights, human-labelled benchmark, re-parse button.
 
-## 7. What the score is not
+## 7. Bias, fairness and safe use
+- **Decision support only.** The system never rejects, hides or auto-advances anyone: every stage change is a recruiter action, audit-logged, and a manual override keeps the machine score and records a required reason.
+- **Protected attributes are not scored.** Lines about age, date of birth, gender, marital status, religion and nationality are removed before skill extraction and matching, and from the stored text. A twin test (identical resumes, different names and protected lines) differs by **0.0 points with TF-IDF** and by at most **0.61 points with MiniLM** across 6 JDs (`eval/run_evaluation.py --backend tfidf|minilm`, run 2026-11-19). Only the embedding model can make the two differ, since the rest of the scoring never sees names; I did not investigate which tokens cause the 0.61.
+- **Blind screening mode** hides names and contact details in the UI and in exports (`blind=true`), so a first review can be done on skills and evidence alone.
+- **Missing is not mismatch.** Unverifiable evidence widens the score range or is left out; it is never silently scored as bad. Parse problems (scanned file, garbled text, no name, no role) put a visible *needs review* flag on the candidate.
+- **Not covered:** proxies such as school name or city are not audited; the ontology and the calibration reflect the author's choices and synthetic data. Do not use the score as the only input to a hiring decision.
+
+## 8. What the score is not
 It is a similarity-and-evidence signal, **not** a probability of being hired or of job performance. Weights, thresholds and calibration ranges are hand-set heuristics that have not been validated on real hiring outcomes.

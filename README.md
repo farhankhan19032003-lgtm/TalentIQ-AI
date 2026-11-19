@@ -20,6 +20,20 @@ Runs fully offline on a CPU-only laptop (8 GB RAM). No paid APIs, no LLM, no Oll
 | Fairness & privacy | Protected-attribute lines scrubbed before matching, blind-screening mode, twin-resume test, PII-free audit log, candidate deletion, retention purge. |
 | Security | Magic-byte checks, size/page/zip-bomb limits, active-content PDF rejection, macro rejection, random storage names, prompt-injection flagging, optional API key, CSV formula-injection protection. |
 
+### Screenshots
+Placeholders: add your own captures to `docs/screenshots/` before submitting (the demo script in [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) visits each of these pages).
+
+| Page | File |
+|---|---|
+| New job: pasted JD with extracted, editable requirements | `docs/screenshots/01-job-editor.png` |
+| Upload: batch of 54 files, one duplicate, two failed, scanned file flagged | `docs/screenshots/02-upload.png` |
+| Ranking: Simple view (Candidate / Experience / Match % / Matched Skills) | `docs/screenshots/03-ranking-simple.png` |
+| Candidate detail: verdict, profile, experience comparison, why this score | `docs/screenshots/04-candidate.png` |
+
+### Requirements
+- **Docker route:** Docker Desktop (Compose v2). Nothing else.
+- **Manual route:** Python 3.12+, Node 20+, optional PostgreSQL 16 and optional Tesseract OCR (scanned PDFs). About 1 GB of disk with the embedding model, 8 GB RAM, no GPU.
+
 ### Scoring formula
 
 ```
@@ -131,7 +145,7 @@ Open http://localhost:5173 → **Jobs → New job** (paste or upload a JD, revie
 
 **Semantic matching.** The semantic component uses the sentence-embedding model all-MiniLM-L6-v2. `python scripts/fetch_minilm.py` downloads it once (about 90 MB, every file checked against the hash Hugging Face publishes) into `backend/storage/models/`. The app runs it with `sentence-transformers` when that is installed, and otherwise with its own **pure-NumPy implementation of the same model** (`backend/app/services/minilm_numpy.py`: same weights, same WordPiece tokenizer, mean pooling, 256-token limit; no torch needed, so it works on any Python version and on locked-down machines). `EMBEDDING_BACKEND=auto` (the default) uses MiniLM when the model files exist and otherwise falls back to TF-IDF, and the ranking page says which one was used and why. `EMBEDDING_BACKEND=tfidf` forces TF-IDF, `minilm` insists on MiniLM.
 
-**Sample data (all fictional).** `sample_data/` holds 6 job descriptions (`.txt`, plus a `.docx` copy of one), 35+ resumes (PDF and DOCX, from strong to poor fit), deliberately bad files (corrupt PDF/DOCX, password-protected PDF, fake extension, an image-only scanned PDF for OCR) and `ground_truth/ground_truth.json`. With the app running, load it through the API: `python scripts/load_samples.py` (Docker, port 8080) or `python scripts/load_samples.py --base http://localhost:8000 --jd python_backend_developer --no-bad-files --run`. For a deterministic 3-minute demo use `python scripts/load_samples.py --demo --run`: it loads the Python Backend JD, **15 fictional resumes (8 PDF, 7 DOCX) from strong to poor fit** and 3 edge cases (scanned, corrupt, password-protected) listed in `sample_data/demo_set.json`. Regenerate the files with `python scripts/generate_sample_data.py` (from the repo root).
+**Sample data (all fictional).** `sample_data/` holds 6 job descriptions (`.txt`, plus a `.docx` copy of one), 35+ resumes (PDF and DOCX, from strong to poor fit), deliberately bad files (corrupt PDF/DOCX, password-protected PDF, fake extension, an image-only scanned PDF for OCR) and `ground_truth/ground_truth.json`. With the app running, load it through the API: `python scripts/load_samples.py` (Docker, port 8080) or `python scripts/load_samples.py --base http://localhost:8000 --jd python_backend_developer --no-bad-files --run`. For the larger **50-resume pack** (`sample_data/pack50/`, files named `resume_XX_name`, 42 PDF + 8 DOCX, plus edge cases) use `python scripts/load_samples.py --pack50 --run`; to wipe the database and uploads first and reload only synthetic data use `python scripts/reset_demo_data.py` (asks for confirmation; `--local` for a non-Docker run). For a deterministic 3-minute demo use `python scripts/load_samples.py --demo --run`: it loads the Python Backend JD, **15 fictional resumes (8 PDF, 7 DOCX) from strong to poor fit** and 3 edge cases (scanned, corrupt, password-protected) listed in `sample_data/demo_set.json`. Regenerate the files with `python scripts/generate_sample_data.py` (from the repo root).
 
 ### Run with Docker (one command)
 
@@ -155,24 +169,40 @@ ruff check app tests eval                 # lint (rules in backend/ruff.toml)
 ```
 See [docs/TESTING.md](docs/TESTING.md) for what each suite covers and the latest recorded results.
 
-### 50-resume test pack (2026-11-16)
-> Measured **before** the 2026-11-18 parsing/scoring calibration (scores and some rank positions have shifted since; the current calibration evidence is in [docs/ALGORITHM.md](docs/ALGORITHM.md), section 3).
+### 50-resume synthetic pack (measured 2026-11-19)
+`sample_data/pack50/` holds 50 fictional resumes named `resume_XX_firstname_lastname` (42 PDF, 8 DOCX; e-mails `name@example.com`) from strong to unrelated fit for the *Python Backend Developer* JD, plus `edge_cases/` (password-protected, corrupt, scanned, byte-identical duplicate) and `manifest.json` (the intended family and tier of each file). Regenerate with `python scripts/generate_pack50.py`; load with `python scripts/load_samples.py --pack50 --run`; wipe everything and reload with `python scripts/reset_demo_data.py`.
 
-A separate pack of 50 fictional PDF resumes with an answer key (5 intended profile groups of 10, one AI/ML JD) was run through the real UI on an empty database: JD pasted and saved, all 50 PDFs attached through the file chooser, matching run with MiniLM.
+Result on a fresh Docker stack (54 files in one upload): **51 parsed, 2 failed (corrupt, password-protected), 1 duplicate skipped**, 51 ranked in 4.0 s (MiniLM). Mean score by intended group:
 
-| Check | Result |
-|---|---|
-| Upload | 50 parsed, 0 failed, 0 duplicates (about 1 s) |
-| Matching | 50 candidates ranked in 6.6 s (MiniLM, NumPy runtime) |
-| "Strong match" group (10) | **all 10 in the top 10**; every one ranked above every Good-with-gaps, Backend/API, ML-focused and Adjacent/weak candidate |
-| Other groups vs "Adjacent/weak" | only 75 % of (partial, weak) pairs are ordered correctly; the best "Adjacent/weak" resume ranks 13th and scores 79.7 |
-| Experience years vs the key | within 1 year for 39 of 50 resumes (mean absolute difference 0.85 y) |
-| Skill extraction vs the key's skill lists | recall 0.94, precision 0.73 (the app also extracts skills such as Agile that the key does not list, so precision is partly the key being short) |
+| Intended group (n) | Mean score | Range |
+|---|---|---|
+| Backend, strong evidence (6) | 89.7 | 89.2 - 90.0 |
+| Backend, medium evidence (3) | 87.7 | 87.5 - 88.1 |
+| Flask/MySQL instead of FastAPI/PostgreSQL (4) | 60.8 | 59.1 - 61.9 |
+| DevOps, strong (3) | 60.0 | 59.7 - 60.2 |
+| Backend fresher, thin evidence (3) | 53.7 | 52.3 - 55.6 |
+| ML / full-stack / Java / data analysts (23) | 13 - 35 | 11.7 - 35.3 |
+| Sales and accounting (5) | 10.7 - 11.3 | 10.5 - 12.0 |
 
-Honest notes: the first run ranked three "Strong match" resumes 24th, 28th and 30th because a role titled "Machine Learning Engineer" was not treated as relevant to an "AI/ML Engineer" job (0 relevant years). That was fixed (title abbreviations are normalised, regression test added) and the numbers above are from the run after the fix, so the fix was made on this same pack. The pack is synthetic and its key is "intended profile", not a human judgement of fit.
+The 9 backend resumes with real FastAPI/PostgreSQL evidence take ranks 1-9; related-skill resumes follow; unrelated careers are below 40. **Imperfect:** the generator makes "strong" and "medium" backend resumes differ by only one bullet, so those two groups are not separated by the score (89.7 vs 87.7); and the pack is generated from templates by the same author as the matcher, so this shows the pipeline behaves consistently, not that it works on real resumes. Two summary-only freshers (Aman Yadav, Kunal Bose) are shown with a "(profile)" role and a needs-review flag.
 
 ### Configuration
-Environment variables only (no `.env` auto-loading) — see [.env.example](.env.example). Set `API_KEY` for any shared deployment. `EMBEDDING_BACKEND` defaults to `auto` (options: `auto | minilm | tfidf`); `EMBEDDING_MODEL_DIR` points at the model files (default `backend/storage/models/all-MiniLM-L6-v2`).
+Environment variables only (no `.env` auto-loading); [.env.example](.env.example) lists them. Set `API_KEY` for any shared deployment.
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `DATABASE_URL` | `sqlite:///./talentiq.db` (Docker Compose: PostgreSQL) | any SQLAlchemy URL, e.g. `postgresql+psycopg://user:pass@host:5432/db` |
+| `EMBEDDING_BACKEND` | `auto` | `auto` = MiniLM if its files exist, else TF-IDF (the run records and shows why); `minilm` / `tfidf` force one |
+| `EMBEDDING_MODEL`, `EMBEDDING_MODEL_DIR` | `sentence-transformers/all-MiniLM-L6-v2`, `backend/storage/models/all-MiniLM-L6-v2` | model name and the folder `scripts/fetch_minilm.py` fills (about 90 MB, hash-checked) |
+| `UPLOAD_DIR`, `STORE_ORIGINAL_FILES` | `./storage/uploads`, `true` | where original resumes are kept; `false` stores parsed data only |
+| `MAX_UPLOAD_MB`, `MAX_PDF_PAGES`, `MAX_BATCH_FILES` | `5`, `30`, `60` | upload limits |
+| `OCR_ENABLED` | `true` | use Tesseract for scanned PDFs when installed |
+| `API_KEY` | empty (no auth) | shared key required by every API call when set |
+| `RETENTION_DAYS` | `0` | `0` keeps data until a recruiter deletes it |
+| `CORS_ORIGINS` | `http://localhost:5173,...` | allowed browser origins in dev |
+| `POSTGRES_PASSWORD` | `talentiq` | Docker Compose database password; change it outside a laptop demo |
+
+**Offline behaviour.** Nothing calls an external service at run time. If the embedding model files are missing, matching still works with TF-IDF similarity; the ranking page then says "TF-IDF fallback" and the reason. The Docker image already contains the model.
 
 ## Documentation
 [Architecture](docs/ARCHITECTURE.md) · [Matching algorithm](docs/ALGORITHM.md) · [API](docs/API_DOCUMENTATION.md) · [Testing](docs/TESTING.md) · [Security](docs/SECURITY.md) · [Demo script](docs/DEMO_SCRIPT.md) · [Audit report](docs/AUDIT_REPORT.md) · [Checklist](docs/CHECKLIST.md) · [Interview prep](docs/INTERVIEW_PREP.md) · [Older notes](interview_prep/)
@@ -182,10 +212,10 @@ Environment variables only (no `.env` auto-loading) — see [.env.example](.env.
 - Benchmarked only on **synthetic** resumes written by the author; ground truth is author-defined; dev set = test set. Results do not predict real-world accuracy.
 - On that benchmark the hybrid ranker beats a plain TF-IDF baseline by a **small** margin: mean NDCG@5 **0.943 with TF-IDF** and **0.945 with MiniLM embeddings** vs 0.932 for the plain baseline (random: 0.25). MiniLM vs TF-IDF is +0.002, which is noise on 6 JDs and 35 synthetic resumes (MiniLM is better on 3 JDs, worse on 1 (Java backend 0.878 vs 0.936), equal on 2). The synthetic resumes reuse the JD's own vocabulary, so this set cannot show the benefit of embeddings; on paraphrases with no shared words TF-IDF scores 0.00 while MiniLM scores 0.31 to 0.57 and ranks them well above unrelated text (`tests/test_minilm_numpy.py`).
 - The NumPy MiniLM matches the published Sentence-Transformers example scores (three pairs to four decimals) and gives the same vectors whether a text is encoded alone or in a batch (difference below 1e-6), but it has not been compared vector-by-vector against the PyTorch model (torch cannot be installed on the author's machine).
-- **PostgreSQL 16.4** was run on Windows (portable binaries, `postgresql+psycopg://...`): the whole backend suite (237 tests, `TEST_DATABASE_URL`), Alembic upgrade/check/downgrade/upgrade, and the 50-resume flow (50 parsed, MiniLM ranking identical to SQLite, max score difference 0.0, reports and interview notes work). Not tested: older/newer Postgres versions, connection pooling under load, Linux/macOS. Install with `pip install "psycopg[binary]"`; on a machine whose Application Control blocks the binary wheel, point psycopg at a PostgreSQL `libpq.dll` (`PSYCOPG_IMPL=python` and its `bin` folder on `PATH`).
+- **PostgreSQL 16.4** was run on Windows (portable binaries, `postgresql+psycopg://...`): the whole backend suite (237 tests at the time, `TEST_DATABASE_URL`; the suite has 275 tests now and the latest run was on SQLite inside Docker), Alembic upgrade/check/downgrade/upgrade, and the 50-resume flow (50 parsed, MiniLM ranking identical to SQLite, max score difference 0.0, reports and interview notes work). Not tested: older/newer Postgres versions, connection pooling under load, Linux/macOS. Install with `pip install "psycopg[binary]"`; on a machine whose Application Control blocks the binary wheel, point psycopg at a PostgreSQL `libpq.dll` (`PSYCOPG_IMPL=python` and its `bin` folder on `PATH`).
 - Bare short skill names (`R`, `Go`, `C`) are only recognised as list items; inflections ("recommender") can be missed; vendor "Oracle" can false-positive.
 - Skill ontology has 160 hand-edited skills; unlisted skills are invisible to the matcher.
-- DOCX has no page numbers; text boxes in DOCX are not extracted; no layout-aware parsing of images/tables inside PDFs.
+- DOCX text boxes are read, but a DOCX has no page numbers; no layout-aware parsing of images/tables inside PDFs.
 - PDF parsing runs in-process (no sandbox). No malware scanning.
 - No user accounts/roles: a single optional shared API key.
 - `docker compose up --build` is **verified** (Docker Desktop on Windows/WSL2: healthy stack, 20-resume flow, same scores). The Render blueprint and Vercel config are provided but **untested**; Linux and macOS hosts are untested. Frontend bundle is ~690 kB (Recharts).
