@@ -6,7 +6,7 @@ and prints PASS/FAIL per step plus browser console errors and failed HTTP calls.
 """
 import os
 os.makedirs("e2e_out", exist_ok=True)
-import json, sys
+import json
 from playwright.sync_api import sync_playwright
 
 BASE = "http://127.0.0.1:5173"

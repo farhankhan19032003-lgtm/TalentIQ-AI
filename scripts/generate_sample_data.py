@@ -7,7 +7,7 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from synthetic.jds import JDS, JD_KEYS  # noqa: E402
+from synthetic.jds import JDS  # noqa: E402
 from synthetic.profiles import JD_ORDER, PRESENT, PROFILES, SPECIAL  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -93,9 +93,6 @@ def build_content(p):
         secs.append(("Projects", blocks))
     if p["certs"]:
         secs.append(("Certifications", [("b", c) for c in p["certs"]]))
-    # skills mentioned only in job titles
-    for e in p["exp"]:
-        pass
     return {"name": p["name"], "contact": " | ".join(contact), "email": next((c for c in contact if "@" in c), None), "protected": p["protected"],
             "sections": secs, "truth": sorted(truth)}
 
@@ -191,7 +188,6 @@ def render_pdf_two_col(c, path):
 
 
 def _docx_fill(container, blocks, doc=None):
-    from docx.shared import Pt
     for kind, t in blocks:
         if kind == "b":
             para = container.add_paragraph(t, style="List Bullet")

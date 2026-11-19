@@ -16,3 +16,26 @@ backend/storage/models/
 *.log
 backend/eval/results/*pytest*
 .DS_Store
+
+# secrets and local config (only .env.example is committed)
+.env.*
+!.env.example
+*.pem
+*.key
+# databases, uploaded resumes and local backups of them: real candidate data must never be committed
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+backend/storage/uploads*/
+backend/storage/*.pdf
+backend/storage/*.docx
+# model / tool caches
+.cache/
+.huggingface/
+.ruff_cache/
+.mypy_cache/
+.claude/
+frontend/.vite/
+coverage/
